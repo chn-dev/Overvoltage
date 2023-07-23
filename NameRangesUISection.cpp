@@ -1,0 +1,214 @@
+#ifdef __GNUC__
+#include <fmt/core.h>
+#define stdformat fmt::format
+#else
+#include <format>
+#define stdformat std::format
+#endif
+
+#include "PluginEditor.h"
+#include "NameRangesUISection.h"
+
+NameRangesUISection::NameRangesUISection( AudioPluginAudioProcessorEditor *pEditor ) :
+   UISection( pEditor, "Name & Ranges" )
+{
+   std::vector<std::string> noteNames;
+   for( int i = 0; i < 128; i++ )
+   {
+      noteNames.push_back( Keyboard::noteNameWithOctave( i ).toStdString() );
+   }
+
+   m_plLow = new juce::Label( juce::String(), "low" );
+   addAndMakeVisible( m_plLow );
+   m_plHigh = new juce::Label( juce::String(), "hi" );
+   addAndMakeVisible( m_plHigh );
+   m_plBaseNote = new juce::Label( juce::String(), "root" );
+   addAndMakeVisible( m_plBaseNote );
+   m_plK1 = new juce::Label( juce::String(), "K" );
+   addAndMakeVisible( m_plK1 );
+   m_plK2 = new juce::Label( juce::String(), "K" );
+   addAndMakeVisible( m_plK2 );
+   m_plV1 = new juce::Label( juce::String(), "V" );
+   addAndMakeVisible( m_plV1 );
+   m_plV2 = new juce::Label( juce::String(), "V" );
+   addAndMakeVisible( m_plV2 );
+
+   m_pcMinNote = new CycleComponent( noteNames );
+   m_pcMinNote->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
+   m_pcMinNote->addListener( this );
+   m_pcMinNote->setJustificationType( juce::Justification::centred );
+   addAndMakeVisible( m_pcMinNote );
+
+   m_pcBaseNote = new CycleComponent( noteNames );
+   m_pcBaseNote->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
+   m_pcBaseNote->addListener( this );
+   m_pcBaseNote->setJustificationType( juce::Justification::centred );
+   addAndMakeVisible( m_pcBaseNote );
+
+   m_pcMaxNote = new CycleComponent( noteNames );
+   m_pcMaxNote->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
+   m_pcMaxNote->addListener( this );
+   m_pcMaxNote->setJustificationType( juce::Justification::centred );
+   addAndMakeVisible( m_pcMaxNote );
+
+   std::vector<std::string> velNames;
+   for( int i = 0; i < 128; i++ )
+   {
+      velNames.push_back( stdformat( "{}", i ) );
+   }
+   m_pcMinVelocity = new CycleComponent( velNames );
+   m_pcMinVelocity->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
+   m_pcMinVelocity->addListener( this );
+   m_pcMinVelocity->setJustificationType( juce::Justification::centred );
+   addAndMakeVisible( m_pcMinVelocity );
+
+   m_pcMaxVelocity = new CycleComponent( velNames );
+   m_pcMaxVelocity->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
+   m_pcMaxVelocity->addListener( this );
+   m_pcMaxVelocity->setJustificationType( juce::Justification::centred );
+   addAndMakeVisible( m_pcMaxVelocity );
+
+   m_plName = new juce::Label( juce::String(), "" );
+   m_plName->addListener( this );
+   m_plName->setJustificationType( juce::Justification::left );
+   m_plName->setEditable( true );
+   m_plName->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
+   m_plName->setColour( juce::Label::ColourIds::outlineWhenEditingColourId, juce::Colour::fromRGBA( 255, 255, 255, 128 ) );
+   m_plName->addListener( this );
+   addAndMakeVisible( m_plName );
+}
+
+
+NameRangesUISection::~NameRangesUISection()
+{
+   delete m_pcMinNote;
+   delete m_pcMaxNote;
+   delete m_pcMinVelocity;
+   delete m_pcMaxVelocity;
+   delete m_plLow;
+   delete m_plHigh;
+   delete m_plK1;
+   delete m_plK2;
+   delete m_plV1;
+   delete m_plV2;
+   delete m_plBaseNote;
+   delete m_pcBaseNote;
+   delete m_plName;
+}
+
+
+void NameRangesUISection::labelTextChanged( Label *pLabel )
+{
+   if( !sample() )
+      return;
+
+   if( pLabel == m_plName )
+   {
+      sample()->setName( m_plName->getText().toStdString() );
+      editor()->repaint();
+   } else
+   if( pLabel == m_pcMinVelocity )
+   {
+      sample()->setMinVelocity( m_pcMinVelocity->getCurrentItem() );
+      if( sample()->getMaxVelocity() < sample()->getMinVelocity() )
+      {
+         sample()->setMaxVelocity( sample()->getMinVelocity() );
+      }
+      editor()->repaint();
+   } else
+   if( pLabel == m_pcMaxVelocity )
+   {
+      sample()->setMaxVelocity( m_pcMaxVelocity->getCurrentItem() );
+      if( sample()->getMinVelocity() > sample()->getMaxVelocity() )
+      {
+         sample()->setMinVelocity( sample()->getMaxVelocity() );
+      }
+      editor()->repaint();
+   } else
+   if( pLabel == m_pcMinNote )
+   {
+      sample()->setMinNote( m_pcMinNote->getCurrentItem() );
+      if( sample()->getMaxNote() < sample()->getMinNote() )
+      {
+         sample()->setMaxNote( sample()->getMinNote() );
+      }
+      editor()->repaint();
+   } else
+   if( pLabel == m_pcMaxNote )
+   {
+      sample()->setMaxNote( m_pcMaxNote->getCurrentItem() );
+      if( sample()->getMinNote() > sample()->getMaxNote() )
+      {
+         sample()->setMinNote( sample()->getMaxNote() );
+      }
+      editor()->repaint();
+   } else
+   if( pLabel == m_pcBaseNote )
+   {
+      sample()->setBaseNote( m_pcBaseNote->getCurrentItem() );
+   }
+   editor()->repaint();
+
+   sampleUpdated();
+}
+
+
+void NameRangesUISection::paint( juce::Graphics &g )
+{
+   UISection::paint( g );
+
+   g.setColour( juce::Colour::fromRGB( 32, 64, 64 ) );
+   g.fillAll();
+}
+
+
+void NameRangesUISection::resized()
+{
+   UISection::resized();
+   int d = 20;
+
+   m_plName->setBounds( 8, 28, getBounds().getWidth() - 16, 18 );
+
+   m_plK1->setBounds( 0, 48 + d, 18, 14 );
+   m_plV1->setBounds( 0, 68 + d, 18, 14 );
+   m_plLow->setBounds( 32, 32 + d, 32, 14 );
+   m_plBaseNote->setBounds( 80, 32 + d, 32, 14 );
+   m_plHigh->setBounds( 128, 32 + d, 32, 14 );
+   m_plK2->setBounds( getBounds().getWidth() - 18, 48 + d, 18, 14 );
+   m_plV2->setBounds( getBounds().getWidth() - 18, 68 + d, 18, 14 );
+   m_pcMinNote->setBounds( 32, 48 + d, 38, 14 );
+   m_pcBaseNote->setBounds( 80, 48 + d, 38, 14 );
+   m_pcMaxNote->setBounds( 128, 48 + d, 38, 14 );
+   m_pcMinVelocity->setBounds( 32, 68 + d, 38, 14 );
+   m_pcMaxVelocity->setBounds( 128, 68 + d, 38, 14 );
+}
+
+
+void NameRangesUISection::sampleUpdated()
+{
+   const Sample *pSample = sample();
+
+   m_pcMinNote->setVisible( pSample != 0 );
+   m_pcMaxNote->setVisible( pSample != 0 );
+   m_pcMinVelocity->setVisible( pSample != 0 );
+   m_pcMaxVelocity->setVisible( pSample != 0 );
+   m_plLow->setVisible( pSample != 0 );
+   m_plHigh->setVisible( pSample != 0 );
+   m_plK1->setVisible( pSample != 0 );
+   m_plK2->setVisible( pSample != 0 );
+   m_plV1->setVisible( pSample != 0 );
+   m_plV2->setVisible( pSample != 0 );
+   m_plBaseNote->setVisible( pSample != 0 );
+   m_pcBaseNote->setVisible( pSample != 0 );
+   m_plName->setVisible( pSample != 0 );
+
+   if( pSample )
+   {
+      m_pcMinNote->setCurrentItem( pSample->getMinNote() );
+      m_pcMaxNote->setCurrentItem( pSample->getMaxNote() );
+      m_pcBaseNote->setCurrentItem( pSample->getBaseNote() );
+      m_pcMinVelocity->setCurrentItem( pSample->getMinVelocity() );
+      m_pcMaxVelocity->setCurrentItem( pSample->getMaxVelocity() );
+      m_plName->setText( pSample->getName(), juce::dontSendNotification );
+   }
+}

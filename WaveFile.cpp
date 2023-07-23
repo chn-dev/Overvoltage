@@ -1,0 +1,286 @@
+#include <math.h>
+#include "WaveFile.h"
+
+WaveFile::WaveFile() :
+   m_Format( -1 ),
+   m_nChannels( -1 ),
+   m_SampleRate( -1 ),
+   m_nBits( -1 ),
+   m_pData( 0 ),
+   m_nSamples( -1 ),
+   m_LoopStart( -1 ),
+   m_LoopEnd( -1 ),
+   m_IsLooped( false )
+{
+}
+
+
+WaveFile::~WaveFile()
+{
+   if( m_pData )
+   {
+      delete m_pData;
+   }
+}
+
+
+uint32_t WaveFile::size() const
+{
+   return( m_nSamples * m_nChannels * ( m_nBits / 8 ) );
+}
+
+
+uint32_t WaveFile::loopStart() const
+{
+   return( m_LoopStart );
+}
+
+
+uint32_t WaveFile::loopEnd() const
+{
+   return( m_LoopEnd );
+}
+
+
+void WaveFile::setLoopStart( uint32_t v )
+{
+   m_LoopStart = v;
+   if( m_LoopStart & 0x80000000 )
+      m_LoopStart = 0;
+   else
+   if( m_LoopStart >= m_nSamples )
+      m_LoopStart = m_nSamples - 1;
+}
+
+
+void WaveFile::setLoopEnd( uint32_t v )
+{
+   m_LoopEnd = v;
+   if( m_LoopEnd & 0x80000000 )
+      m_LoopEnd = 0;
+   else
+   if( m_LoopEnd >= m_nSamples )
+      m_LoopEnd = m_nSamples - 1;
+}
+
+
+bool WaveFile::isLooped() const
+{
+   return( m_IsLooped );
+}
+
+
+int WaveFile::numChannels() const
+{
+   return( m_nChannels );
+}
+
+
+uint32_t WaveFile::sampleRate() const
+{
+   return( m_SampleRate );
+}
+
+
+int WaveFile::numBits() const
+{
+   return( m_nBits );
+}
+
+
+uint16_t *WaveFile::data16() const
+{
+   return( (uint16_t *)m_pData );
+}
+
+
+uint8_t *WaveFile::data8() const
+{
+   return( (uint8_t *)m_pData );
+}
+
+
+float WaveFile::floatValue( int nChannel, int nSample ) const
+{
+   if( nChannel < 0 || nChannel >= m_nChannels )
+      return( NAN );
+
+   if( nSample < 0 || nSample >= m_nSamples )
+      return( NAN );
+
+   if( m_nBits == 16 )
+   {
+      int16_t v = data16()[( nSample * m_nChannels ) + nChannel];
+      return( (float)v / 32768.0 );
+   } else
+   if( m_nBits == 8 )
+   {
+      uint8_t v = data16()[( nSample * m_nChannels ) + nChannel];
+      return( (float)v / 128 );
+   } else
+   {
+      return( NAN );
+   }
+}
+
+
+std::string WaveFile::readTagName( std::ifstream &file )
+{
+   char tmp[5];
+
+   tmp[4] = '\0';
+   if( file.read( (char *)tmp, 4 ).eof() )
+      return( "" );
+
+   return( std::string( tmp ) );
+}
+
+
+uint32_t WaveFile::readDWord( std::ifstream &file )
+{
+   unsigned char tmpDW[4];
+
+   file.read( (char *)&tmpDW, sizeof( tmpDW ) );
+   return( ( tmpDW[3] << 24 ) |
+           ( tmpDW[2] << 16 ) |
+           ( tmpDW[1] << 8 ) |
+             tmpDW[0] );
+}
+
+
+uint16_t WaveFile::getWord( const unsigned char *pD )
+{
+   return( pD[0] | pD[1] << 8 );
+}
+
+
+uint16_t WaveFile::getDWord( const unsigned char *pD )
+{
+   return( pD[0] | pD[1] << 8 | pD[2] << 16 | pD[3] << 24 );
+}
+
+
+WaveFile *WaveFile::load( std::string fname )
+{
+   std::ifstream file;
+
+   file.open( fname, std::ios_base::binary );
+
+   if( !file )
+      return( 0 );
+
+   WaveFile *pWav = new WaveFile();
+
+   file.seekg( 0, std::ios_base::beg );
+
+   if( readTagName( file ) !=  "RIFF" )
+   {
+      file.close();
+      return( 0 );
+   }
+
+   uint32_t riffLen = readDWord( file );
+
+   if( readTagName( file ) != "WAVE" )
+   {
+      file.close();
+      return( 0 );
+   }
+
+   bool haveFormat = false;
+   bool haveData = false;
+   bool ok = true;
+   while( true )
+   {
+      std::string tagName = readTagName( file );
+      uint32_t tagLen = readDWord( file );
+      uint32_t tagRead = 0;
+
+      bool e = file.eof();
+
+      if( tagName == "fmt " )
+      {
+         if( tagLen < 16 )
+         {
+            ok = false;
+            break;
+         }
+
+         unsigned char *pFmt = new unsigned char[tagLen];
+         file.read( (char *)pFmt, tagLen );
+
+         pWav->m_Format = getWord( pFmt + 0 );
+         pWav->m_nChannels = getWord( pFmt + 2 );
+         pWav->m_SampleRate = getDWord( pFmt + 4 );
+         pWav->m_nBits = getWord( pFmt + 14 );
+         delete pFmt;
+
+         if( pWav->m_Format != 1 )
+         {
+            ok = false;
+            break;
+         }
+
+         haveFormat = true;
+         tagRead = tagLen;
+      } else
+      if( tagName == "smpl" )
+      {
+         if( tagLen >= 60 )
+         {
+            unsigned char *pFmt = new unsigned char[tagLen];
+            file.read( (char *)pFmt, tagLen );
+            tagRead = tagLen;
+
+            uint32_t nSampleLoops= getDWord( pFmt + 0x24 - 8 );
+            for( int i = 0; i < nSampleLoops; i++ )
+            {
+               uint32_t id = getDWord( pFmt + ( i * 6 * 4 ) + 0x2c - 8 );
+               uint32_t loopStart = getDWord( pFmt + ( i * 6 * 4 ) + 0x2c - 8 + 8 );
+               uint32_t loopEnd = getDWord( pFmt + ( i * 6 * 4 ) + 0x2c - 8 + 12 ) - 1;
+
+               pWav->m_LoopStart = loopStart;
+               pWav->m_LoopEnd = loopEnd;
+               pWav->m_IsLooped = true;
+               break;
+            }
+         }
+      } else
+      if( tagName == "data" )
+      {
+         void *pData = new unsigned char[tagLen];
+         file.read( (char *)pData, tagLen );
+         pWav->m_pData = pData;
+         haveData = true;
+         pWav->m_nSamples = tagLen;
+      }
+
+      file.seekg( tagLen - tagRead, std::ios_base::cur );
+
+      if( file.eof() || ( haveData && haveFormat ) )
+         break;
+   }
+
+   file.close();
+
+   if( !ok )
+   {
+      delete pWav;
+      pWav = 0;
+   }
+
+   pWav->m_nSamples = pWav->m_nSamples / ( pWav->m_nChannels * ( pWav->m_nBits / 8 ) );
+   if( !pWav->isLooped() )
+   {
+      pWav->m_LoopStart = 0;
+      pWav->m_LoopEnd = pWav->m_nSamples - 1;
+   }
+
+   return( pWav );
+}
+
+
+uint32_t WaveFile::numSamples() const
+{
+   return( m_nSamples );
+}
