@@ -24,6 +24,41 @@ SamplerKeyboard::~SamplerKeyboard()
 }
 
 
+void SamplerKeyboard::addSamplerKeyboardListener( SamplerKeyboardListener *pListener )
+{
+   if( pListener )
+   {
+      m_Listeners.push_back( pListener );
+   }
+}
+
+
+bool SamplerKeyboard::keyPressed( const KeyPress &key, Component *pOriginatingComponent )
+{
+   if( key == KeyPress::deleteKey )
+   {
+      for( Sample *pSample : m_SelectedSamples )
+      {
+         for( SamplerKeyboardListener *pListener : m_Listeners )
+         {
+            pListener->onDeleteSample( pSample );
+         }
+      }
+
+      m_SelectedSamples.clear();
+      m_pEditor->onSampleSelectionUpdated( this );
+      repaint();
+   }
+   return( true );
+}
+
+
+bool SamplerKeyboard::keyStateChanged( bool isKeyDown, Component *pOriginatingComponent )
+{
+   return( true );
+}
+
+
 Sample *SamplerKeyboard::getSampleAt( int x, int y ) const
 {
    for( auto iter = constSamples().rbegin(); iter != constSamples().rend(); iter++ )

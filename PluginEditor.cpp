@@ -3,7 +3,7 @@
 
 //==============================================================================
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor( AudioPluginAudioProcessor& p )
-    : AudioProcessorEditor( &p ), processorRef( p )
+   : AudioProcessorEditor( &p ), processorRef( p )
 {
    juce::ignoreUnused (processorRef);
    // Make sure that before the constructor has finished, you've set the
@@ -16,9 +16,10 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor( AudioPluginAud
    addAndMakeVisible( m_pButton );
 
    m_pKeyboard = new SamplerKeyboard( this );
+   addKeyListener( m_pKeyboard );
    m_pKeyboard->setBounds( 0, 0, 64 + 128, 640 );
-   m_pKeyboard->addListener( this );
-   m_pKeyboard->addListener( &processorRef );
+   m_pKeyboard->addListener( &p );
+   m_pKeyboard->addSamplerKeyboardListener( &p );
    m_pKeyboard->setWidth( 64 );
    processorRef.juce::MidiKeyboardState::addListener( m_pKeyboard );
    addAndMakeVisible( m_pKeyboard );
@@ -101,6 +102,7 @@ void AudioPluginAudioProcessorEditor::buttonClicked( juce::Button *pButton )
    }
 }
 
+
 //==============================================================================
 void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
 {
@@ -112,8 +114,8 @@ void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
 
 void AudioPluginAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+   // This is generally where you'll want to lay out the positions of any
+   // subcomponents in your editor..
 }
 
 

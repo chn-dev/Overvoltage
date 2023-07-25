@@ -7,9 +7,16 @@
 #include "Keyboard.h"
 #include "Sample.h"
 
+class SamplerKeyboardListener
+{
+public:
+   virtual void onDeleteSample( Sample *pSample ) = 0;
+};
+
 //==============================================================================
-class SamplerKeyboard  : public Keyboard,
-                         public juce::FileDragAndDropTarget
+class SamplerKeyboard : public Keyboard,
+                        public juce::FileDragAndDropTarget,
+                        public juce::KeyListener
 
 {
 public:
@@ -18,6 +25,8 @@ public:
 
    //==============================================================================
    virtual void paint( juce::Graphics &g ) override;
+
+   void addSamplerKeyboardListener( SamplerKeyboardListener *pListener );
 
    virtual void mouseMove( const MouseEvent &event);
    virtual void mouseDrag( const MouseEvent &event );
@@ -28,6 +37,10 @@ public:
 
    virtual void handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
    virtual void handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
+
+
+   virtual bool keyPressed( const KeyPress &key, Component *pOriginatingComponent );
+   virtual bool keyStateChanged( bool isKeyDown, Component *pOriginatingComponent );
 
    virtual bool isInterestedInFileDrag( const StringArray &files );
    virtual void fileDragEnter( const StringArray &files, int x, int y );
@@ -50,6 +63,7 @@ private:
 
 private:
    std::set<Sample *> m_SelectedSamples;
+   std::vector<SamplerKeyboardListener *> m_Listeners;
 
    Sample *m_pCurrentSample;
    int m_CurrentSampleNote;

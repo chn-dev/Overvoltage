@@ -5,72 +5,77 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 
-#include "Keyboard.h"
+#include "SamplerKeyboard.h"
 #include "Voice.h"
 
 //==============================================================================
-class AudioPluginAudioProcessor  : public juce::AudioProcessor,
-                                   public juce::MidiKeyboardStateListener,
-                                   public juce::MidiKeyboardState
+class AudioPluginAudioProcessor : public juce::AudioProcessor,
+                                  public juce::MidiKeyboardStateListener,
+                                  public juce::MidiKeyboardState,
+                                  public SamplerKeyboardListener
 {
 public:
-    //==============================================================================
-    AudioPluginAudioProcessor();
-    ~AudioPluginAudioProcessor() override;
+   //==============================================================================
+   AudioPluginAudioProcessor();
+   ~AudioPluginAudioProcessor() override;
 
-    //==============================================================================
-    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
-    void releaseResources() override;
+   virtual void onDeleteSample( Sample *pSample );
 
-    bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
+   //==============================================================================
+   void prepareToPlay (double sampleRate, int samplesPerBlock) override;
+   void releaseResources() override;
 
-    void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
-    using AudioProcessor::processBlock;
+   bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
 
-    //==============================================================================
-    juce::AudioProcessorEditor* createEditor() override;
-    bool hasEditor() const override;
+   void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
+   using AudioProcessor::processBlock;
 
-    //==============================================================================
-    const juce::String getName() const override;
+   //==============================================================================
+   juce::AudioProcessorEditor* createEditor() override;
+   bool hasEditor() const override;
 
-    bool acceptsMidi() const override;
-    bool producesMidi() const override;
-    bool isMidiEffect() const override;
-    double getTailLengthSeconds() const override;
+   //==============================================================================
+   const juce::String getName() const override;
 
-    //==============================================================================
-    int getNumPrograms() override;
-    int getCurrentProgram() override;
-    void setCurrentProgram (int index) override;
-    const juce::String getProgramName (int index) override;
-    void changeProgramName (int index, const juce::String& newName) override;
+   bool acceptsMidi() const override;
+   bool producesMidi() const override;
+   bool isMidiEffect() const override;
+   double getTailLengthSeconds() const override;
 
-    //==============================================================================
-    void getStateInformation (juce::MemoryBlock& destData) override;
-    void setStateInformation (const void* data, int sizeInBytes) override;
+   //==============================================================================
+   int getNumPrograms() override;
+   int getCurrentProgram() override;
+   void setCurrentProgram (int index) override;
+   const juce::String getProgramName (int index) override;
+   void changeProgramName (int index, const juce::String& newName) override;
 
-    virtual void handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
-    virtual void handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
+   //==============================================================================
+   void getStateInformation (juce::MemoryBlock& destData) override;
+   void setStateInformation (const void* data, int sizeInBytes) override;
 
-    std::list<Sample *> &samples();
-    const std::list<Sample *> &constSamples() const;
-    bool midiNoteIsPlaying( int midiNote ) const;
-    bool isPlaying( const Sample *pSample ) const;
-    std::set<int> allPlayingMidiNotes() const;
-    void stopVoice( const Voice *pVoice );
+   virtual void handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
+   virtual void handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
+
+   std::list<Sample *> &samples();
+   const std::list<Sample *> &constSamples() const;
+   bool midiNoteIsPlaying( int midiNote ) const;
+   bool isPlaying( const Sample *pSample ) const;
+   std::set<int> allPlayingMidiNotes() const;
+   void stopVoice( const Voice *pVoice );
 
 private:
-    //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessor)
-    AudioPluginAudioProcessorEditor *m_pEditor;
-    std::list<Sample *> getSamplesByMidiNoteAndVelocity( int note, int vel ) const;
+   void deleteSample( Sample *pSample );
 
-    std::multimap<int, Voice *> m_Voices;
-    std::list<Sample *> m_Samples;
+   //==============================================================================
+   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( AudioPluginAudioProcessor )
+   AudioPluginAudioProcessorEditor *m_pEditor;
+   std::list<Sample *> getSamplesByMidiNoteAndVelocity( int note, int vel ) const;
 
-    double m_sampleRate;
-    int m_samplesPerBlock;
-    int m_ofs;
-    int m_note;
+   std::multimap<int, Voice *> m_Voices;
+   std::list<Sample *> m_Samples;
+
+   double m_sampleRate;
+   int m_samplesPerBlock;
+   int m_ofs;
+   int m_note;
 };

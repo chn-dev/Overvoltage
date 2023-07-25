@@ -122,7 +122,7 @@ bool Voice::process( float *pLeft, float *pRight, int nSamples, double sampleRat
             if( !handleLoop() )
                return( false );
 
-            if( m_pAEG->hasEnded() )
+            if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
                return( false );
 
             int o = m_Ofs;
@@ -130,8 +130,12 @@ bool Voice::process( float *pLeft, float *pRight, int nSamples, double sampleRat
             int16_t lv = pData[( 4 * o ) + 0] | ( pData[( 4 * o ) + 1] << 8 );
             int16_t rv = pData[( 4 * o ) + 2] | ( pData[( 4 * o ) + 3] << 8 );
 
-            pLeft[i] += velocity * ( (float)lv / 32768 ) * m_pAEG->getValue();
-            pRight[i] += velocity * ( (float)rv / 32768 ) * m_pAEG->getValue();
+            double amp = 1.0;
+            if( m_pSample->getPlayMode() != Sample::PlayModeShot )
+               amp = m_pAEG->getValue();
+
+            pLeft[i] += velocity * ( (float)lv / 32768 ) * amp;
+            pRight[i] += velocity * ( (float)rv / 32768 ) * amp;
 
             handleModulations( sampleRate );
 
@@ -145,15 +149,19 @@ bool Voice::process( float *pLeft, float *pRight, int nSamples, double sampleRat
             if( !handleLoop() )
                return( false );
 
-            if( m_pAEG->hasEnded() )
+            if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
                return( false );
 
             int o = m_Ofs;
 
             int16_t v = pData[( 2 * o ) + 0] | ( pData[( 2 * o ) + 1] << 8 );
 
-            pLeft[i] += velocity * ( (float)v / 32768 ) * m_pAEG->getValue();
-            pRight[i] += velocity * ( (float)v / 32768 ) * m_pAEG->getValue();
+            double amp = 1.0;
+            if( m_pSample->getPlayMode() != Sample::PlayModeShot )
+               amp = m_pAEG->getValue();
+
+            pLeft[i] += velocity * ( (float)v / 32768 ) * amp;
+            pRight[i] += velocity * ( (float)v / 32768 ) * amp;
 
             handleModulations( sampleRate );
 
@@ -170,7 +178,7 @@ bool Voice::process( float *pLeft, float *pRight, int nSamples, double sampleRat
             if( !handleLoop() )
                return( false );
 
-            if( m_pAEG->hasEnded() )
+            if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
                return( false );
 
             int o = m_Ofs;
@@ -178,8 +186,12 @@ bool Voice::process( float *pLeft, float *pRight, int nSamples, double sampleRat
             int8_t lv = pData[( o * 2 ) + 0];
             int8_t rv = pData[( o * 2 ) + 1];
 
-            pLeft[i] += velocity * ( (float)lv / 128 ) * m_pAEG->getValue();
-            pRight[i] += velocity * ( (float)rv / 128 ) * m_pAEG->getValue();
+            double amp = 1.0;
+            if( m_pSample->getPlayMode() != Sample::PlayModeShot )
+               amp = m_pAEG->getValue();
+
+            pLeft[i] += velocity * ( (float)lv / 128 ) * amp;
+            pRight[i] += velocity * ( (float)rv / 128 ) * amp;
 
             handleModulations( sampleRate );
 
@@ -193,15 +205,19 @@ bool Voice::process( float *pLeft, float *pRight, int nSamples, double sampleRat
             if( !handleLoop() )
                return( false );
 
-            if( m_pAEG->hasEnded() )
+            if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
                return( false );
 
             int o = m_Ofs;
 
             int8_t v = pData[o];
 
-            pLeft[i] += velocity * ( (float)v / 128 ) * m_pAEG->getValue();
-            pRight[i] += velocity * ( (float)v / 128 ) * m_pAEG->getValue();
+            double amp = 1.0;
+            if( m_pSample->getPlayMode() != Sample::PlayModeShot )
+               amp = m_pAEG->getValue();
+
+            pLeft[i] += velocity * ( (float)v / 128 ) * amp;
+            pRight[i] += velocity * ( (float)v / 128 ) * amp;
 
             handleModulations( sampleRate );
 
