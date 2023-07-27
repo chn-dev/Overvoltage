@@ -78,36 +78,13 @@ juce_generate_juce_header(Overvoltage)
 # Finally, we supply a list of source files that will be built into the target. This is a standard
 # CMake command.
 
+file(GLOB_RECURSE SOURCE_FILES src/*.cpp src/*.c)
+file(GLOB_RECURSE HEADER_FILES src/*.h)
+
 target_sources(Overvoltage
     PRIVATE
-        WaveFile.cpp
-        WaveFile.h
-        Keyboard.cpp
-        Keyboard.h
-        SamplerKeyboard.cpp
-        SamplerKeyboard.h
-        PluginEditor.cpp
-        PluginEditor.h
-        PluginProcessor.cpp
-        PluginProcessor.h
-        Sample.cpp
-        Sample.h
-        Voice.cpp
-        Voice.h
-        WaveView.cpp
-        WaveView.h
-        SampleUISection.cpp
-        SampleUISection.h
-        NameRangesUISection.cpp
-        NameRangesUISection.h
-        AEGUISection.cpp
-        AEGUISection.h
-        EGUISection.cpp
-        EGUISection.h
-        ENV.cpp
-        ENV.h
-        UISection.cpp
-        UISection.h)
+        ${SOURCE_FILES}
+        ${HEADER_FILES})
 
 # `target_compile_definitions` adds some preprocessor definitions to our target. In a Projucer
 # project, these might be passed in the 'Preprocessor Definitions' field. JUCE modules also make use
