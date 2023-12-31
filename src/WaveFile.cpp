@@ -1,6 +1,8 @@
 #include <math.h>
 #include "WaveFile.h"
 
+#include "util.h"
+
 WaveFile::WaveFile() :
    m_Format( -1 ),
    m_nChannels( -1 ),
@@ -21,6 +23,47 @@ WaveFile::~WaveFile()
    {
       delete m_pData;
    }
+}
+
+
+juce::XmlElement *WaveFile::getStateInformation() const
+{
+   juce::XmlElement *pe = new juce::XmlElement( "wave" );
+   
+   juce::XmlElement *peNChannels = new juce::XmlElement( "nchannels" );
+   peNChannels->addTextElement( stdformat( "{}", m_nChannels ) );
+   pe->addChildElement( peNChannels );
+
+   juce::XmlElement *peSampleRate = new juce::XmlElement( "samplerate" );
+   peSampleRate->addTextElement( stdformat( "{}", m_SampleRate ) );
+   pe->addChildElement( peSampleRate );
+
+   juce::XmlElement *peNBits = new juce::XmlElement( "nbits" );
+   peNBits->addTextElement( stdformat( "{}", m_nBits ) );
+   pe->addChildElement( peNBits );
+
+   juce::XmlElement *peNSamples = new juce::XmlElement( "nsamples" );
+   peNSamples->addTextElement( stdformat( "{}", m_nSamples ) );
+   pe->addChildElement( peNSamples );
+
+   juce::XmlElement *peLoopStart = new juce::XmlElement( "loopstart" );
+   peLoopStart->addTextElement( stdformat( "{}", m_LoopStart ) );
+   pe->addChildElement( peLoopStart );
+
+   juce::XmlElement *peLoopEnd = new juce::XmlElement( "loopend" );
+   peLoopEnd->addTextElement( stdformat( "{}", m_LoopEnd ) );
+   pe->addChildElement( peLoopEnd );
+
+   juce::XmlElement *peIsLooped = new juce::XmlElement( "islooped" );
+   peIsLooped->addTextElement( m_IsLooped ? "true" : "false" );
+   pe->addChildElement( peIsLooped );
+
+   juce::XmlElement *peData = new juce::XmlElement( "data" );
+   juce::MemoryBlock mb = juce::MemoryBlock( m_pData, m_nChannels * m_nBits * m_nSamples / 8 );
+   peData->addTextElement( mb.toBase64Encoding() );
+   pe->addChildElement( peData );
+   
+   return( pe );
 }
 
 

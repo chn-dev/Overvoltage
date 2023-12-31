@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 
+#include "JuceHeader.h"
+
 //==============================================================================
 class WaveFile
 {
@@ -29,6 +31,8 @@ public:
    float floatValue( int nChannel, int nSample ) const;
 
    uint32_t size() const;
+
+   juce::XmlElement *getStateInformation() const;
 
 protected:
    static std::string readTagName( std::ifstream &file );

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "JuceHeader.h"
 #include <set>
 
 //==============================================================================
@@ -34,6 +35,8 @@ public:
    bool hasEnded() const;
 
    static double paramToDuration( double p );
+
+   juce::XmlElement *getStateInformation() const;
 
    void noteOn();
    void noteOff();

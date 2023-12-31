@@ -380,7 +380,21 @@ void AudioPluginAudioProcessor::getStateInformation( juce::MemoryBlock& destData
    // You should use this method to store your parameters in the memory block.
    // You could do that either as raw data, or use the XML or ValueTree classes
    // as intermediaries to make it easy to save and load complex data.
-   juce::ignoreUnused (destData);
+   juce::XmlElement vt( "overvoltage" );
+   juce::XmlElement *peSamples = new juce::XmlElement( "samples" );
+   for( Sample *pSample : m_Samples )
+   {
+      juce::XmlElement *peSample = pSample->getStateInformation();
+      peSamples->addChildElement( peSample );
+
+   }
+   vt.addChildElement( peSamples );
+
+   vt.setAttribute( "test", 123.5 );
+
+   copyXmlToBinary( vt, destData );
+   std::string s = vt.toString().toStdString();
+   printf("\n");
 }
 
 
@@ -388,7 +402,30 @@ void AudioPluginAudioProcessor::setStateInformation( const void* data, int sizeI
 {
    // You should use this method to restore your parameters from this memory block,
    // whose contents will have been created by the getStateInformation() call.
-   juce::ignoreUnused (data, sizeInBytes);
+   std::unique_ptr<juce::XmlElement> xmlState( getXmlFromBinary( data, sizeInBytes ) );
+   if( xmlState.get() )
+   {
+      if( xmlState.get()->getTagName() == "overvoltage" )
+      {
+         juce::XmlElement *peOvervoltage = xmlState.get();
+         for( int i = 0; peOvervoltage->getChildElement( i ); i++ )
+         {
+            if( peOvervoltage->getChildElement( i )->getTagName() == "samples" )
+            {
+               for( int nSample = 0; peOvervoltage->getChildElement( i )->getChildElement( nSample ); nSample++ )
+               {
+                  if( peOvervoltage->getChildElement( i )->getChildElement( nSample )->getTagName() == "sample" )
+                  {
+                     juce::XmlElement *peSample = peOvervoltage->getChildElement( i )->getChildElement( nSample );
+                     Sample *pSample = Sample::fromXml( peSample );
+                     printf("\n");
+                  }
+               }
+            }
+            printf("\n");
+         }
+      }
+   }
 }
 
 

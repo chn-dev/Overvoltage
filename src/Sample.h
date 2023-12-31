@@ -3,6 +3,8 @@
 #include <set>
 #include <vector>
 
+#include <juce_audio_processors/juce_audio_processors.h>
+
 #include "WaveFile.h"
 #include "ENV.h"
 
@@ -20,6 +22,10 @@ public:
 
    Sample( std::string name, WaveFile *pWave, int minNote, int maxNote );
    ~Sample();
+
+   static Sample *fromXml( const juce::XmlElement *pe );
+
+   juce::XmlElement *getStateInformation() const;
    
    std::string getName() const;
    void setName( std::string name );

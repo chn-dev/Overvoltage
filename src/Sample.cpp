@@ -1,5 +1,7 @@
 #include "Sample.h"
 
+#include "util.h"
+
 Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
    m_Name( name ),
    m_pWave( pWave ),
@@ -20,6 +22,92 @@ Sample::~Sample()
 {
    delete m_pWave;
    delete m_pAEG;
+}
+
+
+juce::XmlElement *Sample::getStateInformation() const
+{
+   juce::XmlElement *peSample = new juce::XmlElement( "sample" );
+   peSample->setAttribute( "name", juce::String( m_Name ) );
+   
+   juce::XmlElement *pePlaymode = new juce::XmlElement( "playmode" );
+   pePlaymode->addTextElement( toString( m_PlayMode ) );
+   peSample->addChildElement( pePlaymode );
+
+   juce::XmlElement *peDetune = new juce::XmlElement( "detune" );
+   peDetune->addTextElement( stdformat( "{}", m_DetuneCents ) );
+   peSample->addChildElement( peDetune );
+
+   juce::XmlElement *peReverse = new juce::XmlElement( "reverse" );
+   peReverse->addTextElement( m_Reverse ? "true" : "false" );
+   peSample->addChildElement( peReverse );
+
+   juce::XmlElement *peBaseNote = new juce::XmlElement( "basenote" );
+   peBaseNote->addTextElement( stdformat( "{}", m_BaseNote ) );
+   peSample->addChildElement( peBaseNote );
+
+   juce::XmlElement *peMinNote = new juce::XmlElement( "minnote" );
+   peMinNote->addTextElement( stdformat( "{}", m_MinNote ) );
+   peSample->addChildElement( peMinNote );
+
+   juce::XmlElement *peMaxNote = new juce::XmlElement( "maxnote" );
+   peMaxNote->addTextElement( stdformat( "{}", m_MaxNote ) );
+   peSample->addChildElement( peMaxNote );
+
+   juce::XmlElement *peMinVelocity = new juce::XmlElement( "minvelocity" );
+   peMinVelocity->addTextElement( stdformat( "{}", m_MinVelocity ) );
+   peSample->addChildElement( peMinVelocity );
+
+   juce::XmlElement *peMaxVelocity = new juce::XmlElement( "maxvelocity" );
+   peMaxVelocity->addTextElement( stdformat( "{}", m_MaxVelocity ) );
+   peSample->addChildElement( peMaxVelocity );
+
+   juce::XmlElement *peAEG = m_pAEG->getStateInformation();
+   peAEG->setAttribute( "type", "amplitude" );
+   peSample->addChildElement( peAEG );
+
+   juce::XmlElement *peWave = m_pWave->getStateInformation();
+   peSample->addChildElement( peWave );
+
+   return( peSample );
+}
+
+
+Sample *Sample::fromXml( const juce::XmlElement *pe )
+{
+   if( !pe )
+      return( nullptr );
+   if( pe->getTagName() != "sample" )
+      return( nullptr );
+
+   std::string name = pe->getStringAttribute( "name" ).toStdString();
+   PlayMode playMode = PlayModeStandard;
+   float detune = 0.0;
+   bool reverse = false;
+
+   for( int i = 0; pe->getChildElement( i ); i++ )
+   {
+      juce::XmlElement *pChild = pe->getChildElement( i );
+      std::string tagName = pChild->getTagName().toStdString();
+
+      if( tagName == "playmode" )
+      {
+         playMode = fromString( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "detune" )
+      {
+         detune = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "reverse" )
+      {
+         reverse = pChild->getChildElement( 0 )->getText() == "true";
+      } else
+      {
+         printf("\n");
+      }
+      printf("\n");
+   }
+   printf("\n");
 }
 
 

@@ -2,6 +2,8 @@
 
 #include "ENV.h"
 
+#include "util.h"
+
 ENV::ENV() :
    m_Attack( 0.0 ),
    m_Decay( 0.0 ),
@@ -15,6 +17,30 @@ ENV::ENV() :
 
 ENV::~ENV()
 {
+}
+
+
+juce::XmlElement *ENV::getStateInformation() const
+{
+   juce::XmlElement *pe = new juce::XmlElement( "envelope" );
+
+   juce::XmlElement *peAttack = new juce::XmlElement( "attack" );
+   peAttack->addTextElement( stdformat( "{}", m_Attack ) );
+   pe->addChildElement( peAttack );
+
+   juce::XmlElement *peDecay = new juce::XmlElement( "decay" );
+   peDecay->addTextElement( stdformat( "{}", m_Decay ) );
+   pe->addChildElement( peDecay );
+
+   juce::XmlElement *peSustain = new juce::XmlElement( "sustain" );
+   peSustain->addTextElement( stdformat( "{}", m_Sustain ) );
+   pe->addChildElement( peSustain );
+
+   juce::XmlElement *peRelease = new juce::XmlElement( "release" );
+   peRelease->addTextElement( stdformat( "{}", m_Release ) );
+   pe->addChildElement( peRelease );
+
+   return( pe );
 }
 
 
