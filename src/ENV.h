@@ -42,7 +42,9 @@ public:
    void noteOff();
 
    void step( double s );
-   
+
+   static ENV *fromXml( const juce::XmlElement *pe );
+
 protected:
 
 private:

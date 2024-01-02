@@ -26,7 +26,7 @@ public:
    static Sample *fromXml( const juce::XmlElement *pe );
 
    juce::XmlElement *getStateInformation() const;
-   
+
    std::string getName() const;
    void setName( std::string name );
    WaveFile *getWave() const;
@@ -58,6 +58,8 @@ public:
 protected:
 
 private:
+   Sample();
+
    std::string m_Name;
    ENV *m_pAEG;
    WaveFile *m_pWave;

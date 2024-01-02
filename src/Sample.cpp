@@ -18,6 +18,22 @@ Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
 }
 
 
+Sample::Sample() :
+   m_Name( "" ),
+   m_pWave( nullptr ),
+   m_MinNote( -1 ),
+   m_MaxNote( -1 ),
+   m_BaseNote( -1 ),
+   m_PlayMode( Sample::PlayModeStandard ),
+   m_DetuneCents( 0.0 ),
+   m_Reverse( false ),
+   m_MinVelocity( -1 ),
+   m_MaxVelocity( -1 ),
+   m_pAEG( nullptr )
+{
+}
+
+
 Sample::~Sample()
 {
    delete m_pWave;
@@ -29,7 +45,7 @@ juce::XmlElement *Sample::getStateInformation() const
 {
    juce::XmlElement *peSample = new juce::XmlElement( "sample" );
    peSample->setAttribute( "name", juce::String( m_Name ) );
-   
+
    juce::XmlElement *pePlaymode = new juce::XmlElement( "playmode" );
    pePlaymode->addTextElement( toString( m_PlayMode ) );
    peSample->addChildElement( pePlaymode );
@@ -84,6 +100,13 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
    PlayMode playMode = PlayModeStandard;
    float detune = 0.0;
    bool reverse = false;
+   int baseNote = -1;
+   int minNote = -1;
+   int maxNote = -1;
+   int minVelocity = -1;
+   int maxVelocity = -1;
+   ENV *pAEG = nullptr;
+   WaveFile *pWave = nullptr;
 
    for( int i = 0; pe->getChildElement( i ); i++ )
    {
@@ -102,12 +125,82 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       {
          reverse = pChild->getChildElement( 0 )->getText() == "true";
       } else
+      if( tagName == "basenote" )
       {
-         printf("\n");
+         baseNote = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "minnote" )
+      {
+         minNote = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "maxnote" )
+      {
+         maxNote = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "minvelocity" )
+      {
+         minVelocity = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "maxvelocity" )
+      {
+         maxVelocity = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "envelope" )
+      {
+         std::string envType = pChild->getStringAttribute( "type" ).toStdString();
+
+         ENV *pENV = ENV::fromXml( pChild );
+         if( pENV )
+         {
+            if( envType == "amplitude" )
+            {
+               pAEG = pENV;
+            } else
+            {
+               delete pENV;
+            }
+         }
+      } else
+      if( tagName == "wave" )
+      {
+         pWave = WaveFile::fromXml( pChild );
       }
-      printf("\n");
    }
-   printf("\n");
+
+   if( pWave && !name.empty() &&
+       baseNote >= 0 && minNote >= 0 &&
+       maxNote >= 0 && minVelocity >= 0 &&
+       maxVelocity >= 0 && pAEG )
+   {
+      Sample *pSample = new Sample();
+
+      pSample->m_Name = name;
+      pSample->m_pAEG = pAEG;
+      pSample->m_pWave = pWave;
+      pSample->m_PlayMode = playMode;
+      pSample->m_DetuneCents = detune;
+      pSample->m_Reverse = reverse;
+      pSample->m_BaseNote = baseNote;
+      pSample->m_MinNote = minNote;
+      pSample->m_MaxNote = maxNote;
+      pSample->m_MinVelocity = minVelocity;
+      pSample->m_MaxVelocity = maxVelocity;
+
+      return( pSample );
+   } else
+   {
+      if( pAEG )
+      {
+         delete pAEG;
+      }
+
+      if( pWave )
+      {
+         delete pWave;
+      }
+
+      return( nullptr );
+   }
 }
 
 

@@ -5,6 +5,8 @@
 #include "WaveFile.h"
 #include "Sample.h"
 
+#include "util.h"
+
 SamplerKeyboard::SamplerKeyboard( AudioPluginAudioProcessorEditor *pEditor ) :
    Keyboard( pEditor ),
    m_DragDropNote( -1 ),
@@ -187,7 +189,7 @@ bool SamplerKeyboard::isInterestedInFileDrag( const StringArray &files )
 {
    for( String f : files )
    {
-      if( !f.endsWith( ".wav" ) )
+      if( !juce::String( util::toLower( f.toStdString() ) ).endsWith( ".wav" ) )
       {
          return( false );
       }

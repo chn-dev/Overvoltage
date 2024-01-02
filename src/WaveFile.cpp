@@ -1,6 +1,7 @@
 #include <math.h>
-#include "WaveFile.h"
+#include <string>
 
+#include "WaveFile.h"
 #include "util.h"
 
 WaveFile::WaveFile() :
@@ -29,7 +30,7 @@ WaveFile::~WaveFile()
 juce::XmlElement *WaveFile::getStateInformation() const
 {
    juce::XmlElement *pe = new juce::XmlElement( "wave" );
-   
+
    juce::XmlElement *peNChannels = new juce::XmlElement( "nchannels" );
    peNChannels->addTextElement( stdformat( "{}", m_nChannels ) );
    pe->addChildElement( peNChannels );
@@ -62,8 +63,99 @@ juce::XmlElement *WaveFile::getStateInformation() const
    juce::MemoryBlock mb = juce::MemoryBlock( m_pData, m_nChannels * m_nBits * m_nSamples / 8 );
    peData->addTextElement( mb.toBase64Encoding() );
    pe->addChildElement( peData );
-   
+
    return( pe );
+}
+
+
+WaveFile *WaveFile::fromXml( const juce::XmlElement *pe )
+{
+   if( pe->getTagName() != "wave" )
+      return( nullptr );
+
+   int nChannels = -1;
+   int sampleRate = -1;
+   int nBits = -1;
+   u_int32_t nSamples = -1;
+   u_int32_t loopStart = -1;
+   u_int32_t loopEnd = -1;
+   bool isLooped = false;
+   void *pData = nullptr;
+   size_t dataSize = -1;
+
+   for( int i = 0; pe->getChildElement( i ); i++ )
+   {
+      juce::XmlElement *pChild = pe->getChildElement( i );
+      std::string tagName = pChild->getTagName().toStdString();
+
+      if( tagName == "nchannels" )
+      {
+         nChannels = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "samplerate" )
+      {
+         sampleRate = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "nbits" )
+      {
+         nBits = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "nsamples" )
+      {
+         nSamples = std::stoul( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "loopstart" )
+      {
+         loopStart = std::stoul( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "loopend" )
+      {
+         loopEnd = std::stoul( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "islooped" )
+      {
+         std::string v = pChild->getChildElement( 0 )->getText().toStdString();
+         isLooped = ( v == "true" );
+      } else
+      if( tagName == "data" )
+      {
+         std::string v = pChild->getChildElement( 0 )->getText().toStdString();
+         juce::MemoryBlock mem;
+         if( mem.fromBase64Encoding( v ) )
+         {
+            dataSize = mem.getSize();
+            pData = malloc( dataSize );
+            memcpy( pData, mem.getData(), dataSize );
+         }
+      }
+   }
+
+   if( nChannels >= 0 && sampleRate >= 0 &&
+       nBits >= 0 && nSamples != -1 &&
+       loopStart != -1 && loopEnd != -1 && pData )
+   {
+      WaveFile *pWaveFile = new WaveFile();
+      pWaveFile->m_Format = 1;
+      pWaveFile->m_nChannels = nChannels;
+      pWaveFile->m_SampleRate = sampleRate;
+      pWaveFile->m_nBits = nBits;
+      pWaveFile->m_nSamples = nSamples;
+      pWaveFile->m_LoopStart = loopStart;
+      pWaveFile->m_LoopEnd = loopEnd;
+      pWaveFile->m_IsLooped = isLooped;
+      pWaveFile->m_pData = pData;
+
+      return( pWaveFile );
+   } else
+   {
+      if( pData )
+      {
+         free( pData );
+      }
+      return( nullptr );
+   }
+
+   return( nullptr );
 }
 
 

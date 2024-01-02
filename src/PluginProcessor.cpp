@@ -418,11 +418,10 @@ void AudioPluginAudioProcessor::setStateInformation( const void* data, int sizeI
                   {
                      juce::XmlElement *peSample = peOvervoltage->getChildElement( i )->getChildElement( nSample );
                      Sample *pSample = Sample::fromXml( peSample );
-                     printf("\n");
+                     m_Samples.push_back( pSample );
                   }
                }
             }
-            printf("\n");
          }
       }
    }

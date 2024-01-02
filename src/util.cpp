@@ -122,4 +122,15 @@ namespace util
 
       return( ( v * ( max - min ) ) + min );
    }
+
+   std::string toLower( const std::string &str )
+   {
+      std::string r = str;
+      for( int i = 0; i < r.length(); i++ )
+      {
+         r[i] = std::tolower( str[i] );
+      }
+
+      return( r );
+   }
 }

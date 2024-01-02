@@ -11,7 +11,7 @@ class WaveFile
 {
 public:
    ~WaveFile();
-   
+
    static WaveFile *load( std::string fname );
 
    int numChannels() const;
@@ -33,6 +33,7 @@ public:
    uint32_t size() const;
 
    juce::XmlElement *getStateInformation() const;
+   static WaveFile *fromXml( const juce::XmlElement *pe );
 
 protected:
    static std::string readTagName( std::ifstream &file );

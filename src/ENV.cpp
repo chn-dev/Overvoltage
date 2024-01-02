@@ -1,3 +1,4 @@
+#include <string>
 #include <math.h>
 
 #include "ENV.h"
@@ -17,6 +18,40 @@ ENV::ENV() :
 
 ENV::~ENV()
 {
+}
+
+
+ENV *ENV::fromXml( const juce::XmlElement *pe )
+{
+   if( pe->getTagName() != "envelope" )
+      return( nullptr );
+
+   ENV *pENV = new ENV();
+
+   for( int i = 0; pe->getChildElement( i ); i++ )
+   {
+      juce::XmlElement *pChild = pe->getChildElement( i );
+      std::string tagName = pChild->getTagName().toStdString();
+
+      if( tagName == "attack" )
+      {
+         pENV->m_Attack = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "decay" )
+      {
+         pENV->m_Decay = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "sustain" )
+      {
+         pENV->m_Sustain = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "release" )
+      {
+         pENV->m_Release = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+      }
+   }
+
+   return( pENV );
 }
 
 
