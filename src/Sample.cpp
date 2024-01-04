@@ -12,7 +12,9 @@ Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
    m_DetuneCents( 0.0 ),
    m_Reverse( false ),
    m_MinVelocity( 0 ),
-   m_MaxVelocity( 127 )
+   m_MaxVelocity( 127 ),
+   m_Pan( 0.0 ),
+   m_Gain( 1.0 )
 {
    m_pAEG = new ENV();
 }
@@ -29,7 +31,9 @@ Sample::Sample() :
    m_Reverse( false ),
    m_MinVelocity( -1 ),
    m_MaxVelocity( -1 ),
-   m_pAEG( nullptr )
+   m_pAEG( nullptr ),
+   m_Pan( 0.0 ),
+   m_Gain( 1.0 )
 {
 }
 
@@ -53,6 +57,14 @@ juce::XmlElement *Sample::getStateInformation() const
    juce::XmlElement *peDetune = new juce::XmlElement( "detune" );
    peDetune->addTextElement( stdformat( "{}", m_DetuneCents ) );
    peSample->addChildElement( peDetune );
+
+   juce::XmlElement *pePan = new juce::XmlElement( "pan" );
+   pePan->addTextElement( stdformat( "{}", m_Pan ) );
+   peSample->addChildElement( pePan );
+
+   juce::XmlElement *peGain = new juce::XmlElement( "gain" );
+   peGain->addTextElement( stdformat( "{}", m_Gain ) );
+   peSample->addChildElement( peGain );
 
    juce::XmlElement *peReverse = new juce::XmlElement( "reverse" );
    peReverse->addTextElement( m_Reverse ? "true" : "false" );
@@ -99,6 +111,8 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
    std::string name = pe->getStringAttribute( "name" ).toStdString();
    PlayMode playMode = PlayModeStandard;
    float detune = 0.0;
+   float pan = 0.0;
+   float gain = 1.0;
    bool reverse = false;
    int baseNote = -1;
    int minNote = -1;
@@ -120,6 +134,14 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       if( tagName == "detune" )
       {
          detune = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "pan" )
+      {
+         pan = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "gain" )
+      {
+         gain = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
       } else
       if( tagName == "reverse" )
       {
@@ -179,6 +201,8 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       pSample->m_pWave = pWave;
       pSample->m_PlayMode = playMode;
       pSample->m_DetuneCents = detune;
+      pSample->m_Pan = pan;
+      pSample->m_Gain = gain;
       pSample->m_Reverse = reverse;
       pSample->m_BaseNote = baseNote;
       pSample->m_MinNote = minNote;
@@ -407,4 +431,27 @@ float Sample::getDetune() const
 void Sample::setDetune( float d )
 {
    m_DetuneCents = d;
+}
+
+
+float Sample::getPan() const
+{
+   return( m_Pan );
+}
+
+
+void Sample::setPan( float pan )
+{
+   m_Pan = pan;
+}
+
+float Sample::getGain() const
+{
+   return( m_Gain );
+}
+
+
+void Sample::setGain( float gain )
+{
+   m_Gain = gain;
 }

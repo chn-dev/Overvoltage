@@ -130,12 +130,16 @@ bool Voice::process( float *pLeft, float *pRight, int nSamples, double sampleRat
             int16_t lv = pData[( 4 * o ) + 0] | ( pData[( 4 * o ) + 1] << 8 );
             int16_t rv = pData[( 4 * o ) + 2] | ( pData[( 4 * o ) + 3] << 8 );
 
-            double amp = 1.0;
+            float lAmp = getLeftAmp( m_pSample->getPan() ) * m_pSample->getGain();
+            float rAmp = getRightAmp( m_pSample->getPan() ) * m_pSample->getGain();
             if( m_pSample->getPlayMode() != Sample::PlayModeShot )
-               amp = m_pAEG->getValue();
+            {
+               lAmp *= m_pAEG->getValue();
+               rAmp *= m_pAEG->getValue();
+            }
 
-            pLeft[i] += velocity * ( (float)lv / 32768 ) * amp;
-            pRight[i] += velocity * ( (float)rv / 32768 ) * amp;
+            pLeft[i] += velocity * ( (float)lv / 32768 ) * lAmp;
+            pRight[i] += velocity * ( (float)rv / 32768 ) * rAmp;
 
             handleModulations( sampleRate );
 
@@ -156,12 +160,16 @@ bool Voice::process( float *pLeft, float *pRight, int nSamples, double sampleRat
 
             int16_t v = pData[( 2 * o ) + 0] | ( pData[( 2 * o ) + 1] << 8 );
 
-            double amp = 1.0;
+            float lAmp = getLeftAmp( m_pSample->getPan() ) * m_pSample->getGain();
+            float rAmp = getRightAmp( m_pSample->getPan() ) * m_pSample->getGain();
             if( m_pSample->getPlayMode() != Sample::PlayModeShot )
-               amp = m_pAEG->getValue();
+            {
+               lAmp *= m_pAEG->getValue();
+               rAmp += m_pAEG->getValue();
+            }
 
-            pLeft[i] += velocity * ( (float)v / 32768 ) * amp;
-            pRight[i] += velocity * ( (float)v / 32768 ) * amp;
+            pLeft[i] += velocity * ( (float)v / 32768 ) * lAmp;
+            pRight[i] += velocity * ( (float)v / 32768 ) * rAmp;
 
             handleModulations( sampleRate );
 
@@ -186,12 +194,16 @@ bool Voice::process( float *pLeft, float *pRight, int nSamples, double sampleRat
             int8_t lv = pData[( o * 2 ) + 0];
             int8_t rv = pData[( o * 2 ) + 1];
 
-            double amp = 1.0;
+            float lAmp = getLeftAmp( m_pSample->getPan() ) * m_pSample->getGain();
+            float rAmp = getRightAmp( m_pSample->getPan() ) * m_pSample->getGain();
             if( m_pSample->getPlayMode() != Sample::PlayModeShot )
-               amp = m_pAEG->getValue();
+            {
+               lAmp *= m_pAEG->getValue();
+               rAmp *= m_pAEG->getValue();
+            }
 
-            pLeft[i] += velocity * ( (float)lv / 128 ) * amp;
-            pRight[i] += velocity * ( (float)rv / 128 ) * amp;
+            pLeft[i] += velocity * ( (float)lv / 128 ) * lAmp;
+            pRight[i] += velocity * ( (float)rv / 128 ) * rAmp;
 
             handleModulations( sampleRate );
 
@@ -212,12 +224,16 @@ bool Voice::process( float *pLeft, float *pRight, int nSamples, double sampleRat
 
             int8_t v = pData[o];
 
-            double amp = 1.0;
+            float lAmp = getLeftAmp( m_pSample->getPan() ) * m_pSample->getGain();
+            float rAmp = getRightAmp( m_pSample->getPan() ) * m_pSample->getGain();
             if( m_pSample->getPlayMode() != Sample::PlayModeShot )
-               amp = m_pAEG->getValue();
+            {
+               lAmp *= m_pAEG->getValue();
+               rAmp *= m_pAEG->getValue();
+            }
 
-            pLeft[i] += velocity * ( (float)v / 128 ) * amp;
-            pRight[i] += velocity * ( (float)v / 128 ) * amp;
+            pLeft[i] += velocity * ( (float)v / 128 ) * lAmp;
+            pRight[i] += velocity * ( (float)v / 128 ) * rAmp;
 
             handleModulations( sampleRate );
 
@@ -227,4 +243,34 @@ bool Voice::process( float *pLeft, float *pRight, int nSamples, double sampleRat
    }
 
    return( true );
+}
+
+
+float Voice::getLeftAmp( float pan )
+{
+   if( pan < -1.0 )
+      pan = -1.0;
+   else
+   if( pan > 1.0 )
+      pan = 1.0;
+
+   if( pan < 0 )
+      return( 1.0 );
+   else
+      return( 1.0 - pan );
+}
+
+
+float Voice::getRightAmp( float pan )
+{
+   if( pan < -1.0 )
+      pan = -1.0;
+   else
+      if( pan > 1.0 )
+         pan = 1.0;
+
+   if( pan > 0.0 )
+      return( 1.0 );
+   else
+      return( 1.0 + pan );
 }

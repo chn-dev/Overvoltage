@@ -48,6 +48,10 @@ public:
    bool getReverse() const;
    void setReverse( bool r );
    void setPlayMode( Sample::PlayMode pm );
+   float getPan() const;
+   void setPan( float pan );
+   float getGain() const;
+   void setGain( float gain );
    Sample::PlayMode getPlayMode() const;
    ENV *getAEG() const;
 
@@ -65,6 +69,8 @@ private:
    WaveFile *m_pWave;
    PlayMode m_PlayMode;
    float m_DetuneCents;
+   float m_Pan;
+   float m_Gain;
    bool m_Reverse;
    int m_BaseNote;
    int m_MinNote;

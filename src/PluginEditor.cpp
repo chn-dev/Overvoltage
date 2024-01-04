@@ -40,6 +40,10 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor( AudioPluginAud
    m_pAEGUISection->setBounds( 64 + 128 + 4, 196 + 4 + 128 + 4 + 128 + 4, 192, 128 );
    addAndMakeVisible( m_pAEGUISection );
 
+   m_pOutputUISection = new OutputUISection( this );
+   m_pOutputUISection->setBounds( 1024 - 64 - 128 - 4, 196 + 4, 192, 128 );
+   addAndMakeVisible( m_pOutputUISection );
+
    for( UISection *pSection : m_UISections )
    {
       pSection->sampleUpdated();
@@ -55,6 +59,7 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
    delete m_pSampleSection;
    delete m_pNameRangesUISection;
    delete m_pAEGUISection;
+   delete m_pOutputUISection;
 }
 
 

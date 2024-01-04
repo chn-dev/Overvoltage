@@ -1,0 +1,100 @@
+#include "PluginEditor.h"
+#include "OutputUISection.h"
+
+OutputUISection::OutputUISection( AudioPluginAudioProcessorEditor *pEditor ) :
+   UISection( pEditor, "Output" )
+{
+   m_plPan = new juce::Label( juce::String(), "Pan" );
+   addAndMakeVisible( m_plPan );
+
+   m_psPan = new juce::Slider( "Pan" );
+   m_psPan->setRange( -100, 100, 1 );
+   m_psPan->setSliderStyle( juce::Slider::LinearHorizontal );
+   m_psPan->setSliderSnapsToMousePosition( false );
+   m_psPan->setLookAndFeel( &m_SliderLAF );
+   m_psPan->addListener( this );
+   m_psPan->setTextValueSuffix( "%" );
+   m_psPan->setTextBoxStyle( juce::Slider::TextBoxBelow, true, 48, 28 );
+   m_psPan->setColour( juce::Slider::ColourIds::textBoxOutlineColourId, juce::Colour::fromRGBA( 0, 0, 0, 0 ) );
+   addAndMakeVisible( m_psPan );
+
+   m_plGain = new juce::Label( juce::String(), "Gain" );
+   addAndMakeVisible( m_plGain );
+
+   m_psGain = new juce::Slider( "Gain" );
+   m_psGain->setRange( -96, 12, 0.25 );
+   m_psGain->setSliderStyle( juce::Slider::LinearHorizontal );
+   m_psGain->setSliderSnapsToMousePosition( false );
+   m_psGain->setLookAndFeel( &m_SliderLAF );
+   m_psGain->addListener( this );
+   m_psGain->setTextValueSuffix( "dB" );
+   m_psGain->setTextBoxStyle( juce::Slider::TextBoxBelow, true, 64, 28 );
+   m_psGain->setColour( juce::Slider::ColourIds::textBoxOutlineColourId, juce::Colour::fromRGBA( 0, 0, 0, 0 ) );
+   addAndMakeVisible( m_psGain );
+}
+
+
+OutputUISection::~OutputUISection()
+{
+   delete m_plPan;
+   delete m_psPan;
+   delete m_plGain;
+   delete m_psGain;
+}
+
+
+void OutputUISection::sliderValueChanged( Slider *pSlider )
+{
+   if( pSlider == m_psPan && sample() )
+   {
+      sample()->setPan( m_psPan->getValue() / 100.0 );
+   } else
+   if( pSlider == m_psGain && sample() )
+   {
+      sample()->setGain( pow( 10.0, ( ( m_psGain->getValue() ) / 20.0 ) ) );
+   }
+}
+
+
+void OutputUISection::paint( juce::Graphics &g )
+{
+   UISection::paint( g );
+
+   g.setColour( juce::Colour::fromRGB( 32, 64, 64 ) );
+   g.fillAll();
+}
+
+
+void OutputUISection::resized()
+{
+   UISection::resized();
+
+   m_psPan->setBounds( 4, 32, 180, 25 );
+   m_plPan->setBounds( 6, 48, 32, 16 );
+
+   m_psGain->setBounds( 4, 64, 180, 25 );
+   m_plGain->setBounds( 6, 80, 32, 16 );
+}
+
+
+void OutputUISection::sampleUpdated()
+{
+   m_plPan->setVisible( sample() != 0 );
+   m_psPan->setVisible( sample() != 0 );
+
+   m_plGain->setVisible( sample() != 0 );
+   m_psGain->setVisible( sample() != 0 );
+
+   if( sample() )
+   {
+      m_psPan->setValue( sample()->getPan() * 100.0 );
+      m_psGain->setValue( 20.0 * log10( sample()->getGain() ) );
+   }
+}
+
+
+void OutputUISection::labelTextChanged( Label *pLabel )
+{
+   if( !sample() )
+      return;
+}

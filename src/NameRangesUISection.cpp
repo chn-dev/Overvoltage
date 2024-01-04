@@ -1,13 +1,7 @@
-#ifdef __GNUC__
-#include <fmt/core.h>
-#define stdformat fmt::format
-#else
-#include <format>
-#define stdformat std::format
-#endif
-
 #include "PluginEditor.h"
 #include "NameRangesUISection.h"
+
+#include "util.h"
 
 NameRangesUISection::NameRangesUISection( AudioPluginAudioProcessorEditor *pEditor ) :
    UISection( pEditor, "Name & Ranges" )

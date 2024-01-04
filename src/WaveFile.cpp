@@ -72,13 +72,13 @@ WaveFile *WaveFile::fromXml( const juce::XmlElement *pe )
 {
    if( pe->getTagName() != "wave" )
       return( nullptr );
-
+      
    int nChannels = -1;
    int sampleRate = -1;
    int nBits = -1;
-   u_int32_t nSamples = -1;
-   u_int32_t loopStart = -1;
-   u_int32_t loopEnd = -1;
+   uint32_t nSamples = -1;
+   uint32_t loopStart = -1;
+   uint32_t loopEnd = -1;
    bool isLooped = false;
    void *pData = nullptr;
    size_t dataSize = -1;

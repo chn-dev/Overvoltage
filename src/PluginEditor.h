@@ -7,6 +7,7 @@
 #include "SampleUISection.h"
 #include "NameRangesUISection.h"
 #include "AEGUISection.h"
+#include "OutputUISection.h"
 
 //==============================================================================
 class AudioPluginAudioProcessorEditor : public juce::AudioProcessorEditor,
@@ -47,6 +48,7 @@ private:
    SampleUISection *m_pSampleSection;
    NameRangesUISection *m_pNameRangesUISection;
    AEGUISection *m_pAEGUISection;
+   OutputUISection *m_pOutputUISection;
 
    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( AudioPluginAudioProcessorEditor )
 };

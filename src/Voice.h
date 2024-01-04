@@ -21,6 +21,9 @@ protected:
    void handleModulations( double sampleRate );
 
 private:
+   static float getLeftAmp( float pan );
+   static float getRightAmp( float pan );
+
    const Sample *m_pSample;
    ENV *m_pAEG;
    bool m_NoteIsOn;
