@@ -68,7 +68,10 @@ void SampleUISection::buttonClicked( Button *pButton )
 {
    if( pButton == m_pbReverse )
    {
-      sample()->setReverse( m_pbReverse->getToggleState() );
+      for( Sample *pSample : samples() )
+      {
+         pSample->setReverse( m_pbReverse->getToggleState() );
+      }
    }
 }
 
@@ -82,18 +85,21 @@ void SampleUISection::comboBoxChanged( ComboBox *pComboBox )
 {
    if( m_pcbPlayMode == pComboBox )
    {
-      sample()->setPlayMode( (Sample::PlayMode)m_pcbPlayMode->getSelectedId() );
+      for( Sample *pSample : samples() )
+      {
+         pSample->setPlayMode( (Sample::PlayMode)m_pcbPlayMode->getSelectedId() );
+      }
    }
 }
 
-void SampleUISection::sampleUpdated()
+void SampleUISection::samplesUpdated()
 {
    const Sample *pSample = sample();
 
-   m_plDetune->setVisible( pSample != 0 );
-   m_psDetune->setVisible( pSample != 0 );
-   m_pbReverse->setVisible( pSample != 0 );
-   m_pcbPlayMode->setVisible( pSample != 0 );
+   m_plDetune->setVisible( pSample != nullptr );
+   m_psDetune->setVisible( pSample != nullptr );
+   m_pbReverse->setVisible( pSample != nullptr );
+   m_pcbPlayMode->setVisible( pSample != nullptr );
 
    if( pSample )
    {
@@ -106,8 +112,11 @@ void SampleUISection::sampleUpdated()
 
 void SampleUISection::sliderValueChanged( Slider *pSlider )
 {
-   if( m_psDetune == pSlider && sample() )
+   if( ( m_psDetune == pSlider ) && ( samples().size() > 0 ) )
    {
-      sample()->setDetune( pSlider->getValue() );
+      for( Sample *pSample : samples() )
+      {
+         pSample->setDetune( pSlider->getValue() );
+      }
    }
 }

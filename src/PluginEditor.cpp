@@ -46,7 +46,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor( AudioPluginAud
 
    for( UISection *pSection : m_UISections )
    {
-      pSection->sampleUpdated();
+      pSection->samplesUpdated();
    }
 }
 

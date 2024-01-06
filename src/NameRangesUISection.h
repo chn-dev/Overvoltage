@@ -16,8 +16,8 @@ public:
 
    virtual void paint( juce::Graphics &g );
    virtual void resized();
-   
-   virtual void sampleUpdated();
+
+   virtual void samplesUpdated();
 
    virtual void labelTextChanged( Label *pLabel );
 

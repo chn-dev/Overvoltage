@@ -12,25 +12,7 @@ AEGUISection::~AEGUISection()
 {
 }
 
-
-void AEGUISection::paint( juce::Graphics &g )
+ENV *AEGUISection::getENV( const Sample *pSample ) const
 {
-   EGUISection::paint( g );
-}
-
-
-void AEGUISection::resized()
-{
-   EGUISection::resized();
-}
-
-   
-void AEGUISection::sampleUpdated()
-{
-   EGUISection::sampleUpdated();
-
-   if( sample() )
-   {
-      egUpdated( sample()->getAEG() );
-   }
+   return( pSample->getAEG() );
 }

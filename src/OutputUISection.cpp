@@ -54,22 +54,37 @@ OutputUISection::~OutputUISection()
 
 void OutputUISection::comboBoxChanged( ComboBox *pComboBox )
 {
-   if( pComboBox == m_pcbOutputBus )
+   if( samples().size() > 0 )
    {
-      sample()->setOutputBus( m_pcbOutputBus->getSelectedId() - 1 );
+      if( pComboBox == m_pcbOutputBus )
+      {
+         for( Sample *pSample : samples() )
+         {
+            pSample->setOutputBus( m_pcbOutputBus->getSelectedId() - 1 );
+         }
+      }
    }
 }
 
 
 void OutputUISection::sliderValueChanged( Slider *pSlider )
 {
-   if( pSlider == m_psPan && sample() )
+   if( samples().size() > 0 )
    {
-      sample()->setPan( m_psPan->getValue() / 100.0 );
-   } else
-   if( pSlider == m_psGain && sample() )
-   {
-      sample()->setGain( pow( 10.0, ( ( m_psGain->getValue() ) / 20.0 ) ) );
+      if( pSlider == m_psPan )
+      {
+         for( Sample *pSample : samples() )
+         {
+            pSample->setPan( m_psPan->getValue() / 100.0 );
+         }
+      } else
+      if( pSlider == m_psGain )
+      {
+         for( Sample *pSample : samples() )
+         {
+            pSample->setGain( pow( 10.0, ( ( m_psGain->getValue() ) / 20.0 ) ) );
+         }
+      }
    }
 }
 
@@ -87,25 +102,25 @@ void OutputUISection::resized()
 {
    UISection::resized();
 
-   m_psPan->setBounds( 4, 32 - 4, 180, 25 );
-   m_plPan->setBounds( 6, 48 - 4, 32, 16 );
+   m_psPan->setBounds( 4, 32 - 4 + 32, 180, 25 );
+   m_plPan->setBounds( 6, 48 - 4 + 32, 32, 16 );
 
-   m_psGain->setBounds( 4, 64 - 4, 180, 25 );
-   m_plGain->setBounds( 6, 80 - 4, 32, 16 );
+   m_psGain->setBounds( 4, 64 - 4 + 32, 180, 25 );
+   m_plGain->setBounds( 6, 80 - 4 + 32, 32, 16 );
 
-   m_pcbOutputBus->setBounds( 4, 96, 180, 25 );
+   m_pcbOutputBus->setBounds( 4, 32 - 8, 180, 25 );
 }
 
 
-void OutputUISection::sampleUpdated()
+void OutputUISection::samplesUpdated()
 {
-   m_plPan->setVisible( sample() != 0 );
-   m_psPan->setVisible( sample() != 0 );
+   m_plPan->setVisible( sample() != nullptr );
+   m_psPan->setVisible( sample() != nullptr );
 
-   m_plGain->setVisible( sample() != 0 );
-   m_psGain->setVisible( sample() != 0 );
+   m_plGain->setVisible( sample() != nullptr );
+   m_psGain->setVisible( sample() != nullptr );
 
-   m_pcbOutputBus->setVisible( sample() != 0 );
+   m_pcbOutputBus->setVisible( sample() != nullptr );
 
    if( sample() )
    {

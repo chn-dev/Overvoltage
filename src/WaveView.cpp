@@ -22,7 +22,7 @@ void WaveView::paint( juce::Graphics &g )
 
    int totalHeight = getBounds().getHeight() - 14;
 
-   if( !sample() )
+   if( samples().size() != 1 )
    {
       g.setColour( juce::Colour::fromRGB( 255, 0, 0 ) );
       g.drawLine( 0, 0, getWidth(), totalHeight );
@@ -114,7 +114,7 @@ void WaveView::resized()
    UISection::resized();
 }
 
-void WaveView::sampleUpdated()
+void WaveView::samplesUpdated()
 {
    repaint();
 }
@@ -181,7 +181,7 @@ void WaveView::mouseDrag( const MouseEvent &event )
    int dx = event.getDistanceFromDragStartX();
    float fDx = (float)dx / ( (float)getBounds().getWidth() - 2 );
    int mSamples = fDx * ( sample()->getWave()->numSamples() - 1 );
-   
+
    if( m_IsDraggingLoopStart )
    {
       pWave->setLoopStart( m_OrigLoopPoint + mSamples );

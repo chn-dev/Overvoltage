@@ -17,8 +17,8 @@ public:
 
    void paint( juce::Graphics & ) override;
    void resized() override;
-   
-   virtual void sampleUpdated();
+
+   virtual void samplesUpdated();
 
    virtual void mouseDown( const MouseEvent &event );
    virtual void mouseDrag( const MouseEvent &event );

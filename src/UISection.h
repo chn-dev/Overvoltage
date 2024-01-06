@@ -17,8 +17,8 @@ public:
    virtual void resized() override;
 
    void onSampleSelectionUpdated( SamplerKeyboard *pSamplerKeyboard );
-   
-   virtual void sampleUpdated() = 0;
+
+   virtual void samplesUpdated() = 0;
 
 protected:
    class SliderLookAndFeel : public juce::LookAndFeel_V4
@@ -55,11 +55,12 @@ protected:
    };
 
 protected:
+   const std::set<Sample *> &samples() const;
    Sample *sample() const;
    AudioPluginAudioProcessorEditor *editor() const;
 
 private:
    juce::Label *m_pLabel;
    AudioPluginAudioProcessorEditor *m_pEditor;
-   Sample *m_pSample;
+   std::set<Sample *> m_Samples;
 };

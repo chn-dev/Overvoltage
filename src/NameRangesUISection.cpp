@@ -93,7 +93,7 @@ NameRangesUISection::~NameRangesUISection()
 
 void NameRangesUISection::labelTextChanged( Label *pLabel )
 {
-   if( !sample() )
+   if( samples().size() != 1 )
       return;
 
    if( pLabel == m_plName )
@@ -143,7 +143,7 @@ void NameRangesUISection::labelTextChanged( Label *pLabel )
    }
    editor()->repaint();
 
-   sampleUpdated();
+   samplesUpdated();
 }
 
 
@@ -178,31 +178,31 @@ void NameRangesUISection::resized()
 }
 
 
-void NameRangesUISection::sampleUpdated()
+void NameRangesUISection::samplesUpdated()
 {
-   const Sample *pSample = sample();
+   bool ok = samples().size() == 1;
 
-   m_pcMinNote->setVisible( pSample != 0 );
-   m_pcMaxNote->setVisible( pSample != 0 );
-   m_pcMinVelocity->setVisible( pSample != 0 );
-   m_pcMaxVelocity->setVisible( pSample != 0 );
-   m_plLow->setVisible( pSample != 0 );
-   m_plHigh->setVisible( pSample != 0 );
-   m_plK1->setVisible( pSample != 0 );
-   m_plK2->setVisible( pSample != 0 );
-   m_plV1->setVisible( pSample != 0 );
-   m_plV2->setVisible( pSample != 0 );
-   m_plBaseNote->setVisible( pSample != 0 );
-   m_pcBaseNote->setVisible( pSample != 0 );
-   m_plName->setVisible( pSample != 0 );
+   m_pcMinNote->setVisible( ok );
+   m_pcMaxNote->setVisible( ok );
+   m_pcMinVelocity->setVisible( ok );
+   m_pcMaxVelocity->setVisible( ok );
+   m_plLow->setVisible( ok );
+   m_plHigh->setVisible( ok );
+   m_plK1->setVisible( ok );
+   m_plK2->setVisible( ok );
+   m_plV1->setVisible( ok );
+   m_plV2->setVisible( ok );
+   m_plBaseNote->setVisible( ok );
+   m_pcBaseNote->setVisible( ok );
+   m_plName->setVisible( ok );
 
-   if( pSample )
+   if( ok )
    {
-      m_pcMinNote->setCurrentItem( pSample->getMinNote() );
-      m_pcMaxNote->setCurrentItem( pSample->getMaxNote() );
-      m_pcBaseNote->setCurrentItem( pSample->getBaseNote() );
-      m_pcMinVelocity->setCurrentItem( pSample->getMinVelocity() );
-      m_pcMaxVelocity->setCurrentItem( pSample->getMaxVelocity() );
-      m_plName->setText( pSample->getName(), juce::dontSendNotification );
+      m_pcMinNote->setCurrentItem( sample()->getMinNote() );
+      m_pcMaxNote->setCurrentItem( sample()->getMaxNote() );
+      m_pcBaseNote->setCurrentItem( sample()->getBaseNote() );
+      m_pcMinVelocity->setCurrentItem( sample()->getMinVelocity() );
+      m_pcMaxVelocity->setCurrentItem( sample()->getMaxVelocity() );
+      m_plName->setText( sample()->getName(), juce::dontSendNotification );
    }
 }

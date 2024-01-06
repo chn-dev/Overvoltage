@@ -13,12 +13,6 @@ public:
    AEGUISection( AudioPluginAudioProcessorEditor *pEditor );
    ~AEGUISection();
 
-   virtual void paint( juce::Graphics &g );
-   virtual void resized();
-   
-   virtual void sampleUpdated();
-
 protected:
-
-private:
+   virtual ENV *getENV( const Sample *pSample ) const;
 };

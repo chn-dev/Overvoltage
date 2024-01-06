@@ -4,7 +4,6 @@
 #include "PluginEditor.h"
 
 UISection::UISection( AudioPluginAudioProcessorEditor *pEditor, std::string label ) :
-   m_pSample( 0 ),
    m_pEditor( pEditor ),
    m_pLabel( 0 )
 {
@@ -241,22 +240,20 @@ void UISection::resized()
 
 void UISection::onSampleSelectionUpdated( SamplerKeyboard *pSamplerKeyboard )
 {
-   std::set<Sample *> samples = pSamplerKeyboard->selectedSamples();
-   Sample *pSample;
-   if( samples.size() != 1 )
-   {
-      pSample = 0;
-   } else
-   {
-      pSample = *samples.begin();
-   }
-
-   m_pSample = pSample;
-   sampleUpdated();
+   m_Samples = pSamplerKeyboard->selectedSamples();
+   samplesUpdated();
 }
 
 
+const std::set<Sample *> &UISection::samples() const
+{
+   return( m_Samples );
+}
+
 Sample *UISection::sample() const
 {
-   return( m_pSample );
+   if( m_Samples.size() <= 0 )
+      return( nullptr );
+   else
+      return( *m_Samples.begin() );
 }

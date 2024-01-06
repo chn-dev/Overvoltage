@@ -3,8 +3,7 @@
 
 
 EGUISection::EGUISection( AudioPluginAudioProcessorEditor *pEditor, std::string label ) :
-   UISection( pEditor, label ),
-   m_pENV( 0 )
+   UISection( pEditor, label )
 {
    m_psAttack = new juce::Slider( "Attack" );
    m_psAttack->setRange( 0.0, 1.0, 0.001 );
@@ -71,7 +70,7 @@ void EGUISection::paint( juce::Graphics &g )
 void EGUISection::resized()
 {
    UISection::resized();
-   
+
    m_psAttack->setBounds( 16, 16, 20, 100 );
    m_plAttack->setBounds( 17, 108, 18, 16 );
 
@@ -88,8 +87,6 @@ void EGUISection::resized()
 
 void EGUISection::egUpdated( ENV *pENV )
 {
-   m_pENV = pENV;
-
    if( !pENV )
       return;
 
@@ -100,38 +97,55 @@ void EGUISection::egUpdated( ENV *pENV )
 }
 
 
-void EGUISection::sampleUpdated()
+void EGUISection::samplesUpdated()
 {
-   m_psAttack->setVisible( sample() != 0 );
-   m_plAttack->setVisible( sample() != 0 );
-   m_psDecay->setVisible( sample() != 0 );
-   m_plDecay->setVisible( sample() != 0 );
-   m_psSustain->setVisible( sample() != 0 );
-   m_plSustain->setVisible( sample() != 0 );
-   m_psRelease->setVisible( sample() != 0 );
-   m_plRelease->setVisible( sample() != 0 );
+   if( sample() )
+   {
+      egUpdated( getENV( sample() ) );
+   }
+
+   m_psAttack->setVisible( sample() != nullptr );
+   m_plAttack->setVisible( sample() != nullptr );
+   m_psDecay->setVisible( sample() != nullptr );
+   m_plDecay->setVisible( sample() != nullptr );
+   m_psSustain->setVisible( sample() != nullptr );
+   m_plSustain->setVisible( sample() != nullptr );
+   m_psRelease->setVisible( sample() != nullptr );
+   m_plRelease->setVisible( sample() != nullptr );
 }
 
 
 void EGUISection::sliderValueChanged( Slider *pSlider )
 {
-   if( !m_pENV )
+   if( samples().size() <= 0 )
       return;
 
    if( pSlider == m_psAttack )
    {
-      m_pENV->setAttack( m_psAttack->getValue() );
+      for( Sample *pSample : samples() )
+      {
+         getENV( pSample )->setAttack( m_psAttack->getValue() );
+      }
    } else
    if( pSlider == m_psDecay )
    {
-      m_pENV->setDecay( m_psDecay->getValue() );
+      for( Sample *pSample : samples() )
+      {
+         getENV( pSample )->setDecay( m_psDecay->getValue() );
+      }
    } else
    if( pSlider == m_psSustain )
    {
-      m_pENV->setSustain( m_psSustain->getValue() );
+      for( Sample *pSample : samples() )
+      {
+         getENV( pSample )->setSustain( m_psSustain->getValue() );
+      }
    } else
    if( pSlider == m_psRelease )
    {
-      m_pENV->setRelease( m_psRelease->getValue() );
+      for( Sample *pSample : samples() )
+      {
+         getENV( pSample )->setRelease( m_psRelease->getValue() );
+      }
    }
 }

@@ -16,18 +16,17 @@ public:
 
    virtual void paint( juce::Graphics &g );
    virtual void resized();
-   
-   virtual void sampleUpdated();
+
+   virtual void samplesUpdated();
 
    virtual void sliderValueChanged( Slider *pSlider );
 
    void egUpdated( ENV *pENV );
 
 protected:
+   virtual ENV *getENV( const Sample *pSample ) const = 0;
 
 private:
-   ENV *m_pENV;
-
    juce::Slider *m_psAttack;
    juce::Label *m_plAttack;
 
