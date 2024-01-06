@@ -497,11 +497,21 @@ void SamplerKeyboard::mouseDown( const MouseEvent &event )
    Sample *pSample = getSampleAt( x, y );
    if( pSample )
    {
+      bool isCtrlDown = juce::ModifierKeys::getCurrentModifiers().isCtrlDown();
+
       if( m_SelectedSamples.find( pSample ) == m_SelectedSamples.end() )
       {
-         // Make this sample the only selection
-         m_SelectedSamples.clear();
+         if( !isCtrlDown )
+         {
+            m_SelectedSamples.clear();
+         }
          m_SelectedSamples.insert( pSample );
+      } else
+      {
+         if( isCtrlDown )
+         {
+            m_SelectedSamples.erase( pSample );
+         }
       }
 
       m_CurrentSampleNote = dragDropNote( event.getMouseDownY() );

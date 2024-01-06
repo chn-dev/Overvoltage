@@ -38,7 +38,6 @@ public:
    virtual void handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
    virtual void handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
 
-
    virtual bool keyPressed( const KeyPress &key, Component *pOriginatingComponent );
    virtual bool keyStateChanged( bool isKeyDown, Component *pOriginatingComponent );
 
