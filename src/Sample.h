@@ -54,6 +54,8 @@ public:
    void setGain( float gain );
    Sample::PlayMode getPlayMode() const;
    ENV *getAEG() const;
+   int getOutputBus() const;
+   void setOutputBus( int n );
 
    static std::string toString( PlayMode mode );
    static PlayMode fromString( std::string mode );
@@ -65,6 +67,7 @@ private:
    Sample();
 
    std::string m_Name;
+   int m_OutputBus;
    ENV *m_pAEG;
    WaveFile *m_pWave;
    PlayMode m_PlayMode;

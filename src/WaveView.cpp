@@ -1,13 +1,7 @@
-#ifdef __GNUC__
-#include <fmt/core.h>
-#define stdformat fmt::format
-#else
-#include <format>
-#define stdformat std::format
-#endif
-
 #include "PluginEditor.h"
 #include "WaveView.h"
+
+#include "util.h"
 
 WaveView::WaveView( AudioPluginAudioProcessorEditor *pEditor ) :
    UISection( pEditor ),
@@ -208,7 +202,8 @@ void WaveView::mouseDrag( const MouseEvent &event )
 }
 
 
-void WaveView::mouseUp( const MouseEvent &event )
+void WaveView::mouseUp( const MouseEvent &/*event*/ )
 {
 
 }
+

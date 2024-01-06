@@ -9,7 +9,8 @@ class AudioPluginAudioProcessorEditor;
 //==============================================================================
 class OutputUISection : public UISection,
                         public juce::Label::Listener,
-                        public juce::Slider::Listener
+                        public juce::Slider::Listener,
+                        public juce::ComboBox::Listener
 {
 public:
    OutputUISection( AudioPluginAudioProcessorEditor *pEditor );
@@ -20,10 +21,12 @@ public:
    virtual void sampleUpdated();
    virtual void labelTextChanged( Label *pLabel );
    virtual void sliderValueChanged( Slider *pSlider );
+   virtual void comboBoxChanged( ComboBox *pComboBox );
 
 protected:
 
 private:
+   juce::ComboBox *m_pcbOutputBus;
    juce::Slider *m_psPan;
    juce::Label *m_plPan;
    juce::Slider *m_psGain;

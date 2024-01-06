@@ -14,7 +14,8 @@ Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
    m_MinVelocity( 0 ),
    m_MaxVelocity( 127 ),
    m_Pan( 0.0 ),
-   m_Gain( 1.0 )
+   m_Gain( 1.0 ),
+   m_OutputBus( 0 )
 {
    m_pAEG = new ENV();
 }
@@ -33,7 +34,8 @@ Sample::Sample() :
    m_MaxVelocity( -1 ),
    m_pAEG( nullptr ),
    m_Pan( 0.0 ),
-   m_Gain( 1.0 )
+   m_Gain( 1.0 ),
+   m_OutputBus( 0 )
 {
 }
 
@@ -90,6 +92,10 @@ juce::XmlElement *Sample::getStateInformation() const
    peMaxVelocity->addTextElement( stdformat( "{}", m_MaxVelocity ) );
    peSample->addChildElement( peMaxVelocity );
 
+   juce::XmlElement *peOutputBus = new juce::XmlElement( "outputbus" );
+   peOutputBus->addTextElement( stdformat( "{}", m_OutputBus ) );
+   peSample->addChildElement( peOutputBus );
+
    juce::XmlElement *peAEG = m_pAEG->getStateInformation();
    peAEG->setAttribute( "type", "amplitude" );
    peSample->addChildElement( peAEG );
@@ -119,6 +125,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
    int maxNote = -1;
    int minVelocity = -1;
    int maxVelocity = -1;
+   int outputBus = 0;
    ENV *pAEG = nullptr;
    WaveFile *pWave = nullptr;
 
@@ -167,6 +174,10 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       {
          maxVelocity = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
       } else
+      if( tagName == "outputbus" )
+      {
+         outputBus = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
       if( tagName == "envelope" )
       {
          std::string envType = pChild->getStringAttribute( "type" ).toStdString();
@@ -192,6 +203,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
    if( pWave && !name.empty() &&
        baseNote >= 0 && minNote >= 0 &&
        maxNote >= 0 && minVelocity >= 0 &&
+       outputBus >= 0 &&
        maxVelocity >= 0 && pAEG )
    {
       Sample *pSample = new Sample();
@@ -209,6 +221,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       pSample->m_MaxNote = maxNote;
       pSample->m_MinVelocity = minVelocity;
       pSample->m_MaxVelocity = maxVelocity;
+      pSample->m_OutputBus = outputBus;
 
       return( pSample );
    } else
@@ -454,4 +467,16 @@ float Sample::getGain() const
 void Sample::setGain( float gain )
 {
    m_Gain = gain;
+}
+
+
+int Sample::getOutputBus() const
+{
+   return( m_OutputBus );
+}
+
+
+void Sample::setOutputBus( int n )
+{
+   m_OutputBus = n;
 }

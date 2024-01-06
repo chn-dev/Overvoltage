@@ -4,6 +4,14 @@
 OutputUISection::OutputUISection( AudioPluginAudioProcessorEditor *pEditor ) :
    UISection( pEditor, "Output" )
 {
+   m_pcbOutputBus = new juce::ComboBox( "Output Bus" );
+   for( int i = 0; i < editor()->processor().getBusCount( false ); i++ )
+   {
+      m_pcbOutputBus->addItem( editor()->processor().getBus( false, i )->getName(), i + 1 );
+   }
+   m_pcbOutputBus->addListener( this );
+   addAndMakeVisible( m_pcbOutputBus );
+
    m_plPan = new juce::Label( juce::String(), "Pan" );
    addAndMakeVisible( m_plPan );
 
@@ -40,6 +48,16 @@ OutputUISection::~OutputUISection()
    delete m_psPan;
    delete m_plGain;
    delete m_psGain;
+   delete m_pcbOutputBus;
+}
+
+
+void OutputUISection::comboBoxChanged( ComboBox *pComboBox )
+{
+   if( pComboBox == m_pcbOutputBus )
+   {
+      sample()->setOutputBus( m_pcbOutputBus->getSelectedId() - 1 );
+   }
 }
 
 
@@ -69,11 +87,13 @@ void OutputUISection::resized()
 {
    UISection::resized();
 
-   m_psPan->setBounds( 4, 32, 180, 25 );
-   m_plPan->setBounds( 6, 48, 32, 16 );
+   m_psPan->setBounds( 4, 32 - 4, 180, 25 );
+   m_plPan->setBounds( 6, 48 - 4, 32, 16 );
 
-   m_psGain->setBounds( 4, 64, 180, 25 );
-   m_plGain->setBounds( 6, 80, 32, 16 );
+   m_psGain->setBounds( 4, 64 - 4, 180, 25 );
+   m_plGain->setBounds( 6, 80 - 4, 32, 16 );
+
+   m_pcbOutputBus->setBounds( 4, 96, 180, 25 );
 }
 
 
@@ -85,10 +105,13 @@ void OutputUISection::sampleUpdated()
    m_plGain->setVisible( sample() != 0 );
    m_psGain->setVisible( sample() != 0 );
 
+   m_pcbOutputBus->setVisible( sample() != 0 );
+
    if( sample() )
    {
       m_psPan->setValue( sample()->getPan() * 100.0 );
       m_psGain->setValue( 20.0 * log10( sample()->getGain() ) );
+      m_pcbOutputBus->setSelectedId( sample()->getOutputBus() + 1 );
    }
 }
 

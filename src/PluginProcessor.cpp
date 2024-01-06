@@ -4,12 +4,14 @@
 //==============================================================================
 AudioPluginAudioProcessor::AudioPluginAudioProcessor()
    : AudioProcessor( BusesProperties()
-#if ! JucePlugin_IsMidiEffect
-#if ! JucePlugin_IsSynth
-   .withInput( "Input", juce::AudioChannelSet::stereo(), true )
-#endif
-   .withOutput( "Output", juce::AudioChannelSet::stereo(), true )
-#endif
+      .withOutput( "Output 1", juce::AudioChannelSet::stereo(), true )
+      .withOutput( "Output 2", juce::AudioChannelSet::stereo(), true )
+      .withOutput( "Output 3", juce::AudioChannelSet::stereo(), true )
+      .withOutput( "Output 4", juce::AudioChannelSet::stereo(), true )
+      .withOutput( "Output 5", juce::AudioChannelSet::stereo(), true )
+      .withOutput( "Output 6", juce::AudioChannelSet::stereo(), true )
+      .withOutput( "Output 7", juce::AudioChannelSet::stereo(), true )
+      .withOutput( "Output 8", juce::AudioChannelSet::stereo(), true )
    ), m_pEditor( 0 )
 {
    m_ofs = 0;
@@ -114,10 +116,6 @@ void AudioPluginAudioProcessor::releaseResources()
 
 bool AudioPluginAudioProcessor::isBusesLayoutSupported( const BusesLayout& layouts ) const
 {
-#if JucePlugin_IsMidiEffect
-   juce::ignoreUnused( layouts );
-   return( true );
-#else
    // This is the place where you check if the layout is supported.
    // In this template code we only support mono or stereo.
    // Some plugin hosts, such as certain GarageBand versions, will only
@@ -126,14 +124,7 @@ bool AudioPluginAudioProcessor::isBusesLayoutSupported( const BusesLayout& layou
        layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo() )
       return( false );
 
-   // This checks if the input layout matches the output layout
-#if ! JucePlugin_IsSynth
-   if( layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet() )
-      return( false );
-#endif
-
    return( true );
-#endif
 }
 
 
@@ -258,6 +249,29 @@ void AudioPluginAudioProcessor::stopVoice( const Voice *pVoice )
 }
 
 
+bool AudioPluginAudioProcessor::outputBusReady( juce::AudioBuffer<float>& buffer, int n ) const
+{
+   if( n >= getBusCount( false ) )
+   {
+      return( false );
+   }
+
+   const Bus *pBus = getBus( false, n );
+   if( !pBus->isEnabled() )
+   {
+      return( false );
+   }
+
+   AudioBuffer<float> buf = pBus->getBusBuffer( buffer );
+   if( buf.getNumChannels() != 2 )
+   {
+      return( false );
+   }
+
+   return( true );
+}
+
+
 void AudioPluginAudioProcessor::processBlock( juce::AudioBuffer<float>& buffer,
                                               juce::MidiBuffer& midiMessages )
 {
@@ -304,25 +318,52 @@ void AudioPluginAudioProcessor::processBlock( juce::AudioBuffer<float>& buffer,
    // the samples and the outer loop is handling the channels.
    // Alternatively, you can process the samples with the channels
    // interleaved by keeping the same state.
-   for( int channel = 0; channel < totalNumOutputChannels; ++channel )
+   for( int i = 0; i < getBusCount( false ); i++ )
+   {
+      const Bus *pBus = getBus( false, i );
+      if( pBus->isEnabled() )
+      {
+         AudioBuffer b = pBus->getBusBuffer( buffer );
+         for( int channel = 0; channel < b.getNumChannels(); channel++ )
+         {
+            float *pChannelData = b.getWritePointer( channel );
+            for( int j = 0; j < b.getNumSamples(); j++ )
+            {
+               pChannelData[j] = 0.0;
+            }
+         }
+      }
+   }
+/*   for( int channel = 0; channel < totalNumOutputChannels; ++channel )
    {
       auto *pChannelData = buffer.getWritePointer( channel );
       for( auto j = 0; j < m_samplesPerBlock; j++ )
       {
          pChannelData[j] = 0.0;
       }
-   }
-
-   float *pLeft = buffer.getWritePointer( 0 );
-   float *pRight = buffer.getWritePointer( 1 );
+   }*/
 
    std::set<Voice *> stoppedVoices;
    for( auto k = m_Voices.begin(); k != m_Voices.end(); k++ )
    {
       Voice *pVoice = k->second;
-      if( !pVoice->process( pLeft, pRight, m_samplesPerBlock, m_sampleRate ) )
+      int busNum = pVoice->sample()->getOutputBus();
+      if( busNum < 0 )
+         busNum = 0;
+
+      if( !outputBusReady( buffer, busNum ) )
       {
          stoppedVoices.insert( pVoice );
+      } else
+      {
+         AudioBuffer buf = getBus( false, busNum )->getBusBuffer( buffer );
+         float *pLeft = buf.getWritePointer( 0 );
+         float *pRight = buf.getWritePointer( 1 );
+
+         if( !pVoice->process( pLeft, pRight, buf.getNumSamples(), m_sampleRate ) )
+         {
+            stoppedVoices.insert( pVoice );
+         }
       }
    }
 

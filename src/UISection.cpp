@@ -250,12 +250,9 @@ void UISection::onSampleSelectionUpdated( SamplerKeyboard *pSamplerKeyboard )
    {
       pSample = *samples.begin();
    }
-   
-//   if( m_pSample != pSample )
-   {
-      m_pSample = pSample;
-      sampleUpdated();
-   }
+
+   m_pSample = pSample;
+   sampleUpdated();
 }
 
 

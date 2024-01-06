@@ -65,6 +65,7 @@ public:
 
 private:
    void deleteSample( Sample *pSample );
+   bool outputBusReady( juce::AudioBuffer<float>& buffer, int n ) const;
 
    //==============================================================================
    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( AudioPluginAudioProcessor )
