@@ -165,7 +165,7 @@ bool Voice::process( float *pLeft, float *pRight, int nSamples, double sampleRat
             if( m_pSample->getPlayMode() != Sample::PlayModeShot )
             {
                lAmp *= m_pAEG->getValue();
-               rAmp += m_pAEG->getValue();
+               rAmp *= m_pAEG->getValue();
             }
 
             pLeft[i] += velocity * ( (float)v / 32768 ) * lAmp;
