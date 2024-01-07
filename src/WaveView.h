@@ -9,7 +9,9 @@
 class AudioPluginAudioProcessorEditor;
 
 //==============================================================================
-class WaveView : public UISection
+class WaveView : public UISection,
+                 public juce::Button::Listener,
+                 public juce::ScrollBar::Listener
 {
 public:
    WaveView( AudioPluginAudioProcessorEditor *pEditor );
@@ -25,10 +27,32 @@ public:
    virtual void mouseUp( const MouseEvent & event );
    virtual void mouseMove( const MouseEvent &event );
 
+   virtual void buttonClicked( Button *pButton );
+   virtual void buttonStateChanged( Button *pButton );
+
+   virtual void scrollBarMoved( ScrollBar *pScrollBar, double newRangeStart );
+
 protected:
+   int getXPosFromSampleNum( uint32_t sampleNum ) const;
+   uint32_t getSampleNumFromXPos( int xPos ) const;
+
+   uint32_t getSampleViewStart() const;
+   uint32_t getSampleViewEnd() const;
+
+protected:
+   juce::TextButton *m_pbZoom;
+   juce::TextButton *m_pbShowAll;
+   juce::ScrollBar *m_psScrollBar;
    uint32_t m_OrigLoopPoint;
    bool m_IsDraggingLoopStart;
    bool m_IsDraggingLoopEnd;
+
+   bool m_IsSelecting;
+   uint32_t m_SelectionStart;
+   uint32_t m_SelectionEnd;
+
+   uint32_t m_SampleViewStart;
+   uint32_t m_SampleViewEnd;
 
 private:
 };
