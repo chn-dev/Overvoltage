@@ -10,14 +10,11 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor( AudioPluginAud
    // editor's size to whatever you need it to be.
    setSize( 1024, 640 );
 
-   m_pButton = new juce::TextButton( "Hello!" );
-   m_pButton->setBounds( 0, 0, 48, 24 );
-   m_pButton->addListener( this );
-   addAndMakeVisible( m_pButton );
+   int yofs = 16;
 
    m_pKeyboard = new SamplerKeyboard( this );
    addKeyListener( m_pKeyboard );
-   m_pKeyboard->setBounds( 0, 0, 64 + 128, 640 );
+   m_pKeyboard->setBounds( 0, yofs, 64 + 128, 640 - yofs );
    m_pKeyboard->addListener( &p );
    m_pKeyboard->addSamplerKeyboardListener( &p );
    m_pKeyboard->setWidth( 64 );
@@ -25,23 +22,23 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor( AudioPluginAud
    addAndMakeVisible( m_pKeyboard );
 
    m_pWaveView = new WaveView( this );
-   m_pWaveView->setBounds( 64 + 128 + 4, 0, 1024 - ( 64 + 128 + 4 ), 196 );
+   m_pWaveView->setBounds( 64 + 128 + 4, yofs, 1024 - ( 64 + 128 + 4 ), 196 );
    addAndMakeVisible( m_pWaveView );
 
    m_pSampleSection = new SampleUISection( this );
-   m_pSampleSection->setBounds( 64 + 128 + 4, 196 + 4, 192, 128 );
+   m_pSampleSection->setBounds( 64 + 128 + 4, 196 + 4 + yofs, 192, 128 );
    addAndMakeVisible( m_pSampleSection );
 
    m_pNameRangesUISection = new NameRangesUISection( this );
-   m_pNameRangesUISection->setBounds( 64 + 128 + 4, 196 + 4 + 128 + 4, 192, 128 );
+   m_pNameRangesUISection->setBounds( 64 + 128 + 4, 196 + 4 + 128 + 4 + yofs, 192, 128 );
    addAndMakeVisible( m_pNameRangesUISection );
 
    m_pAEGUISection = new AEGUISection( this );
-   m_pAEGUISection->setBounds( 64 + 128 + 4, 196 + 4 + 128 + 4 + 128 + 4, 192, 128 );
+   m_pAEGUISection->setBounds( 64 + 128 + 4, 196 + 4 + 128 + 4 + 128 + 4 + yofs, 192, 128 );
    addAndMakeVisible( m_pAEGUISection );
 
    m_pOutputUISection = new OutputUISection( this );
-   m_pOutputUISection->setBounds( 1024 - 64 - 128 - 4, 196 + 4, 192, 128 );
+   m_pOutputUISection->setBounds( 1024 - 64 - 128 - 4, 196 + 4 + yofs, 192, 128 );
    addAndMakeVisible( m_pOutputUISection );
 
    for( UISection *pSection : m_UISections )
@@ -53,7 +50,6 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor( AudioPluginAud
 
 AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
 {
-   delete m_pButton;
    delete m_pKeyboard;
    delete m_pWaveView;
    delete m_pSampleSection;
@@ -101,10 +97,6 @@ void AudioPluginAudioProcessorEditor::handleNoteOff( MidiKeyboardState *pSource,
 
 void AudioPluginAudioProcessorEditor::buttonClicked( juce::Button *pButton )
 {
-   if( m_pButton == pButton )
-   {
-      juce::AlertWindow::showMessageBox( juce::AlertWindow::InfoIcon, "Title", "Hello, world!" );
-   }
 }
 
 

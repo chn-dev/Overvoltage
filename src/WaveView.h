@@ -42,6 +42,8 @@ protected:
 protected:
    juce::TextButton *m_pbZoom;
    juce::TextButton *m_pbShowAll;
+   juce::TextButton *m_pbZoomIn;
+   juce::TextButton *m_pbZoomOut;
    juce::ScrollBar *m_psScrollBar;
    uint32_t m_OrigLoopPoint;
    bool m_IsDraggingLoopStart;

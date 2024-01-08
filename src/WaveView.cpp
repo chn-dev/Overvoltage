@@ -21,6 +21,14 @@ WaveView::WaveView( AudioPluginAudioProcessorEditor *pEditor ) :
    m_pbShowAll->addListener( this );
    addAndMakeVisible( m_pbShowAll );
 
+   m_pbZoomIn = new juce::TextButton( "+" );
+   m_pbZoomIn->addListener( this );
+   addAndMakeVisible( m_pbZoomIn );
+
+   m_pbZoomOut = new juce::TextButton( "-" );
+   m_pbZoomOut->addListener( this );
+   addAndMakeVisible( m_pbZoomOut );
+
    m_psScrollBar = new juce::ScrollBar( false );
    m_psScrollBar->addListener( this );
    addAndMakeVisible( m_psScrollBar );
@@ -31,6 +39,8 @@ WaveView::~WaveView()
 {
    delete m_pbZoom;
    delete m_pbShowAll;
+   delete m_pbZoomOut;
+   delete m_pbZoomIn;
    delete m_psScrollBar;
 }
 
@@ -164,9 +174,35 @@ void WaveView::resized()
 {
    UISection::resized();
 
-   m_pbZoom->setBounds( getBounds().getWidth() - ( 1 * 14 ), getBounds().getHeight() - 14, 14, 14 );
-   m_pbShowAll->setBounds( getBounds().getWidth() - ( 2 * 14 ), getBounds().getHeight() - 14, 14, 14 );
-   m_psScrollBar->setBounds( 0, getBounds().getHeight() - 14 - 8, getBounds().getWidth(), 8 );
+   m_pbShowAll->setBounds(
+      getBounds().getWidth() - ( 1 * 14 ),
+      getBounds().getHeight() - 14,
+      14,
+      14 );
+
+   m_pbZoom->setBounds(
+      getBounds().getWidth() - ( 2 * 14 ),
+      getBounds().getHeight() - 14,
+      14,
+      14 );
+
+   m_pbZoomOut->setBounds(
+      getBounds().getWidth() - ( 3 * 14 ),
+      getBounds().getHeight() - 14,
+      14,
+      14 );
+
+   m_pbZoomIn->setBounds(
+      getBounds().getWidth() - ( 4 * 14 ),
+      getBounds().getHeight() - 14,
+      14,
+      14 );
+
+   m_psScrollBar->setBounds(
+      0,
+      getBounds().getHeight() - 14 - 8,
+      getBounds().getWidth(),
+      8 );
 }
 
 
@@ -180,6 +216,8 @@ void WaveView::samplesUpdated()
 
    m_pbZoom->setVisible( samples().size() == 1 );
    m_pbShowAll->setVisible( samples().size() == 1 );
+   m_pbZoomIn->setVisible( samples().size() == 1 );
+   m_pbZoomOut->setVisible( samples().size() == 1 );
    m_psScrollBar->setVisible( samples().size() == 1 );
 
    if( samples().size() == 1 )
@@ -349,6 +387,40 @@ void WaveView::mouseUp( const MouseEvent &/*event*/ )
 
 void WaveView::buttonClicked( Button *pButton )
 {
+   if( pButton == m_pbZoomIn )
+   {
+      uint32_t vStart = getSampleViewStart();
+      uint32_t vEnd = getSampleViewEnd();
+      if( vEnd - vStart >= 16 )
+      {
+         uint32_t len = vEnd - vStart;
+         vStart += len / 4;
+         vEnd -= len / 4;
+         m_SampleViewStart = vStart;
+         m_SampleViewEnd = vEnd;
+         m_psScrollBar->setCurrentRange( getSampleViewStart(), getSampleViewEnd() - getSampleViewStart() );
+         repaint();
+      }
+   } else
+   if( pButton == m_pbZoomOut )
+   {
+      uint32_t vStart = getSampleViewStart();
+      uint32_t vEnd = getSampleViewEnd();
+      uint32_t len = vEnd - vStart;
+      uint32_t nl = len / 2;
+      if( nl > vStart )
+         vStart = 0;
+      else
+         vStart -= nl;
+
+      vEnd += nl;
+      if( vEnd >= sample()->getWave()->numSamples() )
+         vEnd = sample()->getWave()->numSamples() - 1;
+      m_SampleViewStart = vStart;
+      m_SampleViewEnd = vEnd;
+      m_psScrollBar->setCurrentRange( getSampleViewStart(), getSampleViewEnd() - getSampleViewStart() );
+      repaint();
+   } else
    if( pButton == m_pbZoom )
    {
       if( ( m_SelectionStart != ~0 ) && ( m_SelectionEnd != ~0 ) )
