@@ -10,7 +10,7 @@
 class SamplerKeyboardListener
 {
 public:
-   virtual void onDeleteSample( Sample *pSample ) = 0;
+   virtual void onDeleteSample( int part, Sample *pSample ) = 0;
 };
 
 //==============================================================================
@@ -48,6 +48,7 @@ public:
    virtual void filesDropped( const StringArray &files, int x, int y );
 
    std::set<Sample *> selectedSamples() const;
+   void clearSelectedSamples();
 
 protected:
    int dragDropNote( int y ) const;

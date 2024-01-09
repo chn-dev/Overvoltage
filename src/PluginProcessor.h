@@ -7,6 +7,7 @@
 
 #include "SamplerKeyboard.h"
 #include "Voice.h"
+#include "Part.h"
 
 //==============================================================================
 class AudioPluginAudioProcessor : public juce::AudioProcessor,
@@ -19,7 +20,7 @@ public:
    AudioPluginAudioProcessor();
    ~AudioPluginAudioProcessor() override;
 
-   virtual void onDeleteSample( Sample *pSample );
+   virtual void onDeleteSample( int part, Sample *pSample );
 
    //==============================================================================
    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -64,16 +65,16 @@ public:
    void stopVoice( const Voice *pVoice );
 
 private:
-   void deleteSample( Sample *pSample );
+   void deleteSample( int part, Sample *pSample );
    bool outputBusReady( juce::AudioBuffer<float>& buffer, int n ) const;
 
    //==============================================================================
    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( AudioPluginAudioProcessor )
    AudioPluginAudioProcessorEditor *m_pEditor;
-   std::list<Sample *> getSamplesByMidiNoteAndVelocity( int note, int vel ) const;
+   std::list<Sample *> getSamplesByMidiNoteAndVelocity( int part, int note, int vel ) const;
 
    std::multimap<int, Voice *> m_Voices;
-   std::list<Sample *> m_Samples;
+   std::vector<Part *> m_Parts;
 
    double m_sampleRate;
    int m_samplesPerBlock;

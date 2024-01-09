@@ -43,7 +43,7 @@ bool SamplerKeyboard::keyPressed( const KeyPress &key, Component *pOriginatingCo
       {
          for( SamplerKeyboardListener *pListener : m_Listeners )
          {
-            pListener->onDeleteSample( pSample );
+            pListener->onDeleteSample( m_pEditor->currentPart(), pSample );
          }
       }
 
@@ -579,4 +579,12 @@ void SamplerKeyboard::handleNoteOff( MidiKeyboardState *pSource, int midiChannel
 std::set<Sample *> SamplerKeyboard::selectedSamples() const
 {
    return( m_SelectedSamples );
+}
+
+
+void SamplerKeyboard::clearSelectedSamples()
+{
+   m_SelectedSamples.clear();
+   m_pEditor->onSampleSelectionUpdated( this );
+   repaint();
 }

@@ -19,7 +19,7 @@ public:
    ~AudioPluginAudioProcessorEditor() override;
 
    //==============================================================================
-   void paint (juce::Graphics&) override;
+   void paint( juce::Graphics& ) override;
    void resized() override;
 
    virtual void handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
@@ -30,12 +30,16 @@ public:
 
    void onSampleSelectionUpdated( SamplerKeyboard *pSamplerKeyboard );
 
+   virtual void buttonClicked( juce::Button *pButton );
+   virtual void buttonStateChanged( juce::Button *pButton );
+
+   int currentPart() const;
+
    AudioPluginAudioProcessor &processor() const;
 
 private:
-   void buttonClicked( juce::Button *pButton );
+   void activatePart( int nPart );
 
-private:
    // This reference is provided as a quick way for your editor to
    // access the processor object that created it.
    AudioPluginAudioProcessor &processorRef;
@@ -48,6 +52,9 @@ private:
    NameRangesUISection *m_pNameRangesUISection;
    AEGUISection *m_pAEGUISection;
    OutputUISection *m_pOutputUISection;
+
+   int m_CurrentPart;
+   std::vector<juce::TextButton *> m_PartButtons;
 
    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( AudioPluginAudioProcessorEditor )
 };

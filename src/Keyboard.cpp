@@ -45,7 +45,7 @@ juce::String Keyboard::noteNameWithOctave( int note )
 {
    std::string name = noteName( note ).toStdString();
    int octave = ( note / 12 ) - 2;
-   
+
    int numSpaces = 0;
    if( octave >= 0 )
       numSpaces++;
@@ -83,7 +83,7 @@ juce::String Keyboard::noteName( int note )
          return( "G" );
       case 8:
          return( "G#" );
-      case 9: 
+      case 9:
          return( "A" );
       case 10:
          return( "A#" );
@@ -317,7 +317,7 @@ void Keyboard::mouseDrag( const MouseEvent &event )
       if( m_CurrentNote != note )
       {
          m_Notes[m_CurrentNote] = -1;
-         noteOff( 1, m_CurrentNote, 1.0 );
+         noteOff( m_pEditor->currentPart() + 1, m_CurrentNote, 1.0 );
 
          m_CurrentNote = -1;
 
@@ -325,7 +325,7 @@ void Keyboard::mouseDrag( const MouseEvent &event )
          {
             m_Notes[note] = 127;
             m_CurrentNote = note;
-            noteOn( 1, m_CurrentNote, 1.0 );
+            noteOn( m_pEditor->currentPart() + 1, m_CurrentNote, 1.0 );
          }
 
          repaint();
@@ -369,7 +369,7 @@ void Keyboard::mouseDown( const MouseEvent &event )
       {
          m_Notes[note] = 127;
          m_CurrentNote = note;
-         noteOn( 1, note, 1.0 );
+         noteOn( m_pEditor->currentPart() + 1, note, 1.0 );
          repaint();
       }
    }
@@ -387,7 +387,7 @@ void Keyboard::mouseUp( const MouseEvent &event )
    {
       m_Notes[m_CurrentNote] = -1;
       m_CurrentNote = -1;
-      noteOff( 1, note, 1.0 );
+      noteOff( m_pEditor->currentPart() + 1, note, 1.0 );
       repaint();
    }
 }

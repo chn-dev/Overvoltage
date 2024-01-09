@@ -1,6 +1,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+#include "util.h"
+
 //==============================================================================
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor( AudioPluginAudioProcessor& p )
    : AudioProcessorEditor( &p ), processorRef( p )
@@ -10,7 +12,19 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor( AudioPluginAud
    // editor's size to whatever you need it to be.
    setSize( 1024, 640 );
 
-   int yofs = 16;
+   for( int i = 0; i < 16; i++ )
+   {
+      juce::TextButton *pButton = new juce::TextButton( stdformat( "{}", i + 1 ) );
+      pButton->setToggleable( true );
+      pButton->setClickingTogglesState( true );
+      pButton->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
+      pButton->addListener( this );
+      m_PartButtons.push_back( pButton );
+      pButton->setBounds( i * 36 + 8, 7, 32, 18 );
+      addAndMakeVisible( pButton );
+   }
+
+   int yofs = 32;
 
    m_pKeyboard = new SamplerKeyboard( this );
    addKeyListener( m_pKeyboard );
@@ -45,6 +59,8 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor( AudioPluginAud
    {
       pSection->samplesUpdated();
    }
+
+   activatePart( 0 );
 }
 
 
@@ -56,6 +72,50 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
    delete m_pNameRangesUISection;
    delete m_pAEGUISection;
    delete m_pOutputUISection;
+
+   for( juce::TextButton *pButton : m_PartButtons )
+   {
+      delete pButton;
+   }
+
+   m_PartButtons.clear();
+}
+
+
+int AudioPluginAudioProcessorEditor::currentPart() const
+{
+   return( m_CurrentPart );
+}
+
+
+void AudioPluginAudioProcessorEditor::activatePart( int nPart )
+{
+   if( nPart < 0 || nPart >= m_PartButtons.size() )
+      return;
+
+   m_CurrentPart = nPart;
+   for( int i = 0; i < m_PartButtons.size(); i++ )
+   {
+      m_PartButtons[i]->setToggleState( i == nPart, dontSendNotification );
+   }
+}
+
+
+void AudioPluginAudioProcessorEditor::buttonClicked( Button *pButton )
+{
+   auto partIter = std::find( m_PartButtons.begin(), m_PartButtons.end(), pButton );
+   if( partIter != m_PartButtons.end() )
+   {
+      int partIndex = partIter - m_PartButtons.begin();
+      activatePart( partIndex );
+      m_pKeyboard->clearSelectedSamples();
+      repaint();
+   }
+}
+
+
+void AudioPluginAudioProcessorEditor::buttonStateChanged( Button *pButton )
+{
 }
 
 
@@ -95,13 +155,8 @@ void AudioPluginAudioProcessorEditor::handleNoteOff( MidiKeyboardState *pSource,
 }
 
 
-void AudioPluginAudioProcessorEditor::buttonClicked( juce::Button *pButton )
-{
-}
-
-
 //==============================================================================
-void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
+void AudioPluginAudioProcessorEditor::paint( juce::Graphics& g )
 {
    juce::ignoreUnused( g );
 

@@ -24,7 +24,6 @@ public:
    ~Sample();
 
    static Sample *fromXml( const juce::XmlElement *pe );
-
    juce::XmlElement *getStateInformation() const;
 
    std::string getName() const;
