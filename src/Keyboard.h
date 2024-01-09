@@ -53,7 +53,7 @@ protected:
    int m_KeyHeight;
    int m_NoteOffset;
    int m_MaxNoteOffset;
-   int m_Notes[128];
+   int m_Notes[16][128];
    int m_CurrentNote;
    int m_Width;
 };

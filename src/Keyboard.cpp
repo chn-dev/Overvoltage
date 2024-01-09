@@ -19,7 +19,10 @@ Keyboard::Keyboard( AudioPluginAudioProcessorEditor *pEditor ) :
 {
    for( int i = 0; i < 128; i++ )
    {
-      m_Notes[i] = -1;
+      for( int j = 0; j < 16; j++ )
+      {
+         m_Notes[j][i] = -1;
+      }
    }
 }
 
@@ -121,8 +124,8 @@ void Keyboard::handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int mi
 
    if( m_CurrentNote != midiNoteNumber )
    {
-      m_Notes[midiNoteNumber] = (int)( velocity * 128 );
-      noteOn( 1, midiNoteNumber, velocity );
+      m_Notes[midiChannel - 1][midiNoteNumber] = (int)( velocity * 128 );
+      noteOn( midiChannel, midiNoteNumber, velocity );
 
       const MessageManagerLock mmLock;
       repaint();
@@ -136,8 +139,8 @@ void Keyboard::handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int m
 
    if( m_CurrentNote != midiNoteNumber )
    {
-      m_Notes[midiNoteNumber] = -1;
-      noteOff( 1, midiNoteNumber, velocity );
+      m_Notes[midiChannel - 1][midiNoteNumber] = -1;
+      noteOff( midiChannel, midiNoteNumber, velocity );
 
       const MessageManagerLock mmLock;
       repaint();
@@ -176,7 +179,7 @@ void Keyboard::drawNote( juce::Graphics &g, int note )
    if( r.getY() + r.getHeight() < 0 )
       return;
 
-   if( m_Notes[note] >= 0 )
+   if( m_Notes[m_pEditor->currentPart()][note] >= 0 )
       g.setColour( juce::Colour::fromRGB( 255, 64, 64 ) );
    else
       g.setColour( c );
@@ -316,14 +319,14 @@ void Keyboard::mouseDrag( const MouseEvent &event )
    {
       if( m_CurrentNote != note )
       {
-         m_Notes[m_CurrentNote] = -1;
+         m_Notes[m_pEditor->currentPart()][m_CurrentNote] = -1;
          noteOff( m_pEditor->currentPart() + 1, m_CurrentNote, 1.0 );
 
          m_CurrentNote = -1;
 
          if( note >= 0 )
          {
-            m_Notes[note] = 127;
+            m_Notes[m_pEditor->currentPart()][note] = 127;
             m_CurrentNote = note;
             noteOn( m_pEditor->currentPart() + 1, m_CurrentNote, 1.0 );
          }
@@ -365,9 +368,9 @@ void Keyboard::mouseDown( const MouseEvent &event )
 
    if( note >= 0 )
    {
-      if( m_Notes[note] < 0 )
+      if( m_Notes[m_pEditor->currentPart()][note] < 0 )
       {
-         m_Notes[note] = 127;
+         m_Notes[m_pEditor->currentPart()][note] = 127;
          m_CurrentNote = note;
          noteOn( m_pEditor->currentPart() + 1, note, 1.0 );
          repaint();
@@ -385,7 +388,7 @@ void Keyboard::mouseUp( const MouseEvent &event )
 
    if( m_CurrentNote >= 0 )
    {
-      m_Notes[m_CurrentNote] = -1;
+      m_Notes[m_pEditor->currentPart()][m_CurrentNote] = -1;
       m_CurrentNote = -1;
       noteOff( m_pEditor->currentPart() + 1, note, 1.0 );
       repaint();
