@@ -4,18 +4,19 @@
 
 Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
    m_Name( name ),
+   m_OutputBus( 0 ),
+   m_pAEG( nullptr ),
    m_pWave( pWave ),
-   m_MinNote( minNote ),
-   m_MaxNote( maxNote ),
-   m_BaseNote( minNote ),
    m_PlayMode( Sample::PlayModeStandard ),
    m_DetuneCents( 0.0 ),
-   m_Reverse( false ),
-   m_MinVelocity( 0 ),
-   m_MaxVelocity( 127 ),
    m_Pan( 0.0 ),
    m_Gain( 1.0 ),
-   m_OutputBus( 0 )
+   m_Reverse( false ),
+   m_BaseNote( minNote ),
+   m_MinNote( minNote ),
+   m_MaxNote( maxNote ),
+   m_MinVelocity( 0 ),
+   m_MaxVelocity( 127 )
 {
    m_pAEG = new ENV();
 }
@@ -23,19 +24,19 @@ Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
 
 Sample::Sample() :
    m_Name( "" ),
+   m_OutputBus( 0 ),
+   m_pAEG( nullptr ),
    m_pWave( nullptr ),
-   m_MinNote( -1 ),
-   m_MaxNote( -1 ),
-   m_BaseNote( -1 ),
    m_PlayMode( Sample::PlayModeStandard ),
    m_DetuneCents( 0.0 ),
-   m_Reverse( false ),
-   m_MinVelocity( -1 ),
-   m_MaxVelocity( -1 ),
-   m_pAEG( nullptr ),
    m_Pan( 0.0 ),
    m_Gain( 1.0 ),
-   m_OutputBus( 0 )
+   m_Reverse( false ),
+   m_BaseNote( -1 ),
+   m_MinNote( -1 ),
+   m_MaxNote( -1 ),
+   m_MinVelocity( -1 ),
+   m_MaxVelocity( -1 )
 {
 }
 

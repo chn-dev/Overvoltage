@@ -131,8 +131,7 @@ void OutputUISection::samplesUpdated()
 }
 
 
-void OutputUISection::labelTextChanged( Label *pLabel )
+void OutputUISection::labelTextChanged( Label */*pLabel*/ )
 {
-   if( !sample() )
-      return;
 }
+

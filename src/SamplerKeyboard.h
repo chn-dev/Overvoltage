@@ -10,7 +10,7 @@
 class SamplerKeyboardListener
 {
 public:
-   virtual void onDeleteSample( int part, Sample *pSample ) = 0;
+   virtual void onDeleteSample( size_t part, Sample *pSample ) = 0;
 };
 
 //==============================================================================
@@ -38,7 +38,9 @@ public:
    virtual void handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
    virtual void handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
 
+	virtual bool keyPressed( const KeyPress &key );
    virtual bool keyPressed( const KeyPress &key, Component *pOriginatingComponent );
+   virtual bool keyStateChanged( bool isKeyDown );
    virtual bool keyStateChanged( bool isKeyDown, Component *pOriginatingComponent );
 
    virtual bool isInterestedInFileDrag( const StringArray &files );

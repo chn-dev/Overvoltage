@@ -3,7 +3,7 @@
 #include "Part.h"
 #include "util.h"
 
-Part::Part( int partNum ) :
+Part::Part( size_t partNum ) :
    m_PartNum( partNum )
 {
 }
@@ -37,7 +37,7 @@ Part *Part::fromXml( const juce::XmlElement *pe )
    if( pe->getTagName() != "part" )
       return( nullptr );
 
-   int partNum = std::stoi( pe->getStringAttribute( "num" ).toStdString() );
+   size_t partNum = std::stoul( pe->getStringAttribute( "num" ).toStdString() );
 
    Part *pPart = new Part( partNum );
 
@@ -65,7 +65,7 @@ Part *Part::fromXml( const juce::XmlElement *pe )
 }
 
 
-int Part::getPartNum() const
+size_t Part::getPartNum() const
 {
    return( m_PartNum );
 }

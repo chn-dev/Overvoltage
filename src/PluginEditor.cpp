@@ -82,19 +82,19 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
 }
 
 
-int AudioPluginAudioProcessorEditor::currentPart() const
+size_t AudioPluginAudioProcessorEditor::currentPart() const
 {
    return( m_CurrentPart );
 }
 
 
-void AudioPluginAudioProcessorEditor::activatePart( int nPart )
+void AudioPluginAudioProcessorEditor::activatePart( size_t nPart )
 {
-   if( nPart < 0 || nPart >= m_PartButtons.size() )
+   if( nPart >= m_PartButtons.size() )
       return;
 
    m_CurrentPart = nPart;
-   for( int i = 0; i < m_PartButtons.size(); i++ )
+   for( size_t i = 0; i < m_PartButtons.size(); i++ )
    {
       m_PartButtons[i]->setToggleState( i == nPart, dontSendNotification );
    }
@@ -106,7 +106,7 @@ void AudioPluginAudioProcessorEditor::buttonClicked( Button *pButton )
    auto partIter = std::find( m_PartButtons.begin(), m_PartButtons.end(), pButton );
    if( partIter != m_PartButtons.end() )
    {
-      int partIndex = partIter - m_PartButtons.begin();
+      size_t partIndex = (size_t)( partIter - m_PartButtons.begin() );
       activatePart( partIndex );
       m_pKeyboard->clearSelectedSamples();
       repaint();
@@ -114,7 +114,7 @@ void AudioPluginAudioProcessorEditor::buttonClicked( Button *pButton )
 }
 
 
-void AudioPluginAudioProcessorEditor::buttonStateChanged( Button *pButton )
+void AudioPluginAudioProcessorEditor::buttonStateChanged( Button */*pButton*/ )
 {
 }
 

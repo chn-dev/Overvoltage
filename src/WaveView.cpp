@@ -60,7 +60,7 @@ void WaveView::paint( juce::Graphics &g )
    {
       const WaveFile *pWave = sample()->getWave();
 
-      if( m_SelectionStart != ~0 && m_SelectionEnd != ~0 )
+      if( ( m_SelectionStart != ~(decltype( m_SelectionStart ))0 ) && ( m_SelectionEnd != ~(decltype( m_SelectionEnd ))0 ) )
       {
          uint32_t s = m_SelectionStart;
          uint32_t e = m_SelectionEnd;
@@ -209,10 +209,10 @@ void WaveView::resized()
 void WaveView::samplesUpdated()
 {
    m_IsSelecting = false;
-   m_SelectionStart = ~0;
-   m_SelectionEnd = ~0;
-   m_SampleViewStart = ~0;
-   m_SampleViewEnd = ~0;
+   m_SelectionStart = ~(decltype( m_SelectionStart ))0;
+   m_SelectionEnd = ~(decltype( m_SelectionEnd ))0;
+   m_SampleViewStart = ~(decltype( m_SampleViewStart ))0;
+   m_SampleViewEnd = ~(decltype( m_SampleViewEnd ))0;
 
    m_pbZoom->setVisible( samples().size() == 1 );
    m_pbShowAll->setVisible( samples().size() == 1 );
@@ -300,13 +300,13 @@ int WaveView::getXPosFromSampleNum( uint32_t sampleNum ) const
 {
    uint32_t numSamples = getSampleViewEnd() - getSampleViewStart() + 1;
    sampleNum = sampleNum - getSampleViewStart();
-   return( ( sampleNum * ( getBounds().getWidth() - 2 ) / numSamples ) + 1 );
+   return( ( (int)sampleNum * ( getBounds().getWidth() - 2 ) / (int)numSamples ) + 1 );
 }
 
 
 uint32_t WaveView::getSampleViewStart() const
 {
-   if( ( m_SampleViewStart == ~0 ) || ( m_SampleViewEnd == ~0 ) )
+   if( ( m_SampleViewStart == ~(decltype( m_SampleViewStart ))0 ) || ( m_SampleViewEnd == ~(decltype( m_SampleViewEnd ))0 ) )
    {
       if( sample() )
       {
@@ -320,7 +320,7 @@ uint32_t WaveView::getSampleViewStart() const
 
 uint32_t WaveView::getSampleViewEnd() const
 {
-   if( ( m_SampleViewStart == ~0 ) || ( m_SampleViewEnd == ~0 ) )
+   if( ( m_SampleViewStart == ~(decltype( m_SampleViewStart ))0 ) || ( m_SampleViewEnd == ~(decltype( m_SampleViewEnd ))0 ) )
    {
       if( sample() )
       {
@@ -377,8 +377,8 @@ void WaveView::mouseUp( const MouseEvent &/*event*/ )
    m_IsSelecting = false;
    if( m_SelectionStart == m_SelectionEnd )
    {
-      m_SelectionStart = ~0;
-      m_SelectionEnd = ~0;
+      m_SelectionStart = ~(decltype( m_SelectionStart ))0;
+      m_SelectionEnd = ~(decltype( m_SelectionEnd ))0;
    }
 
    repaint();
@@ -423,14 +423,14 @@ void WaveView::buttonClicked( Button *pButton )
    } else
    if( pButton == m_pbZoom )
    {
-      if( ( m_SelectionStart != ~0 ) && ( m_SelectionEnd != ~0 ) )
+      if( ( m_SelectionStart != ~(decltype( m_SelectionStart ))0 ) && ( m_SelectionEnd != ~(decltype( m_SelectionEnd ))0 ) )
       {
          uint32_t selStart = m_SelectionStart < m_SelectionEnd ? m_SelectionStart : m_SelectionEnd;
          uint32_t selEnd =   m_SelectionStart < m_SelectionEnd ? m_SelectionEnd : m_SelectionStart;
          m_SampleViewStart = selStart;
          m_SampleViewEnd = selEnd;
-         m_SelectionStart = ~0;
-         m_SelectionEnd = ~0;
+         m_SelectionStart = ~(decltype( m_SelectionStart ))0;
+         m_SelectionEnd = ~(decltype( m_SelectionEnd ))0;
 
          m_psScrollBar->setCurrentRange( getSampleViewStart(), getSampleViewEnd() - getSampleViewStart() );
 
@@ -439,20 +439,20 @@ void WaveView::buttonClicked( Button *pButton )
    } else
    if( pButton == m_pbShowAll )
    {
-      m_SampleViewStart = ~0;
-      m_SampleViewEnd = ~0;
+      m_SampleViewStart = ~(decltype( m_SampleViewStart ))0;
+      m_SampleViewEnd = ~(decltype( m_SampleViewEnd ))0;
       m_psScrollBar->setCurrentRange( getSampleViewStart(), getSampleViewEnd() );
       repaint();
    }
 }
 
 
-void WaveView::buttonStateChanged( Button *pButton )
+void WaveView::buttonStateChanged( Button */*pButton*/ )
 {
 }
 
 
-void WaveView::scrollBarMoved( ScrollBar *pScrollBar, double newRangeStart )
+void WaveView::scrollBarMoved( ScrollBar *pScrollBar, double /*newRangeStart*/ )
 {
    if( pScrollBar == m_psScrollBar )
    {

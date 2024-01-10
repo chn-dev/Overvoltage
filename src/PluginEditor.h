@@ -33,12 +33,12 @@ public:
    virtual void buttonClicked( juce::Button *pButton );
    virtual void buttonStateChanged( juce::Button *pButton );
 
-   int currentPart() const;
+   size_t currentPart() const;
 
    AudioPluginAudioProcessor &processor() const;
 
 private:
-   void activatePart( int nPart );
+   void activatePart( size_t nPart );
 
    // This reference is provided as a quick way for your editor to
    // access the processor object that created it.
@@ -53,7 +53,7 @@ private:
    AEGUISection *m_pAEGUISection;
    OutputUISection *m_pOutputUISection;
 
-   int m_CurrentPart;
+   size_t m_CurrentPart;
    std::vector<juce::TextButton *> m_PartButtons;
 
    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( AudioPluginAudioProcessorEditor )

@@ -20,7 +20,7 @@ public:
    AudioPluginAudioProcessor();
    ~AudioPluginAudioProcessor() override;
 
-   virtual void onDeleteSample( int part, Sample *pSample );
+   virtual void onDeleteSample( size_t part, Sample *pSample );
 
    //==============================================================================
    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -65,13 +65,13 @@ public:
    void stopVoice( const Voice *pVoice );
 
 private:
-   void deleteSample( int part, Sample *pSample );
+   void deleteSample( size_t part, Sample *pSample );
    bool outputBusReady( juce::AudioBuffer<float>& buffer, int n ) const;
 
    //==============================================================================
    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( AudioPluginAudioProcessor )
    AudioPluginAudioProcessorEditor *m_pEditor;
-   std::list<Sample *> getSamplesByMidiNoteAndVelocity( int part, int note, int vel ) const;
+   std::list<Sample *> getSamplesByMidiNoteAndVelocity( size_t part, int note, int vel ) const;
 
    std::multimap<int, Voice *> m_Voices;
    std::vector<Part *> m_Parts;

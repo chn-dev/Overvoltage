@@ -76,7 +76,7 @@ void SampleUISection::buttonClicked( Button *pButton )
 }
 
 
-void SampleUISection::buttonStateChanged( Button *pButton )
+void SampleUISection::buttonStateChanged( Button */*pButton*/ )
 {
 }
 

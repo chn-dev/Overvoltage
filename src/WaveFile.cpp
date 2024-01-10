@@ -5,15 +5,15 @@
 #include "util.h"
 
 WaveFile::WaveFile() :
-   m_Format( -1 ),
-   m_nChannels( -1 ),
-   m_SampleRate( -1 ),
-   m_nBits( -1 ),
-   m_pData( 0 ),
-   m_nSamples( -1 ),
-   m_LoopStart( -1 ),
-   m_LoopEnd( -1 ),
-   m_IsLooped( false )
+   m_Format( (decltype( m_Format ))-1 ),
+   m_nChannels( (decltype( m_nChannels ))-1 ),
+   m_SampleRate( ~(decltype( m_SampleRate ))0 ),
+   m_nBits( (decltype( m_nBits ))-1 ),
+   m_nSamples( ~(decltype( m_nSamples ))0 ),
+   m_LoopStart( ~(decltype( m_LoopStart ))0 ),
+   m_LoopEnd( ~(decltype( m_LoopEnd ))0 ),
+   m_IsLooped( false ),
+   m_pData( nullptr )
 {
 }
 
@@ -60,7 +60,7 @@ juce::XmlElement *WaveFile::getStateInformation() const
    pe->addChildElement( peIsLooped );
 
    juce::XmlElement *peData = new juce::XmlElement( "data" );
-   juce::MemoryBlock mb = juce::MemoryBlock( m_pData, m_nChannels * m_nBits * m_nSamples / 8 );
+   juce::MemoryBlock mb = juce::MemoryBlock( m_pData, (uint32_t)m_nChannels * (uint32_t)m_nBits * m_nSamples / 8 );
    peData->addTextElement( mb.toBase64Encoding() );
    pe->addChildElement( peData );
 
@@ -76,12 +76,11 @@ WaveFile *WaveFile::fromXml( const juce::XmlElement *pe )
    int nChannels = -1;
    int sampleRate = -1;
    int nBits = -1;
-   uint32_t nSamples = -1;
-   uint32_t loopStart = -1;
-   uint32_t loopEnd = -1;
+   uint32_t nSamples = ~(decltype( nSamples ))0;
+   uint32_t loopStart = ~(decltype( loopStart ))0;
+   uint32_t loopEnd = ~(decltype( loopEnd ))0;
    bool isLooped = false;
-   void *pData = nullptr;
-   size_t dataSize = -1;
+   uint8_t *pData = nullptr;
 
    for( int i = 0; pe->getChildElement( i ); i++ )
    {
@@ -123,21 +122,21 @@ WaveFile *WaveFile::fromXml( const juce::XmlElement *pe )
          juce::MemoryBlock mem;
          if( mem.fromBase64Encoding( v ) )
          {
-            dataSize = mem.getSize();
-            pData = malloc( dataSize );
+            size_t dataSize = mem.getSize();
+            pData = new uint8_t[dataSize];
             memcpy( pData, mem.getData(), dataSize );
          }
       }
    }
 
    if( nChannels >= 0 && sampleRate >= 0 &&
-       nBits >= 0 && nSamples != -1 &&
-       loopStart != -1 && loopEnd != -1 && pData )
+       nBits >= 0 && nSamples != ~(decltype( nSamples ))0 &&
+       loopStart != ~(decltype( loopStart ))0 && loopEnd != ~(decltype( loopEnd ))0 && pData )
    {
       WaveFile *pWaveFile = new WaveFile();
       pWaveFile->m_Format = 1;
       pWaveFile->m_nChannels = nChannels;
-      pWaveFile->m_SampleRate = sampleRate;
+      pWaveFile->m_SampleRate = (uint32_t)sampleRate;
       pWaveFile->m_nBits = nBits;
       pWaveFile->m_nSamples = nSamples;
       pWaveFile->m_LoopStart = loopStart;
@@ -235,22 +234,22 @@ uint8_t *WaveFile::data8() const
 }
 
 
-float WaveFile::floatValue( int nChannel, int nSample ) const
+float WaveFile::floatValue( int nChannel, uint32_t nSample ) const
 {
-   if( nChannel < 0 || nChannel >= m_nChannels )
+   if( (uint32_t)nChannel >= m_nChannels )
       return( NAN );
 
-   if( nSample < 0 || nSample >= m_nSamples )
+   if( nSample >= m_nSamples )
       return( NAN );
 
    if( m_nBits == 16 )
    {
-      int16_t v = data16()[( nSample * m_nChannels ) + nChannel];
+      int16_t v = (int16_t)data16()[( nSample * m_nChannels ) + (uint32_t)nChannel];
       return( (float)v / 32768.0 );
    } else
    if( m_nBits == 8 )
    {
-      uint8_t v = data16()[( nSample * m_nChannels ) + nChannel];
+      uint8_t v = data16()[( nSample * m_nChannels ) + (uint32_t)nChannel];
       return( (float)v / 128 );
    } else
    {
@@ -276,10 +275,10 @@ uint32_t WaveFile::readDWord( std::ifstream &file )
    unsigned char tmpDW[4];
 
    file.read( (char *)&tmpDW, sizeof( tmpDW ) );
-   return( ( tmpDW[3] << 24 ) |
-           ( tmpDW[2] << 16 ) |
-           ( tmpDW[1] << 8 ) |
-             tmpDW[0] );
+   return( ( (uint32_t)tmpDW[3] << 24 ) |
+           ( (uint32_t)tmpDW[2] << 16 ) |
+           ( (uint32_t)tmpDW[1] << 8 ) |
+           ( (uint32_t)tmpDW[0] ) );
 }
 
 
@@ -289,9 +288,9 @@ uint16_t WaveFile::getWord( const unsigned char *pD )
 }
 
 
-uint16_t WaveFile::getDWord( const unsigned char *pD )
+uint32_t WaveFile::getDWord( const unsigned char *pD )
 {
-   return( pD[0] | pD[1] << 8 | pD[2] << 16 | pD[3] << 24 );
+   return( ( (uint32_t)pD[0] ) | ( (uint32_t)pD[1] << 8 ) | ( (uint32_t)pD[2] << 16 ) | ( (uint32_t)pD[3] << 24 ) );
 }
 
 
@@ -300,26 +299,24 @@ WaveFile *WaveFile::load( std::string fname )
    std::ifstream file;
 
    file.open( fname, std::ios_base::binary );
-
    if( !file )
-      return( 0 );
+      return( nullptr );
 
    WaveFile *pWav = new WaveFile();
 
    file.seekg( 0, std::ios_base::beg );
-
    if( readTagName( file ) !=  "RIFF" )
    {
       file.close();
-      return( 0 );
+      return( nullptr );
    }
 
-   uint32_t riffLen = readDWord( file );
+   /*uint32_t riffLen = */readDWord( file );
 
    if( readTagName( file ) != "WAVE" )
    {
       file.close();
-      return( 0 );
+      return( nullptr );
    }
 
    bool haveFormat = false;
@@ -330,8 +327,6 @@ WaveFile *WaveFile::load( std::string fname )
       std::string tagName = readTagName( file );
       uint32_t tagLen = readDWord( file );
       uint32_t tagRead = 0;
-
-      bool e = file.eof();
 
       if( tagName == "fmt " )
       {
@@ -368,11 +363,11 @@ WaveFile *WaveFile::load( std::string fname )
             tagRead = tagLen;
 
             uint32_t nSampleLoops= getDWord( pFmt + 0x24 - 8 );
-            for( int i = 0; i < nSampleLoops; i++ )
+            for( uint32_t i = 0; i < nSampleLoops; i++ )
             {
-               uint32_t id = getDWord( pFmt + ( i * 6 * 4 ) + 0x2c - 8 );
+//               uint32_t id = getDWord( pFmt + ( i * 6 * 4 ) + 0x2c - 8 );
                uint32_t loopStart = getDWord( pFmt + ( i * 6 * 4 ) + 0x2c - 8 + 8 );
-               uint32_t loopEnd = getDWord( pFmt + ( i * 6 * 4 ) + 0x2c - 8 + 12 ) - 1;
+               uint32_t loopEnd   = getDWord( pFmt + ( i * 6 * 4 ) + 0x2c - 8 + 12 ) - 1;
 
                pWav->m_LoopStart = loopStart;
                pWav->m_LoopEnd = loopEnd;
@@ -383,7 +378,7 @@ WaveFile *WaveFile::load( std::string fname )
       } else
       if( tagName == "data" )
       {
-         void *pData = new unsigned char[tagLen];
+         uint8_t *pData = new uint8_t[tagLen];
          file.read( (char *)pData, tagLen );
          pWav->m_pData = pData;
          haveData = true;
@@ -401,10 +396,10 @@ WaveFile *WaveFile::load( std::string fname )
    if( !ok )
    {
       delete pWav;
-      pWav = 0;
+      pWav = nullptr;
    }
 
-   pWav->m_nSamples = pWav->m_nSamples / ( pWav->m_nChannels * ( pWav->m_nBits / 8 ) );
+   pWav->m_nSamples = pWav->m_nSamples / ( (uint32_t)pWav->m_nChannels * ( (uint32_t)pWav->m_nBits / 8 ) );
    if( !pWav->isLooped() )
    {
       pWav->m_LoopStart = 0;

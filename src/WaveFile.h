@@ -28,7 +28,7 @@ public:
    uint16_t *data16() const;
    uint8_t *data8() const;
 
-   float floatValue( int nChannel, int nSample ) const;
+   float floatValue( int nChannel, uint32_t nSample ) const;
 
    uint32_t size() const;
 
@@ -39,7 +39,7 @@ protected:
    static std::string readTagName( std::ifstream &file );
    static uint32_t readDWord( std::ifstream &file );
    static uint16_t getWord( const unsigned char *pD );
-   static uint16_t getDWord( const unsigned char *pD );
+   static uint32_t getDWord( const unsigned char *pD );
 
 private:
    WaveFile();
@@ -53,5 +53,5 @@ private:
    uint32_t m_LoopStart;
    uint32_t m_LoopEnd;
    bool m_IsLooped;
-   void *m_pData;
+   uint8_t *m_pData;
 };

@@ -8,20 +8,20 @@
 class Part
 {
 public:
-   Part( int partNum );
+   Part( size_t partNum );
    ~Part();
 
    std::list<Sample *> &samples();
    const std::list<Sample *> &constSamples() const;
 
-   int getPartNum() const;
+   size_t getPartNum() const;
    void deleteSample( Sample *pSample );
 
    static Part *fromXml( const juce::XmlElement *pe );
    juce::XmlElement *getStateInformation() const;
 
 private:
-   int m_PartNum;
+   size_t m_PartNum;
    std::list<Sample *> m_Samples;
 };
 

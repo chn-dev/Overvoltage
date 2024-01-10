@@ -9,14 +9,14 @@
 
 SamplerKeyboard::SamplerKeyboard( AudioPluginAudioProcessorEditor *pEditor ) :
    Keyboard( pEditor ),
-   m_DragDropNote( -1 ),
-   m_pCurrentSample( 0 ),
+   m_pCurrentSample( nullptr ),
    m_CurrentSampleNote( -1 ),
    m_CurrentSampleNoteOffset( 0 ),
    m_CurrentSampleHandle( -1 ),
+   m_DragDropNote( -1 ),
+   m_SelectionStartPoint( juce::Point<int>( 0, 0 ) ),
    m_SelectionRectangle( juce::Rectangle<int>( 0, 0, 0, 0 ) ),
-   m_Selecting( false ),
-   m_SelectionStartPoint( juce::Point<int>( 0, 0 ) )
+   m_Selecting( false )
 {
 }
 
@@ -35,7 +35,13 @@ void SamplerKeyboard::addSamplerKeyboardListener( SamplerKeyboardListener *pList
 }
 
 
-bool SamplerKeyboard::keyPressed( const KeyPress &key, Component *pOriginatingComponent )
+bool SamplerKeyboard::keyPressed( const KeyPress &/*key*/ )
+{
+   return( false );
+}
+
+
+bool SamplerKeyboard::keyPressed( const KeyPress &key, Component */*pOriginatingComponent*/ )
 {
    if( key == KeyPress::deleteKey )
    {
@@ -55,7 +61,13 @@ bool SamplerKeyboard::keyPressed( const KeyPress &key, Component *pOriginatingCo
 }
 
 
-bool SamplerKeyboard::keyStateChanged( bool isKeyDown, Component *pOriginatingComponent )
+bool SamplerKeyboard::keyStateChanged( bool /*isKeyDown*/ )
+{
+   return( false );
+}
+
+
+bool SamplerKeyboard::keyStateChanged( bool /*isKeyDown*/, Component */*pOriginatingComponent*/ )
 {
    return( true );
 }
@@ -71,7 +83,7 @@ Sample *SamplerKeyboard::getSampleAt( int x, int y ) const
          return( pSample );
    }
 
-   return( 0 );
+   return( nullptr );
 }
 
 
@@ -278,8 +290,6 @@ void SamplerKeyboard::updateCursor( const MouseEvent &event )
       int numSelected = m_SelectedSamples.size();
 
       juce::Rectangle<int> r = getNoteRect( pSample );
-      int lrX = r.getX() + r.getWidth();
-      int lrY = r.getY() + r.getHeight();
 
       bool top = false;
       bool bottom = false;
@@ -383,9 +393,9 @@ void SamplerKeyboard::mouseDrag( const MouseEvent &event )
       m_SelectedSamples.clear();
       for( Sample *pSample : samples() )
       {
-         juce::Rectangle<int> r = getNoteRect( pSample );
-         if( m_SelectionRectangle.contains( r ) ||
-             m_SelectionRectangle.intersects( r ) )
+         juce::Rectangle<int> noteRect = getNoteRect( pSample );
+         if( m_SelectionRectangle.contains( noteRect ) ||
+             m_SelectionRectangle.intersects( noteRect ) )
          {
             m_SelectedSamples.insert( pSample );
          }

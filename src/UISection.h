@@ -60,7 +60,8 @@ protected:
    AudioPluginAudioProcessorEditor *editor() const;
 
 private:
-   juce::Label *m_pLabel;
    AudioPluginAudioProcessorEditor *m_pEditor;
+   juce::Label *m_pLabel;
    std::set<Sample *> m_Samples;
 };
+

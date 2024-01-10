@@ -6,12 +6,12 @@
 #include "util.h"
 
 ENV::ENV() :
+   m_Value( 0.0 ),
+   m_State( StateNone ),
    m_Attack( 0.0 ),
    m_Decay( 0.0 ),
    m_Sustain( 1.0 ),
-   m_Release( 0.0 ),
-   m_Value( 0.0 ),
-   m_State( StateNone )
+   m_Release( 0.0 )
 {
 }
 

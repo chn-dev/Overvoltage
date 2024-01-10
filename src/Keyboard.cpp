@@ -1,21 +1,15 @@
-#ifdef __GNUC__
-#include <fmt/core.h>
-#define stdformat fmt::format
-#else
-#include <format>
-#define stdformat std::format
-#endif
-
 #include "Keyboard.h"
 #include "PluginEditor.h"
 
+#include "util.h"
+
 Keyboard::Keyboard( AudioPluginAudioProcessorEditor *pEditor ) :
    m_pEditor( pEditor ),
+   m_KeyHeight( 28 ),
    m_NoteOffset( 36 ),
    m_MaxNoteOffset( 128 ),
    m_CurrentNote( -1 ),
-   m_Width( -1 ),
-   m_KeyHeight( 28 )
+   m_Width( -1 )
 {
    for( int i = 0; i < 128; i++ )
    {

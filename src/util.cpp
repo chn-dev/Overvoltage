@@ -26,7 +26,7 @@ namespace util
       int r = 0;
       double v = a[0];
 
-      for( int i = 0; i < a.size(); i++ )
+      for( size_t i = 0; i < a.size(); i++ )
       {
          if( a[i] > v )
          {
@@ -115,7 +115,7 @@ namespace util
       {
          double tmp = min;
          min = max;
-         max = min;
+         max = tmp;
       }
 
       double v = (double)std::rand() / (double)RAND_MAX; // v = [0.0 .. 1.0]
@@ -126,7 +126,7 @@ namespace util
    std::string toLower( const std::string &str )
    {
       std::string r = str;
-      for( int i = 0; i < r.length(); i++ )
+      for( size_t i = 0; i < r.length(); i++ )
       {
          r[i] = std::tolower( str[i] );
       }

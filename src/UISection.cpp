@@ -1,11 +1,9 @@
-#pragma once
-
 #include "UISection.h"
 #include "PluginEditor.h"
 
 UISection::UISection( AudioPluginAudioProcessorEditor *pEditor, std::string label ) :
    m_pEditor( pEditor ),
-   m_pLabel( 0 )
+   m_pLabel( nullptr )
 {
    m_pEditor->addUISection( this );
 
@@ -56,7 +54,7 @@ UISection::CycleComponent::~CycleComponent()
 
 void UISection::CycleComponent::setCurrentItem( int item )
 {
-   setText( m_Items.at( item ), juce::dontSendNotification );
+   setText( m_Items.at( (size_t)item ), juce::dontSendNotification );
    m_CurrentItem = item;
 }
 
@@ -84,7 +82,7 @@ void UISection::CycleComponent::mouseDrag( const MouseEvent &event )
    if ( item < 0 )
       item = 0;
    else
-   if( item >= m_Items.size() )
+   if( (size_t)item >= m_Items.size() )
       item = m_Items.size() - 1;
 
    if( getCurrentItem() != item )
@@ -96,7 +94,7 @@ void UISection::CycleComponent::mouseDrag( const MouseEvent &event )
 }
 
 
-void UISection::CycleComponent::mouseDown( const MouseEvent &event )
+void UISection::CycleComponent::mouseDown( const MouseEvent &/*event*/ )
 {
    m_MouseStartPoint = juce::Desktop::getInstance().getMainMouseSource().getScreenPosition();
    m_OrigMouseCursor = getMouseCursor();
@@ -107,7 +105,7 @@ void UISection::CycleComponent::mouseDown( const MouseEvent &event )
 }
 
 
-void UISection::CycleComponent::mouseUp( const MouseEvent &event )
+void UISection::CycleComponent::mouseUp( const MouseEvent &/*event*/ )
 {
    setColour( ColourIds::outlineColourId, m_OrigColour );
    setMouseCursor( m_OrigMouseCursor );
@@ -117,7 +115,7 @@ void UISection::CycleComponent::mouseUp( const MouseEvent &event )
 void UISection::SliderLookAndFeel::drawLinearSlider(
    Graphics &g,
    int x, int y, int width, int height,
-   float sliderPos, float minSliderPos, float maxSliderPos,
+   float /*sliderPos*/, float /*minSliderPos*/, float /*maxSliderPos*/,
    const Slider::SliderStyle sliderStyle, Slider &slider )
 {
    if( sliderStyle == Slider::SliderStyle::LinearHorizontal )
@@ -224,7 +222,7 @@ void UISection::SliderLookAndFeel::drawLinearSlider(
 }
 
 
-void UISection::paint( juce::Graphics &g )
+void UISection::paint( juce::Graphics &/*g*/ )
 {
 }
 

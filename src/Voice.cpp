@@ -3,10 +3,11 @@
 
 Voice::Voice( const Sample *pSample, int note, int velocity ) :
    m_pSample( pSample ),
+   m_pAEG( nullptr ),
+   m_NoteIsOn( true ),
    m_Note( note ),
    m_Velocity( velocity ),
    m_Ofs( 0.0 ),
-   m_NoteIsOn( true ),
    m_nSample( 0 )
 {
    if( pSample->getReverse() )
@@ -191,8 +192,8 @@ bool Voice::process( float *pLeft, float *pRight, int nSamples, double sampleRat
 
             int o = m_Ofs;
 
-            int8_t lv = pData[( o * 2 ) + 0];
-            int8_t rv = pData[( o * 2 ) + 1];
+            int8_t lv = (int8_t)pData[( o * 2 ) + 0];
+            int8_t rv = (int8_t)pData[( o * 2 ) + 1];
 
             float lAmp = getLeftAmp( m_pSample->getPan() ) * m_pSample->getGain();
             float rAmp = getRightAmp( m_pSample->getPan() ) * m_pSample->getGain();
@@ -222,7 +223,7 @@ bool Voice::process( float *pLeft, float *pRight, int nSamples, double sampleRat
 
             int o = m_Ofs;
 
-            int8_t v = pData[o];
+            int8_t v = (int8_t)pData[o];
 
             float lAmp = getLeftAmp( m_pSample->getPan() ) * m_pSample->getGain();
             float rAmp = getRightAmp( m_pSample->getPan() ) * m_pSample->getGain();

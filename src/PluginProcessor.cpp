@@ -12,12 +12,12 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
       .withOutput( "Output 6", juce::AudioChannelSet::stereo(), true )
       .withOutput( "Output 7", juce::AudioChannelSet::stereo(), true )
       .withOutput( "Output 8", juce::AudioChannelSet::stereo(), true )
-   ), m_pEditor( 0 )
+   ), m_pEditor( nullptr )
 {
    m_ofs = 0;
    m_note = -1;
 
-   for( int i = 0; i < 16; i++ )
+   for( size_t i = 0; i < 16; i++ )
    {
       m_Parts.push_back( new Part( i ) );
    }
@@ -26,7 +26,7 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
 
 AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
 {
-   for( int i = 0; i < m_Parts.size(); i++ )
+   for( size_t i = 0; i < m_Parts.size(); i++ )
    {
       delete m_Parts[i];
    }
@@ -140,8 +140,6 @@ bool AudioPluginAudioProcessor::isBusesLayoutSupported( const BusesLayout& layou
 
 std::list<Sample *> &AudioPluginAudioProcessor::samples()
 {
-   int curPart = m_pEditor->currentPart();
-   Part *pPart = m_Parts[curPart];
    return( m_Parts[m_pEditor->currentPart()]->samples() );
 }
 
@@ -202,7 +200,7 @@ void AudioPluginAudioProcessor::handleNoteOn( MidiKeyboardState *pSource, int mi
 */
    int vel = 127 * velocity;
 
-   std::list<Sample *> s = getSamplesByMidiNoteAndVelocity( midiChannel - 1, midiNoteNumber, vel );
+   std::list<Sample *> s = getSamplesByMidiNoteAndVelocity( (size_t)( midiChannel - 1 ), midiNoteNumber, vel );
    for( Sample *pSample : s )
    {
       Voice *pVoice = new Voice( pSample, midiNoteNumber, vel );
@@ -213,7 +211,7 @@ void AudioPluginAudioProcessor::handleNoteOn( MidiKeyboardState *pSource, int mi
 }
 
 
-std::list<Sample *> AudioPluginAudioProcessor::getSamplesByMidiNoteAndVelocity( int part, int note, int vel ) const
+std::list<Sample *> AudioPluginAudioProcessor::getSamplesByMidiNoteAndVelocity( size_t part, int note, int vel ) const
 {
    std::list<Sample *> result;
 
@@ -436,7 +434,7 @@ void AudioPluginAudioProcessor::getStateInformation( juce::MemoryBlock& destData
    juce::XmlElement vt( "overvoltage" );
 
    juce::XmlElement *peParts = new juce::XmlElement( "parts" );
-   for( int i = 0; i < m_Parts.size(); i++ )
+   for( size_t i = 0; i < m_Parts.size(); i++ )
    {
       juce::XmlElement *pePart = m_Parts[i]->getStateInformation();
       peParts->addChildElement( pePart );
@@ -496,13 +494,13 @@ juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter()
 }
 
 
-void AudioPluginAudioProcessor::onDeleteSample( int part, Sample *pSample )
+void AudioPluginAudioProcessor::onDeleteSample( size_t part, Sample *pSample )
 {
    deleteSample( part, pSample );
 }
 
 
-void AudioPluginAudioProcessor::deleteSample( int part, Sample *pSample )
+void AudioPluginAudioProcessor::deleteSample( size_t part, Sample *pSample )
 {
    std::vector<Voice *> voicesToStop;
    for( std::pair<int, Voice *> sv : m_Voices )
