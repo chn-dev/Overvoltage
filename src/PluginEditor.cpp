@@ -4,7 +4,7 @@
 #include "util.h"
 
 //==============================================================================
-PluginEditor::PluginEditor( AudioPluginAudioProcessor& p )
+PluginEditor::PluginEditor( PluginProcessor& p )
    : AudioProcessorEditor( &p ), processorRef( p )
 {
    juce::ignoreUnused (processorRef);
@@ -137,7 +137,7 @@ void PluginEditor::removeUISection( UISection *pSection )
 }
 
 
-AudioPluginAudioProcessor &PluginEditor::processor() const
+PluginProcessor &PluginEditor::processor() const
 {
    return( processorRef );
 }

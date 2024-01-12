@@ -16,7 +16,7 @@ class PluginEditor : public juce::AudioProcessorEditor,
                      public juce::MidiKeyboardStateListener
 {
 public:
-   explicit PluginEditor( AudioPluginAudioProcessor & );
+   explicit PluginEditor( PluginProcessor & );
    ~PluginEditor() override;
 
    //==============================================================================
@@ -36,14 +36,14 @@ public:
 
    size_t currentPart() const;
 
-   AudioPluginAudioProcessor &processor() const;
+   PluginProcessor &processor() const;
 
 private:
    void activatePart( size_t nPart );
 
    // This reference is provided as a quick way for your editor to
    // access the processor object that created it.
-   AudioPluginAudioProcessor &processorRef;
+   PluginProcessor &processorRef;
 
    std::set<UISection *> m_UISections;
 

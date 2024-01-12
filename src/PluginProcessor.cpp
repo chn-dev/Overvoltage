@@ -2,7 +2,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-AudioPluginAudioProcessor::AudioPluginAudioProcessor()
+PluginProcessor::PluginProcessor()
    : AudioProcessor( BusesProperties()
       .withOutput( "Output 1", juce::AudioChannelSet::stereo(), true )
       .withOutput( "Output 2", juce::AudioChannelSet::stereo(), true )
@@ -24,7 +24,7 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
 }
 
 
-AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
+PluginProcessor::~PluginProcessor()
 {
    for( size_t i = 0; i < m_Parts.size(); i++ )
    {
@@ -35,13 +35,13 @@ AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
 
 
 //==============================================================================
-const juce::String AudioPluginAudioProcessor::getName() const
+const juce::String PluginProcessor::getName() const
 {
    return JucePlugin_Name;
 }
 
 
-bool AudioPluginAudioProcessor::acceptsMidi() const
+bool PluginProcessor::acceptsMidi() const
 {
 #if JucePlugin_WantsMidiInput
    return( true );
@@ -51,7 +51,7 @@ bool AudioPluginAudioProcessor::acceptsMidi() const
 }
 
 
-bool AudioPluginAudioProcessor::producesMidi() const
+bool PluginProcessor::producesMidi() const
 {
 #if JucePlugin_ProducesMidiOutput
    return( true );
@@ -61,7 +61,7 @@ bool AudioPluginAudioProcessor::producesMidi() const
 }
 
 
-bool AudioPluginAudioProcessor::isMidiEffect() const
+bool PluginProcessor::isMidiEffect() const
 {
 #if JucePlugin_IsMidiEffect
    return( true );
@@ -71,60 +71,60 @@ bool AudioPluginAudioProcessor::isMidiEffect() const
 }
 
 
-double AudioPluginAudioProcessor::getTailLengthSeconds() const
+double PluginProcessor::getTailLengthSeconds() const
 {
    return( 0.0 );
 }
 
 
-int AudioPluginAudioProcessor::getNumPrograms()
+int PluginProcessor::getNumPrograms()
 {
    return( 1 ); // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
 
-int AudioPluginAudioProcessor::getCurrentProgram()
+int PluginProcessor::getCurrentProgram()
 {
    return( 0 );
 }
 
 
-void AudioPluginAudioProcessor::setCurrentProgram( int index )
+void PluginProcessor::setCurrentProgram( int index )
 {
    juce::ignoreUnused( index );
 }
 
 
-const juce::String AudioPluginAudioProcessor::getProgramName( int index )
+const juce::String PluginProcessor::getProgramName( int index )
 {
    juce::ignoreUnused( index );
    return {};
 }
 
 
-void AudioPluginAudioProcessor::changeProgramName( int index, const juce::String &newName )
+void PluginProcessor::changeProgramName( int index, const juce::String &newName )
 {
    juce::ignoreUnused( index, newName );
 }
 
 
 //==============================================================================
-void AudioPluginAudioProcessor::prepareToPlay( double sampleRate, int samplesPerBlock )
+void PluginProcessor::prepareToPlay( double sampleRate, int samplesPerBlock )
 {
    m_sampleRate = sampleRate;
    m_samplesPerBlock = samplesPerBlock;
 }
 
 
-void AudioPluginAudioProcessor::releaseResources()
+void PluginProcessor::releaseResources()
 {
    // When playback stops, you can use this as an opportunity to free up any
    // spare memory, etc.
 }
 
 
-bool AudioPluginAudioProcessor::isBusesLayoutSupported( const BusesLayout& layouts ) const
+bool PluginProcessor::isBusesLayoutSupported( const BusesLayout& layouts ) const
 {
    // This is the place where you check if the layout is supported.
    // In this template code we only support mono or stereo.
@@ -138,25 +138,25 @@ bool AudioPluginAudioProcessor::isBusesLayoutSupported( const BusesLayout& layou
 }
 
 
-std::list<Sample *> &AudioPluginAudioProcessor::samples()
+std::list<Sample *> &PluginProcessor::samples()
 {
    return( m_Parts[m_pEditor->currentPart()]->samples() );
 }
 
 
-const std::list<Sample *> &AudioPluginAudioProcessor::constSamples() const
+const std::list<Sample *> &PluginProcessor::constSamples() const
 {
    return( m_Parts[m_pEditor->currentPart()]->samples() );
 }
 
 
-bool AudioPluginAudioProcessor::midiNoteIsPlaying( int midiNote ) const
+bool PluginProcessor::midiNoteIsPlaying( int midiNote ) const
 {
    return( m_Voices.count( midiNote ) > 0 );
 }
 
 
-std::set<int> AudioPluginAudioProcessor::allPlayingMidiNotes() const
+std::set<int> PluginProcessor::allPlayingMidiNotes() const
 {
    std::set<int> result;
    for( auto i = m_Voices.begin(); i != m_Voices.end(); i++ )
@@ -168,7 +168,7 @@ std::set<int> AudioPluginAudioProcessor::allPlayingMidiNotes() const
 }
 
 
-bool AudioPluginAudioProcessor::isPlaying( const Sample *pSample ) const
+bool PluginProcessor::isPlaying( const Sample *pSample ) const
 {
    std::set<int> midiNotes = allPlayingMidiNotes();
    for( auto v : m_Voices )
@@ -183,7 +183,7 @@ bool AudioPluginAudioProcessor::isPlaying( const Sample *pSample ) const
 }
 
 
-void AudioPluginAudioProcessor::handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
+void PluginProcessor::handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
 {
    juce::ignoreUnused( pSource, midiChannel, velocity );
 /* MONO mode
@@ -211,7 +211,7 @@ void AudioPluginAudioProcessor::handleNoteOn( MidiKeyboardState *pSource, int mi
 }
 
 
-std::list<Sample *> AudioPluginAudioProcessor::getSamplesByMidiNoteAndVelocity( size_t part, int note, int vel ) const
+std::list<Sample *> PluginProcessor::getSamplesByMidiNoteAndVelocity( size_t part, int note, int vel ) const
 {
    std::list<Sample *> result;
 
@@ -227,7 +227,7 @@ std::list<Sample *> AudioPluginAudioProcessor::getSamplesByMidiNoteAndVelocity( 
 }
 
 
-void AudioPluginAudioProcessor::handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
+void PluginProcessor::handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
 {
    juce::ignoreUnused( pSource, midiChannel, midiNoteNumber, velocity );
 
@@ -245,7 +245,7 @@ void AudioPluginAudioProcessor::handleNoteOff( MidiKeyboardState *pSource, int m
 }
 
 
-void AudioPluginAudioProcessor::stopVoice( const Voice *pVoice )
+void PluginProcessor::stopVoice( const Voice *pVoice )
 {
    for( auto v = m_Voices.begin(); v != m_Voices.end(); v++ )
    {
@@ -259,7 +259,7 @@ void AudioPluginAudioProcessor::stopVoice( const Voice *pVoice )
 }
 
 
-bool AudioPluginAudioProcessor::outputBusReady( juce::AudioBuffer<float>& buffer, int n ) const
+bool PluginProcessor::outputBusReady( juce::AudioBuffer<float>& buffer, int n ) const
 {
    if( n >= getBusCount( false ) )
    {
@@ -282,7 +282,7 @@ bool AudioPluginAudioProcessor::outputBusReady( juce::AudioBuffer<float>& buffer
 }
 
 
-void AudioPluginAudioProcessor::processBlock( juce::AudioBuffer<float>& buffer,
+void PluginProcessor::processBlock( juce::AudioBuffer<float>& buffer,
                                               juce::MidiBuffer& midiMessages )
 {
    for (const juce::MidiMessageMetadata metadata : midiMessages)
@@ -412,13 +412,13 @@ void AudioPluginAudioProcessor::processBlock( juce::AudioBuffer<float>& buffer,
 
 
 //==============================================================================
-bool AudioPluginAudioProcessor::hasEditor() const
+bool PluginProcessor::hasEditor() const
 {
    return( true ); // (change this to false if you choose to not supply an editor)
 }
 
 
-juce::AudioProcessorEditor *AudioPluginAudioProcessor::createEditor()
+juce::AudioProcessorEditor *PluginProcessor::createEditor()
 {
    m_pEditor = new PluginEditor( *this );
    return( m_pEditor );
@@ -426,7 +426,7 @@ juce::AudioProcessorEditor *AudioPluginAudioProcessor::createEditor()
 
 
 //==============================================================================
-void AudioPluginAudioProcessor::getStateInformation( juce::MemoryBlock& destData )
+void PluginProcessor::getStateInformation( juce::MemoryBlock& destData )
 {
    // You should use this method to store your parameters in the memory block.
    // You could do that either as raw data, or use the XML or ValueTree classes
@@ -448,7 +448,7 @@ void AudioPluginAudioProcessor::getStateInformation( juce::MemoryBlock& destData
 }
 
 
-void AudioPluginAudioProcessor::setStateInformation( const void* data, int sizeInBytes )
+void PluginProcessor::setStateInformation( const void* data, int sizeInBytes )
 {
    // You should use this method to restore your parameters from this memory block,
    // whose contents will have been created by the getStateInformation() call.
@@ -490,17 +490,17 @@ void AudioPluginAudioProcessor::setStateInformation( const void* data, int sizeI
 // This creates new instances of the plugin..
 juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter()
 {
-   return( new AudioPluginAudioProcessor() );
+   return( new PluginProcessor() );
 }
 
 
-void AudioPluginAudioProcessor::onDeleteSample( size_t part, Sample *pSample )
+void PluginProcessor::onDeleteSample( size_t part, Sample *pSample )
 {
    deleteSample( part, pSample );
 }
 
 
-void AudioPluginAudioProcessor::deleteSample( size_t part, Sample *pSample )
+void PluginProcessor::deleteSample( size_t part, Sample *pSample )
 {
    std::vector<Voice *> voicesToStop;
    for( std::pair<int, Voice *> sv : m_Voices )

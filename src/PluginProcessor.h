@@ -12,15 +12,15 @@
 #include "SamplerKeyboard.h"
 
 //==============================================================================
-class AudioPluginAudioProcessor : public juce::AudioProcessor,
-                                  public juce::MidiKeyboardStateListener,
-                                  public juce::MidiKeyboardState,
-                                  public SamplerKeyboardListener
+class PluginProcessor : public juce::AudioProcessor,
+                        public juce::MidiKeyboardStateListener,
+                        public juce::MidiKeyboardState,
+                        public SamplerKeyboardListener
 {
 public:
    //==============================================================================
-   AudioPluginAudioProcessor();
-   ~AudioPluginAudioProcessor() override;
+   PluginProcessor();
+   ~PluginProcessor() override;
 
    virtual void onDeleteSample( size_t part, Sample *pSample );
 
@@ -71,7 +71,7 @@ private:
    bool outputBusReady( juce::AudioBuffer<float>& buffer, int n ) const;
 
    //==============================================================================
-   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( AudioPluginAudioProcessor )
+   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( PluginProcessor )
    PluginEditor *m_pEditor;
    std::list<Sample *> getSamplesByMidiNoteAndVelocity( size_t part, int note, int vel ) const;
 
