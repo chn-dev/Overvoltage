@@ -135,9 +135,9 @@ WaveFile *WaveFile::fromXml( const juce::XmlElement *pe )
    {
       WaveFile *pWaveFile = new WaveFile();
       pWaveFile->m_Format = 1;
-      pWaveFile->m_nChannels = nChannels;
+      pWaveFile->m_nChannels = (uint16_t)nChannels;
       pWaveFile->m_SampleRate = (uint32_t)sampleRate;
-      pWaveFile->m_nBits = nBits;
+      pWaveFile->m_nBits = (uint16_t)nBits;
       pWaveFile->m_nSamples = nSamples;
       pWaveFile->m_LoopStart = loopStart;
       pWaveFile->m_LoopEnd = loopEnd;
@@ -153,8 +153,6 @@ WaveFile *WaveFile::fromXml( const juce::XmlElement *pe )
       }
       return( nullptr );
    }
-
-   return( nullptr );
 }
 
 
@@ -245,11 +243,11 @@ float WaveFile::floatValue( int nChannel, uint32_t nSample ) const
    if( m_nBits == 16 )
    {
       int16_t v = (int16_t)data16()[( nSample * m_nChannels ) + (uint32_t)nChannel];
-      return( (float)v / 32768.0 );
+      return( (float)v / 32768.0f );
    } else
    if( m_nBits == 8 )
    {
-      uint8_t v = data16()[( nSample * m_nChannels ) + (uint32_t)nChannel];
+      uint8_t v = data8()[( nSample * m_nChannels ) + (uint32_t)nChannel];
       return( (float)v / 128 );
    } else
    {
@@ -362,17 +360,16 @@ WaveFile *WaveFile::load( std::string fname )
             file.read( (char *)pFmt, tagLen );
             tagRead = tagLen;
 
-            uint32_t nSampleLoops= getDWord( pFmt + 0x24 - 8 );
-            for( uint32_t i = 0; i < nSampleLoops; i++ )
+            uint32_t nSampleLoops = getDWord( pFmt + 0x24 - 8 );
+            if( nSampleLoops > 0 )
             {
 //               uint32_t id = getDWord( pFmt + ( i * 6 * 4 ) + 0x2c - 8 );
-               uint32_t loopStart = getDWord( pFmt + ( i * 6 * 4 ) + 0x2c - 8 + 8 );
-               uint32_t loopEnd   = getDWord( pFmt + ( i * 6 * 4 ) + 0x2c - 8 + 12 ) - 1;
+               uint32_t loopStart = getDWord( pFmt + ( 0 * 6 * 4 ) + 0x2c - 8 + 8 );
+               uint32_t loopEnd   = getDWord( pFmt + ( 0 * 6 * 4 ) + 0x2c - 8 + 12 ) - 1;
 
                pWav->m_LoopStart = loopStart;
                pWav->m_LoopEnd = loopEnd;
                pWav->m_IsLooped = true;
-               break;
             }
          }
       } else
@@ -383,6 +380,7 @@ WaveFile *WaveFile::load( std::string fname )
          pWav->m_pData = pData;
          haveData = true;
          pWav->m_nSamples = tagLen;
+         tagRead = tagLen;
       }
 
       file.seekg( tagLen - tagRead, std::ios_base::cur );

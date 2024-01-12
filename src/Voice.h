@@ -11,14 +11,14 @@ public:
    Voice( const Sample *pSample, int note, int velocity );
    ~Voice();
 
-   bool process( float *pLeft, float *pRight, int nSamples, double sampleRate );
+   bool process( float *pLeft, float *pRight, int nSamples, float sampleRate );
    const Sample *sample() const;
    int midiNote() const;
    void noteOff();
    
 protected:
    bool handleLoop();
-   void handleModulations( double sampleRate );
+   void handleModulations( float sampleRate );
 
 private:
    static float getLeftAmp( float pan );

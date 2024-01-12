@@ -185,10 +185,9 @@ void Keyboard::drawNote( juce::Graphics &g, int note )
    if( note % 12 == 0 )
    {
       // C
-      char txt[32];
-      sprintf( txt, "%d ", ( note / 12 ) - 2 );
+      std::string t = stdformat( "{} " , ( note / 12 ) - 2 );
       g.setFont( r.getHeight() * 0.85f );
-      g.drawText( txt, r, juce::Justification::right );
+      g.drawText( t, r, juce::Justification::right );
    }
 }
 
@@ -314,7 +313,7 @@ void Keyboard::mouseDrag( const MouseEvent &event )
       if( m_CurrentNote != note )
       {
          m_Notes[m_pEditor->currentPart()][m_CurrentNote] = -1;
-         noteOff( m_pEditor->currentPart() + 1, m_CurrentNote, 1.0 );
+         noteOff( (int)m_pEditor->currentPart() + 1, m_CurrentNote, 1.0 );
 
          m_CurrentNote = -1;
 
@@ -322,7 +321,7 @@ void Keyboard::mouseDrag( const MouseEvent &event )
          {
             m_Notes[m_pEditor->currentPart()][note] = 127;
             m_CurrentNote = note;
-            noteOn( m_pEditor->currentPart() + 1, m_CurrentNote, 1.0 );
+            noteOn( (int)m_pEditor->currentPart() + 1, m_CurrentNote, 1.0 );
          }
 
          repaint();
@@ -366,7 +365,7 @@ void Keyboard::mouseDown( const MouseEvent &event )
       {
          m_Notes[m_pEditor->currentPart()][note] = 127;
          m_CurrentNote = note;
-         noteOn( m_pEditor->currentPart() + 1, note, 1.0 );
+         noteOn( (int)m_pEditor->currentPart() + 1, note, 1.0 );
          repaint();
       }
    }
@@ -384,7 +383,7 @@ void Keyboard::mouseUp( const MouseEvent &event )
    {
       m_Notes[m_pEditor->currentPart()][m_CurrentNote] = -1;
       m_CurrentNote = -1;
-      noteOff( m_pEditor->currentPart() + 1, note, 1.0 );
+      noteOff( (int)m_pEditor->currentPart() + 1, note, 1.0 );
       repaint();
    }
 }

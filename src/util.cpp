@@ -31,7 +31,7 @@ namespace util
          if( a[i] > v )
          {
             v = a[i];
-            r = i;
+            r = (int)i;
          }
       }
 
@@ -128,7 +128,7 @@ namespace util
       std::string r = str;
       for( size_t i = 0; i < r.length(); i++ )
       {
-         r[i] = std::tolower( str[i] );
+         r[i] = (char)std::tolower( str[i] );
       }
 
       return( r );

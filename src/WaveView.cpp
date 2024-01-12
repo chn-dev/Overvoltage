@@ -54,8 +54,8 @@ void WaveView::paint( juce::Graphics &g )
    if( samples().size() != 1 )
    {
       g.setColour( juce::Colour::fromRGB( 255, 0, 0 ) );
-      g.drawLine( 0, 0, getWidth(), totalHeight );
-      g.drawLine( getBounds().getWidth(), 0, 0, totalHeight );
+      g.drawLine( 0, 0, (float)getWidth(), (float)totalHeight );
+      g.drawLine( (float)getBounds().getWidth(), 0, 0, (float)totalHeight );
    } else
    {
       const WaveFile *pWave = sample()->getWave();
@@ -84,7 +84,7 @@ void WaveView::paint( juce::Graphics &g )
          int yCenter = ( yTop + yBottom ) / 2;
 
          g.setColour( juce::Colour::fromRGB( 255, 0, 0 ) );
-         g.drawLine( 0, yCenter, getBounds().getWidth() - 1, yCenter );
+         g.drawLine( 0, (float)yCenter, (float)( getBounds().getWidth() - 1 ), (float)yCenter );
 
          g.setColour( juce::Colour::fromRGB( 255, 255, 255 ) );
          int prevY = -1;
@@ -95,12 +95,12 @@ void WaveView::paint( juce::Graphics &g )
             float v = pWave->floatValue( nChannel, nSample );
             if( v != NAN )
             {
-               int y = ( v * (float)totalHeight ) / (float)pWave->numChannels();
+               int y = (int)( ( v * (float)totalHeight ) / (float)pWave->numChannels() );
                y /= 2;
 
                if( j > 0 )
                {
-                  g.drawLine( j - 1 + 1, prevY + yCenter, j + 1, y + yCenter );
+                  g.drawLine( (float)( j - 1 + 1 ), (float)( prevY + yCenter ), (float)( j + 1 ), (float)( y + yCenter ) );
                }
 
                prevY = y;
@@ -142,20 +142,20 @@ void WaveView::paint( juce::Graphics &g )
           pWave->loopStart() <= getSampleViewEnd() )
       {
          int loopStartX = getXPosFromSampleNum( pWave->loopStart() );
-         g.drawVerticalLine( loopStartX, 0, totalHeight );
-         tr.addTriangle( loopStartX, 0,
-                         loopStartX + 12, 0,
-                         loopStartX, 12 );
+         g.drawVerticalLine( loopStartX, 0, (float)totalHeight );
+         tr.addTriangle( (float)loopStartX, 0,
+                         (float)( loopStartX + 12 ), 0,
+                         (float)loopStartX, 12 );
       }
 
       if( pWave->loopEnd() >= getSampleViewStart() &&
           pWave->loopEnd() <= getSampleViewEnd() )
       {
          int loopEndX = getXPosFromSampleNum( pWave->loopEnd() );
-         g.drawVerticalLine( loopEndX, 0, totalHeight );
-         tr.addTriangle( loopEndX, 0,
-                         loopEndX - 12, 0,
-                         loopEndX, 12 );
+         g.drawVerticalLine( loopEndX, 0, (float)totalHeight );
+         tr.addTriangle( (float)loopEndX, 0,
+                         (float)( loopEndX - 12 ), 0,
+                         (float)loopEndX, 12 );
       }
 
       g.fillPath( tr );
@@ -290,7 +290,7 @@ uint32_t WaveView::getSampleNumFromXPos( int xPos ) const
 {
    uint32_t numSamples = getSampleViewEnd() - getSampleViewStart() + 1;
    float fDx = (float)xPos / ( (float)getBounds().getWidth() - 2 );
-   uint32_t nSample = fDx * ( numSamples - 1 );
+   uint32_t nSample = (uint32_t)( fDx * ( numSamples - 1 ) );
    nSample = nSample + getSampleViewStart();
    return( nSample );
 }
@@ -458,8 +458,8 @@ void WaveView::scrollBarMoved( ScrollBar *pScrollBar, double /*newRangeStart*/ )
    {
       double rStart = m_psScrollBar->getCurrentRangeStart();
       double rSize = m_psScrollBar->getCurrentRangeSize();
-      m_SampleViewStart = rStart;
-      m_SampleViewEnd = rStart + rSize;
+      m_SampleViewStart = (uint32_t)rStart;
+      m_SampleViewEnd = (uint32_t)( rStart + rSize );
       repaint();
    }
 }

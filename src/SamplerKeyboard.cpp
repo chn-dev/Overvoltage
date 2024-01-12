@@ -287,7 +287,7 @@ void SamplerKeyboard::updateCursor( const MouseEvent &event )
    if( pSample )
    {
       bool isSelected = m_SelectedSamples.find( pSample ) != m_SelectedSamples.end();
-      int numSelected = m_SelectedSamples.size();
+      size_t numSelected = m_SelectedSamples.size();
 
       juce::Rectangle<int> r = getNoteRect( pSample );
 

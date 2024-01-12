@@ -83,7 +83,7 @@ void UISection::CycleComponent::mouseDrag( const MouseEvent &event )
       item = 0;
    else
    if( (size_t)item >= m_Items.size() )
-      item = m_Items.size() - 1;
+      item = (int)m_Items.size() - 1;
 
    if( getCurrentItem() != item )
    {
@@ -131,42 +131,42 @@ void UISection::SliderLookAndFeel::drawLinearSlider(
       int y2 = y + ( height / 2 ) - 1;
       int y3 = y + ( height / 2 ) + ( knobHeight / 2 );
 
-      float p = ( slider.getValue() - slider.getMinimum() ) / ( slider.getMaximum() - slider.getMinimum() );
-      int xKnob = x2 + ( p * ( width - knobWidth ) );
+      float p = (float)( ( slider.getValue() - slider.getMinimum() ) / ( slider.getMaximum() - slider.getMinimum() ) );
+      int xKnob = (int)( x2 + ( p * ( width - knobWidth ) ) );
       int yKnob = y2;
 
       // The transparent triangle
       g.setColour( juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
       Path tr;
-      tr.addTriangle( x2, y2 - 1,
-                      x3, y1,
-                      x3, y2 - 1 );
+      tr.addTriangle( (float)x2, (float)( y2 - 1 ),
+                      (float)x3, (float)y1,
+                      (float)x3, (float)( y2 - 1 ) );
       g.fillPath( tr );
 
       g.setColour( juce::Colour::fromRGB( 255, 255, 255 ) );
-      g.drawHorizontalLine( y2, x1, x4 );
-      g.drawVerticalLine( x2, y1, y3 );
-      g.drawVerticalLine( x3, y1, y3 );
+      g.drawHorizontalLine( y2, (float)x1, (float)x4 );
+      g.drawVerticalLine( x2, (float)y1, (float)y3 );
+      g.drawVerticalLine( x3, (float)y1, (float)y3 );
 
       // Draw the knob
       g.setColour( juce::Colour::fromRGB( 196, 196, 196 ) );
-      g.fillRoundedRectangle( xKnob - ( knobWidth / 2 ),
-                              yKnob - ( knobHeight / 2 ),
-                              knobWidth,
-                              knobHeight,
+      g.fillRoundedRectangle( (float)( xKnob - ( knobWidth / 2 ) ),
+                              (float)( yKnob - ( knobHeight / 2 ) ),
+                              (float)knobWidth,
+                              (float)knobHeight,
                               6 );
 
       g.setColour( juce::Colour::fromRGB( 0, 0, 0 ) );
-      g.drawRoundedRectangle( xKnob - ( knobWidth / 2 ),
-                              yKnob - ( knobHeight / 2 ),
-                              knobWidth,
-                              knobHeight,
+      g.drawRoundedRectangle( (float)( xKnob - ( knobWidth / 2 ) ),
+                              (float)( yKnob - ( knobHeight / 2 ) ),
+                              (float)knobWidth,
+                              (float)knobHeight,
                               6,
                               1.5 );
       // Line in the middle of the knob
       g.setColour( juce::Colour::fromRGB( 0, 0, 0 ) );
-      g.drawVerticalLine( xKnob, yKnob - ( knobHeight / 2 ) + 5,
-                                 yKnob - ( knobHeight / 2 ) + knobHeight - 5 );
+      g.drawVerticalLine( xKnob, (float)( yKnob - ( knobHeight / 2 ) + 5 ),
+                                 (float)( yKnob - ( knobHeight / 2 ) + knobHeight - 5 ) );
    } else
    if( sliderStyle == Slider::SliderStyle::LinearVertical )
    {
@@ -181,43 +181,43 @@ void UISection::SliderLookAndFeel::drawLinearSlider(
       int x2 = x + ( width / 2 ) - 1;
       int x3 = x + ( width / 2 ) + ( knobWidth / 2 );
 
-      float p = ( slider.getValue() - slider.getMinimum() ) / ( slider.getMaximum() - slider.getMinimum() );
+      float p = (float)( ( slider.getValue() - slider.getMinimum() ) / ( slider.getMaximum() - slider.getMinimum() ) );
       int xKnob = x2;
-      int yKnob = y3 - ( p * ( height - knobHeight ) );
+      int yKnob = (int)( y3 - ( p * ( height - knobHeight ) ) );
 
       // The transparent triangle
       g.setColour( juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
       Path tr;
-      tr.addTriangle( x2 + 1, y2,
-                      x2 + 1, y3,
-                      x3, y2 );
+      tr.addTriangle( (float)( x2 + 1 ), (float)y2,
+                      (float)( x2 + 1 ), (float)y3,
+                      (float)x3, (float)y2 );
       g.fillPath( tr );
 
       g.setColour( juce::Colour::fromRGB( 255, 255, 255 ) );
-      g.drawVerticalLine( x2, y1, y4 );
-      g.drawHorizontalLine( y2, x1, x3 );
-      g.drawHorizontalLine( y3, x1, x3 );
+      g.drawVerticalLine( x2, (float)y1, (float)y4 );
+      g.drawHorizontalLine( y2, (float)x1, (float)x3 );
+      g.drawHorizontalLine( y3, (float)x1, (float)x3 );
 
       // Draw the knob
       g.setColour( juce::Colour::fromRGB( 196, 196, 196 ) );
-      g.fillRoundedRectangle( xKnob - ( knobWidth / 2 ),
-                              yKnob - ( knobHeight / 2 ),
-                              knobWidth,
-                              knobHeight,
+      g.fillRoundedRectangle( (float)( xKnob - ( knobWidth / 2 ) ),
+                              (float)( yKnob - ( knobHeight / 2 ) ),
+                              (float)knobWidth,
+                              (float)knobHeight,
                               6 );
 
       g.setColour( juce::Colour::fromRGB( 0, 0, 0 ) );
-      g.drawRoundedRectangle( xKnob - ( knobWidth / 2 ),
-                              yKnob - ( knobHeight / 2 ),
-                              knobWidth,
-                              knobHeight,
+      g.drawRoundedRectangle( (float)( xKnob - ( knobWidth / 2 ) ),
+                              (float)( yKnob - ( knobHeight / 2 ) ),
+                              (float)knobWidth,
+                              (float)knobHeight,
                               6,
                               1.5 );
 
       // Line in the middle of the knob
       g.setColour( juce::Colour::fromRGB( 0, 0, 0 ) );
-      g.drawHorizontalLine( yKnob, xKnob - ( knobWidth / 2 ) + 5,
-                                   xKnob - ( knobWidth / 2 ) + knobWidth - 5 );
+      g.drawHorizontalLine( yKnob, (float)( xKnob - ( knobWidth / 2 ) + 5 ),
+                                   (float)( xKnob - ( knobWidth / 2 ) + knobWidth - 5 ) );
    }
 }
 

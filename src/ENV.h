@@ -30,25 +30,25 @@ public:
    void setRelease( float r );
    float getRelease() const;
 
-   double getValue() const;
+   float getValue() const;
 
    bool hasEnded() const;
 
-   static double paramToDuration( double p );
+   static float paramToDuration( float p );
 
    juce::XmlElement *getStateInformation() const;
 
    void noteOn();
    void noteOff();
 
-   void step( double s );
+   void step( float s );
 
    static ENV *fromXml( const juce::XmlElement *pe );
 
 protected:
 
 private:
-   double m_Value;
+   float m_Value;
    State m_State;
    float m_Attack;
    float m_Decay;

@@ -85,23 +85,29 @@ bool ENV::hasEnded() const
 }
 
 
-double ENV::paramToDuration( double p )
+float ENV::paramToDuration( float p )
 {
-   if( p < 0 )
-      p = 0.0;
+   if( p < 0.0f )
+      p = 0.0f;
    else
-   if( p > 1.0 )
-      p = 1.0;
+   if( p > 1.0f )
+      p = 1.0f;
 
-   return( 10.0 * pow( p, 2.0 ) );
+   return( 10.0f * powf( p, 2.0f ) );
 }
 
 
-void ENV::step( double s )
+void ENV::step( float s )
 {
    if( m_State == StateAttack )
    {
-      m_Value += s / paramToDuration( m_Attack );
+      if( m_Attack == 0 )
+      {
+         m_Value = 1.0;
+      } else
+      {
+         m_Value += s / paramToDuration( m_Attack );
+      }
 
       if( m_Value >= 1.0 )
       {
@@ -111,7 +117,13 @@ void ENV::step( double s )
    } else
    if( m_State == StateDecay )
    {
-      m_Value -= s / paramToDuration( m_Decay );
+      if( m_Decay == 0 )
+      {
+         m_Value = m_Decay;
+      } else
+      {
+         m_Value -= s / paramToDuration( m_Decay );
+      }
 
       if( m_Value <= m_Decay )
       {
@@ -125,7 +137,13 @@ void ENV::step( double s )
    } else
    if( m_State == StateRelease )
    {
-      m_Value -= s / paramToDuration( m_Release );
+      if( m_Release == 0 )
+      {
+         m_Value = 0;
+      } else
+      {
+         m_Value -= s / paramToDuration( m_Release );
+      }
 
       if( m_Value < 0.0 )
       {
@@ -152,7 +170,7 @@ void ENV::noteOff()
 }
 
 
-double ENV::getValue() const
+float ENV::getValue() const
 {
    return( m_Value );
 }

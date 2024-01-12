@@ -116,7 +116,7 @@ void SampleUISection::sliderValueChanged( Slider *pSlider )
    {
       for( Sample *pSample : samples() )
       {
-         pSample->setDetune( pSlider->getValue() );
+         pSample->setDetune( (float)pSlider->getValue() );
       }
    }
 }

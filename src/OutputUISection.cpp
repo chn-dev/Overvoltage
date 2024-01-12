@@ -75,14 +75,14 @@ void OutputUISection::sliderValueChanged( Slider *pSlider )
       {
          for( Sample *pSample : samples() )
          {
-            pSample->setPan( m_psPan->getValue() / 100.0 );
+            pSample->setPan( (float)m_psPan->getValue() / 100.0f );
          }
       } else
       if( pSlider == m_psGain )
       {
          for( Sample *pSample : samples() )
          {
-            pSample->setGain( pow( 10.0, ( ( m_psGain->getValue() ) / 20.0 ) ) );
+            pSample->setGain( powf( 10.0f, ( ( (float)m_psGain->getValue() ) / 20.0f ) ) );
          }
       }
    }
