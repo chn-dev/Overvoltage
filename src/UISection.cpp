@@ -1,7 +1,7 @@
 #include "UISection.h"
 #include "PluginEditor.h"
 
-UISection::UISection( AudioPluginAudioProcessorEditor *pEditor, std::string label ) :
+UISection::UISection( PluginEditor *pEditor, std::string label ) :
    m_pEditor( pEditor ),
    m_pLabel( nullptr )
 {
@@ -32,7 +32,7 @@ UISection::~UISection()
 }
 
 
-AudioPluginAudioProcessorEditor *UISection::editor() const
+PluginEditor *UISection::editor() const
 {
    return( m_pEditor );
 }

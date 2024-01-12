@@ -2,7 +2,7 @@
 #include "EGUISection.h"
 
 
-EGUISection::EGUISection( AudioPluginAudioProcessorEditor *pEditor, std::string label ) :
+EGUISection::EGUISection( PluginEditor *pEditor, std::string label ) :
    UISection( pEditor, label )
 {
    m_psAttack = new juce::Slider( "Attack" );

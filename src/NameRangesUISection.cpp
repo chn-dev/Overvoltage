@@ -3,7 +3,7 @@
 
 #include "util.h"
 
-NameRangesUISection::NameRangesUISection( AudioPluginAudioProcessorEditor *pEditor ) :
+NameRangesUISection::NameRangesUISection( PluginEditor *pEditor ) :
    UISection( pEditor, "Name & Ranges" )
 {
    std::vector<std::string> noteNames;

@@ -1,10 +1,11 @@
-#pragma once
+#ifndef __SAMPLEUISECTION_H__
+#define __SAMPLEUISECTION_H__
 
 #include "JuceHeader.h"
 
 #include "UISection.h"
 
-class AudioPluginAudioProcessorEditor;
+class PluginEditor;
 
 //==============================================================================
 class SampleUISection : public UISection,
@@ -13,7 +14,7 @@ class SampleUISection : public UISection,
                         public juce::ComboBox::Listener
 {
 public:
-   SampleUISection( AudioPluginAudioProcessorEditor *pEditor );
+   SampleUISection( PluginEditor *pEditor );
    ~SampleUISection();
 
    virtual void paint( juce::Graphics &g );
@@ -37,3 +38,5 @@ private:
    juce::ComboBox *m_pcbPlayMode;
    juce::TextButton *m_pbReverse;
 };
+
+#endif

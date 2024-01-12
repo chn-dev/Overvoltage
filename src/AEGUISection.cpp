@@ -2,7 +2,7 @@
 #include "AEGUISection.h"
 
 
-AEGUISection::AEGUISection( AudioPluginAudioProcessorEditor *pEditor ) :
+AEGUISection::AEGUISection( PluginEditor *pEditor ) :
    EGUISection( pEditor, "AEG" )
 {
 }

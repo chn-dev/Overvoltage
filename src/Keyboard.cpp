@@ -3,7 +3,7 @@
 
 #include "util.h"
 
-Keyboard::Keyboard( AudioPluginAudioProcessorEditor *pEditor ) :
+Keyboard::Keyboard( PluginEditor *pEditor ) :
    m_pEditor( pEditor ),
    m_KeyHeight( 28 ),
    m_NoteOffset( 36 ),

@@ -1,16 +1,17 @@
-#pragma once
+#ifndef __UISECTION_H__
+#define __UISECTION_H__
 
 #include "JuceHeader.h"
 #include "SamplerKeyboard.h"
 
-class AudioPluginAudioProcessorEditor;
+class PluginEditor;
 
 
 //==============================================================================
 class UISection : public juce::Component
 {
 public:
-   UISection( AudioPluginAudioProcessorEditor *pEditor, std::string label = std::string() );
+   UISection( PluginEditor *pEditor, std::string label = std::string() );
    ~UISection();
 
    virtual void paint( juce::Graphics &g ) override;
@@ -57,11 +58,12 @@ protected:
 protected:
    const std::set<Sample *> &samples() const;
    Sample *sample() const;
-   AudioPluginAudioProcessorEditor *editor() const;
+   PluginEditor *editor() const;
 
 private:
-   AudioPluginAudioProcessorEditor *m_pEditor;
+   PluginEditor *m_pEditor;
    juce::Label *m_pLabel;
    std::set<Sample *> m_Samples;
 };
 
+#endif

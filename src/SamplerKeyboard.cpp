@@ -1,13 +1,13 @@
 #include <filesystem>
 
+#include <SamplerEngine/WaveFile.h>
+
 #include "PluginEditor.h"
 #include "SamplerKeyboard.h"
-#include "WaveFile.h"
-#include "Sample.h"
 
 #include "util.h"
 
-SamplerKeyboard::SamplerKeyboard( AudioPluginAudioProcessorEditor *pEditor ) :
+SamplerKeyboard::SamplerKeyboard( PluginEditor *pEditor ) :
    Keyboard( pEditor ),
    m_pCurrentSample( nullptr ),
    m_CurrentSampleNote( -1 ),

@@ -1,12 +1,14 @@
-#pragma once
+#ifndef __WAVEVIEW_H__
+#define __WAVEVIEW_H__
 
 #include "JuceHeader.h"
 
+#include <SamplerEngine/Sample.h>
+
 #include "UISection.h"
-#include "Sample.h"
 #include "SamplerKeyboard.h"
 
-class AudioPluginAudioProcessorEditor;
+class PluginEditor;
 
 //==============================================================================
 class WaveView : public UISection,
@@ -14,7 +16,7 @@ class WaveView : public UISection,
                  public juce::ScrollBar::Listener
 {
 public:
-   WaveView( AudioPluginAudioProcessorEditor *pEditor );
+   WaveView( PluginEditor *pEditor );
    ~WaveView();
 
    void paint( juce::Graphics & ) override;
@@ -58,3 +60,5 @@ protected:
 
 private:
 };
+
+#endif

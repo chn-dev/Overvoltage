@@ -1,13 +1,15 @@
-#pragma once
+#ifndef __PLUGINPROCESSOR_H__
+#define __PLUGINPROCESSOR_H__
 
 #include <map>
 #include <list>
 
 #include <juce_audio_processors/juce_audio_processors.h>
 
+#include <SamplerEngine/Voice.h>
+#include <SamplerEngine/Part.h>
+
 #include "SamplerKeyboard.h"
-#include "Voice.h"
-#include "Part.h"
 
 //==============================================================================
 class AudioPluginAudioProcessor : public juce::AudioProcessor,
@@ -70,7 +72,7 @@ private:
 
    //==============================================================================
    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( AudioPluginAudioProcessor )
-   AudioPluginAudioProcessorEditor *m_pEditor;
+   PluginEditor *m_pEditor;
    std::list<Sample *> getSamplesByMidiNoteAndVelocity( size_t part, int note, int vel ) const;
 
    std::multimap<int, Voice *> m_Voices;
@@ -81,3 +83,5 @@ private:
    int m_ofs;
    int m_note;
 };
+
+#endif

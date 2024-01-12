@@ -1,7 +1,7 @@
 #include "PluginEditor.h"
 #include "OutputUISection.h"
 
-OutputUISection::OutputUISection( AudioPluginAudioProcessorEditor *pEditor ) :
+OutputUISection::OutputUISection( PluginEditor *pEditor ) :
    UISection( pEditor, "Output" )
 {
    m_pcbOutputBus = new juce::ComboBox( "Output Bus" );

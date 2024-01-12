@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __NAMERANGESUISECTION_H__
+#define __NAMERANGESUISECTION_H__
 
 #include "JuceHeader.h"
 
@@ -11,7 +12,7 @@ class NameRangesUISection : public UISection,
                             public juce::Label::Listener
 {
 public:
-   NameRangesUISection( AudioPluginAudioProcessorEditor *pEditor );
+   NameRangesUISection( PluginEditor *pEditor );
    ~NameRangesUISection();
 
    virtual void paint( juce::Graphics &g );
@@ -42,3 +43,5 @@ private:
 
    CycleComponent *m_pcBaseNote;
 };
+
+#endif

@@ -125,3 +125,6 @@ target_link_libraries(Overvoltage
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags)
 
+target_include_directories( Overvoltage
+    PUBLIC
+	"src" )

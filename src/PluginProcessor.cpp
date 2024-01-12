@@ -420,7 +420,7 @@ bool AudioPluginAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor *AudioPluginAudioProcessor::createEditor()
 {
-   m_pEditor = new AudioPluginAudioProcessorEditor( *this );
+   m_pEditor = new PluginEditor( *this );
    return( m_pEditor );
 }
 

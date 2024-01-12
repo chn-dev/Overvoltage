@@ -1,17 +1,18 @@
-#pragma once
+#ifndef __EGUISECTION_H__
+#define __EGUISECTION_H__
 
 #include "JuceHeader.h"
 
 #include "UISection.h"
 
-class AudioPluginAudioProcessorEditor;
+class PluginEditor;
 
 //==============================================================================
 class EGUISection : public UISection,
-                     public juce::Slider::Listener
+                    public juce::Slider::Listener
 {
 public:
-   EGUISection( AudioPluginAudioProcessorEditor *pEditor, std::string label );
+   EGUISection( PluginEditor *pEditor, std::string label );
    ~EGUISection();
 
    virtual void paint( juce::Graphics &g );
@@ -39,3 +40,5 @@ private:
    juce::Slider *m_psRelease;
    juce::Label *m_plRelease;
 };
+
+#endif

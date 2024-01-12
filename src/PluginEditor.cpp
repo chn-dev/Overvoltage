@@ -4,7 +4,7 @@
 #include "util.h"
 
 //==============================================================================
-AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor( AudioPluginAudioProcessor& p )
+PluginEditor::PluginEditor( AudioPluginAudioProcessor& p )
    : AudioProcessorEditor( &p ), processorRef( p )
 {
    juce::ignoreUnused (processorRef);
@@ -64,7 +64,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor( AudioPluginAud
 }
 
 
-AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
+PluginEditor::~PluginEditor()
 {
    delete m_pKeyboard;
    delete m_pWaveView;
@@ -82,13 +82,13 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
 }
 
 
-size_t AudioPluginAudioProcessorEditor::currentPart() const
+size_t PluginEditor::currentPart() const
 {
    return( m_CurrentPart );
 }
 
 
-void AudioPluginAudioProcessorEditor::activatePart( size_t nPart )
+void PluginEditor::activatePart( size_t nPart )
 {
    if( nPart >= m_PartButtons.size() )
       return;
@@ -101,7 +101,7 @@ void AudioPluginAudioProcessorEditor::activatePart( size_t nPart )
 }
 
 
-void AudioPluginAudioProcessorEditor::buttonClicked( Button *pButton )
+void PluginEditor::buttonClicked( Button *pButton )
 {
    auto partIter = std::find( m_PartButtons.begin(), m_PartButtons.end(), pButton );
    if( partIter != m_PartButtons.end() )
@@ -114,12 +114,12 @@ void AudioPluginAudioProcessorEditor::buttonClicked( Button *pButton )
 }
 
 
-void AudioPluginAudioProcessorEditor::buttonStateChanged( Button */*pButton*/ )
+void PluginEditor::buttonStateChanged( Button */*pButton*/ )
 {
 }
 
 
-void AudioPluginAudioProcessorEditor::addUISection( UISection *pSection )
+void PluginEditor::addUISection( UISection *pSection )
 {
    if( pSection )
    {
@@ -128,7 +128,7 @@ void AudioPluginAudioProcessorEditor::addUISection( UISection *pSection )
 }
 
 
-void AudioPluginAudioProcessorEditor::removeUISection( UISection *pSection )
+void PluginEditor::removeUISection( UISection *pSection )
 {
    if( pSection && ( m_UISections.find( pSection ) != m_UISections.end() ) )
    {
@@ -137,26 +137,26 @@ void AudioPluginAudioProcessorEditor::removeUISection( UISection *pSection )
 }
 
 
-AudioPluginAudioProcessor &AudioPluginAudioProcessorEditor::processor() const
+AudioPluginAudioProcessor &PluginEditor::processor() const
 {
    return( processorRef );
 }
 
 
-void AudioPluginAudioProcessorEditor::handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
+void PluginEditor::handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
 {
    juce::ignoreUnused( pSource, midiChannel, midiNoteNumber, velocity );
 }
 
 
-void AudioPluginAudioProcessorEditor::handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
+void PluginEditor::handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
 {
    juce::ignoreUnused( pSource, midiChannel, midiNoteNumber, velocity );
 }
 
 
 //==============================================================================
-void AudioPluginAudioProcessorEditor::paint( juce::Graphics& g )
+void PluginEditor::paint( juce::Graphics& g )
 {
    juce::ignoreUnused( g );
 
@@ -164,14 +164,14 @@ void AudioPluginAudioProcessorEditor::paint( juce::Graphics& g )
    g.fillAll();
 }
 
-void AudioPluginAudioProcessorEditor::resized()
+void PluginEditor::resized()
 {
    // This is generally where you'll want to lay out the positions of any
    // subcomponents in your editor..
 }
 
 
-void AudioPluginAudioProcessorEditor::onSampleSelectionUpdated( SamplerKeyboard *pSamplerKeyboard )
+void PluginEditor::onSampleSelectionUpdated( SamplerKeyboard *pSamplerKeyboard )
 {
    for( UISection *pSection : m_UISections )
    {

@@ -1,7 +1,7 @@
 #include "PluginEditor.h"
 #include "SampleUISection.h"
 
-SampleUISection::SampleUISection( AudioPluginAudioProcessorEditor *pEditor ) :
+SampleUISection::SampleUISection( PluginEditor *pEditor ) :
    UISection( pEditor, "Sample" )
 {
    m_plDetune = new juce::Label( "Detune", "Detune:" );

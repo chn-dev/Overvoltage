@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __ENV_H__
+#define __ENV_H__
 
 #include "JuceHeader.h"
 #include <set>
@@ -55,3 +56,6 @@ private:
    double m_Sustain;
    double m_Release;
 };
+
+#endif
+

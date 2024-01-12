@@ -3,7 +3,7 @@
 
 #include "util.h"
 
-WaveView::WaveView( AudioPluginAudioProcessorEditor *pEditor ) :
+WaveView::WaveView( PluginEditor *pEditor ) :
    UISection( pEditor ),
    m_IsDraggingLoopStart( false ),
    m_IsDraggingLoopEnd( false ),

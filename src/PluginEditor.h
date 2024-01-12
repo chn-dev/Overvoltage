@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __PLUGINEDITOR_H__
+#define __PLUGINEDITOR_H__
 
 #include "PluginProcessor.h"
 
@@ -10,13 +11,13 @@
 #include "OutputUISection.h"
 
 //==============================================================================
-class AudioPluginAudioProcessorEditor : public juce::AudioProcessorEditor,
-                                        public juce::Button::Listener,
-                                        public juce::MidiKeyboardStateListener
+class PluginEditor : public juce::AudioProcessorEditor,
+                     public juce::Button::Listener,
+                     public juce::MidiKeyboardStateListener
 {
 public:
-   explicit AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor&);
-   ~AudioPluginAudioProcessorEditor() override;
+   explicit PluginEditor( AudioPluginAudioProcessor & );
+   ~PluginEditor() override;
 
    //==============================================================================
    void paint( juce::Graphics& ) override;
@@ -56,5 +57,8 @@ private:
    size_t m_CurrentPart;
    std::vector<juce::TextButton *> m_PartButtons;
 
-   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( AudioPluginAudioProcessorEditor )
+   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( PluginEditor )
 };
+
+#endif
+

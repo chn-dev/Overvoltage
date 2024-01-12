@@ -1,10 +1,11 @@
-#pragma once
+#ifndef __OUTPUTUISECTION_H__
+#define __OUTPUTUISECTION_H__
 
 #include "JuceHeader.h"
 
 #include "UISection.h"
 
-class AudioPluginAudioProcessorEditor;
+class PluginEditor;
 
 //==============================================================================
 class OutputUISection : public UISection,
@@ -13,7 +14,7 @@ class OutputUISection : public UISection,
                         public juce::ComboBox::Listener
 {
 public:
-   OutputUISection( AudioPluginAudioProcessorEditor *pEditor );
+   OutputUISection( PluginEditor *pEditor );
    ~OutputUISection();
 
    virtual void paint( juce::Graphics &g );
@@ -32,3 +33,5 @@ private:
    juce::Slider *m_psGain;
    juce::Label *m_plGain;
 };
+
+#endif

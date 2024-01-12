@@ -1,9 +1,11 @@
-#pragma once
+#ifndef __KEYBOARD_H__
+#define __KEYBOARD_H__
+
+#include <SamplerEngine/SamplerEngine.h>
 
 #include "JuceHeader.h"
-#include "Sample.h"
 
-class AudioPluginAudioProcessorEditor;
+class PluginEditor;
 
 //==============================================================================
 class Keyboard  : public juce::Component,
@@ -11,7 +13,7 @@ class Keyboard  : public juce::Component,
                   public juce::MidiKeyboardStateListener
 {
 public:
-   explicit Keyboard( AudioPluginAudioProcessorEditor *pEditor );
+   explicit Keyboard( PluginEditor *pEditor );
    ~Keyboard() override;
 
    //==============================================================================
@@ -49,7 +51,7 @@ private:
    int getKeyboardHeight( int noteStart, int noteEnd ) const;
 
 protected:
-   AudioPluginAudioProcessorEditor *m_pEditor;
+   PluginEditor *m_pEditor;
    int m_KeyHeight;
    int m_NoteOffset;
    int m_MaxNoteOffset;
@@ -57,3 +59,5 @@ protected:
    int m_CurrentNote;
    int m_Width;
 };
+
+#endif

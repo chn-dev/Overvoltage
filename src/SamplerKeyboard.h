@@ -1,11 +1,13 @@
-#pragma once
+#ifndef __SAMPLERKEYBOARD_H__
+#define __SAMPLERKEYBOARD_H__
 
 #include <list>
 #include <set>
 
+#include <SamplerEngine/Sample.h>
+
 #include "JuceHeader.h"
 #include "Keyboard.h"
-#include "Sample.h"
 
 class SamplerKeyboardListener
 {
@@ -20,7 +22,7 @@ class SamplerKeyboard : public Keyboard,
 
 {
 public:
-   SamplerKeyboard( AudioPluginAudioProcessorEditor *pEditor );
+   SamplerKeyboard( PluginEditor *pEditor );
    ~SamplerKeyboard();
 
    //==============================================================================
@@ -78,3 +80,6 @@ private:
    juce::Rectangle<int> m_SelectionRectangle;
    bool m_Selecting;
 };
+
+#endif
+
