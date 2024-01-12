@@ -1,6 +1,8 @@
 #include <math.h>
 #include "Voice.h"
 
+using namespace SamplerEngine;
+
 Voice::Voice( const Sample *pSample, int note, int velocity ) :
    m_pSample( pSample ),
    m_pAEG( nullptr ),

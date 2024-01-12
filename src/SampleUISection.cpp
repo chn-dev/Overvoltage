@@ -26,9 +26,9 @@ SampleUISection::SampleUISection( PluginEditor *pEditor ) :
    addAndMakeVisible( m_pbReverse );
 
    m_pcbPlayMode = new juce::ComboBox( "Play Mode" );
-   for( Sample::PlayMode pm : Sample::allPlayModes() )
+   for( SamplerEngine::Sample::PlayMode pm : SamplerEngine::Sample::allPlayModes() )
    {
-      m_pcbPlayMode->addItem( Sample::toString( pm ), pm );
+      m_pcbPlayMode->addItem( SamplerEngine::Sample::toString( pm ), pm );
    }
    m_pcbPlayMode->addListener( this );
    addAndMakeVisible( m_pcbPlayMode );
@@ -68,7 +68,7 @@ void SampleUISection::buttonClicked( Button *pButton )
 {
    if( pButton == m_pbReverse )
    {
-      for( Sample *pSample : samples() )
+      for( SamplerEngine::Sample *pSample : samples() )
       {
          pSample->setReverse( m_pbReverse->getToggleState() );
       }
@@ -85,16 +85,16 @@ void SampleUISection::comboBoxChanged( ComboBox *pComboBox )
 {
    if( m_pcbPlayMode == pComboBox )
    {
-      for( Sample *pSample : samples() )
+      for( SamplerEngine::Sample *pSample : samples() )
       {
-         pSample->setPlayMode( (Sample::PlayMode)m_pcbPlayMode->getSelectedId() );
+         pSample->setPlayMode( (SamplerEngine::Sample::PlayMode)m_pcbPlayMode->getSelectedId() );
       }
    }
 }
 
 void SampleUISection::samplesUpdated()
 {
-   const Sample *pSample = sample();
+   const SamplerEngine::Sample *pSample = sample();
 
    m_plDetune->setVisible( pSample != nullptr );
    m_psDetune->setVisible( pSample != nullptr );
@@ -114,7 +114,7 @@ void SampleUISection::sliderValueChanged( Slider *pSlider )
 {
    if( ( m_psDetune == pSlider ) && ( samples().size() > 0 ) )
    {
-      for( Sample *pSample : samples() )
+      for( SamplerEngine::Sample *pSample : samples() )
       {
          pSample->setDetune( (float)pSlider->getValue() );
       }

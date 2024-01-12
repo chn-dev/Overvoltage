@@ -5,24 +5,27 @@
 #include "Sample.h"
 
 //==============================================================================
-class Part
+namespace SamplerEngine
 {
-public:
-   Part( size_t partNum );
-   ~Part();
+   class Part
+   {
+   public:
+      Part( size_t partNum );
+      ~Part();
 
-   std::list<Sample *> &samples();
-   const std::list<Sample *> &constSamples() const;
+      std::list<Sample *> &samples();
+      const std::list<Sample *> &constSamples() const;
 
-   size_t getPartNum() const;
-   void deleteSample( Sample *pSample );
+      size_t getPartNum() const;
+      void deleteSample( Sample *pSample );
 
-   static Part *fromXml( const juce::XmlElement *pe );
-   juce::XmlElement *getStateInformation() const;
+      static Part *fromXml( const juce::XmlElement *pe );
+      juce::XmlElement *getStateInformation() const;
 
-private:
-   size_t m_PartNum;
-   std::list<Sample *> m_Samples;
-};
+   private:
+      size_t m_PartNum;
+      std::list<Sample *> m_Samples;
+   };
+}
 
 #endif

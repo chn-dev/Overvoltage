@@ -122,28 +122,28 @@ void EGUISection::sliderValueChanged( Slider *pSlider )
 
    if( pSlider == m_psAttack )
    {
-      for( Sample *pSample : samples() )
+      for( SamplerEngine::Sample *pSample : samples() )
       {
          getENV( pSample )->setAttack( m_psAttack->getValue() );
       }
    } else
    if( pSlider == m_psDecay )
    {
-      for( Sample *pSample : samples() )
+      for( SamplerEngine::Sample *pSample : samples() )
       {
          getENV( pSample )->setDecay( m_psDecay->getValue() );
       }
    } else
    if( pSlider == m_psSustain )
    {
-      for( Sample *pSample : samples() )
+      for( SamplerEngine::Sample *pSample : samples() )
       {
          getENV( pSample )->setSustain( m_psSustain->getValue() );
       }
    } else
    if( pSlider == m_psRelease )
    {
-      for( Sample *pSample : samples() )
+      for( SamplerEngine::Sample *pSample : samples() )
       {
          getENV( pSample )->setRelease( m_psRelease->getValue() );
       }

@@ -4,6 +4,8 @@
 #include "WaveFile.h"
 #include "util.h"
 
+using namespace SamplerEngine;
+
 WaveFile::WaveFile() :
    m_Format( (decltype( m_Format ))-1 ),
    m_nChannels( (decltype( m_nChannels ))-1 ),
@@ -72,7 +74,7 @@ WaveFile *WaveFile::fromXml( const juce::XmlElement *pe )
 {
    if( pe->getTagName() != "wave" )
       return( nullptr );
-      
+
    int nChannels = -1;
    int sampleRate = -1;
    int nBits = -1;

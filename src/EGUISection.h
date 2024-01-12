@@ -25,7 +25,7 @@ public:
    void egUpdated( ENV *pENV );
 
 protected:
-   virtual ENV *getENV( const Sample *pSample ) const = 0;
+   virtual ENV *getENV( const SamplerEngine::Sample *pSample ) const = 0;
 
 private:
    juce::Slider *m_psAttack;

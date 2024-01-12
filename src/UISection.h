@@ -56,14 +56,14 @@ protected:
    };
 
 protected:
-   const std::set<Sample *> &samples() const;
-   Sample *sample() const;
+   const std::set<SamplerEngine::Sample *> &samples() const;
+   SamplerEngine::Sample *sample() const;
    PluginEditor *editor() const;
 
 private:
    PluginEditor *m_pEditor;
    juce::Label *m_pLabel;
-   std::set<Sample *> m_Samples;
+   std::set<SamplerEngine::Sample *> m_Samples;
 };
 
 #endif

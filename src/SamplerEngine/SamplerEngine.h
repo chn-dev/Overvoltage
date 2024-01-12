@@ -4,5 +4,12 @@
 #include "Part.h"
 #include "Voice.h"
 
+namespace SamplerEngine
+{
+   class SamplerEngine
+   {
+   };
+}
+
 #endif
 

@@ -19,7 +19,7 @@ PluginProcessor::PluginProcessor()
 
    for( size_t i = 0; i < 16; i++ )
    {
-      m_Parts.push_back( new Part( i ) );
+      m_Parts.push_back( new SamplerEngine::Part( i ) );
    }
 }
 
@@ -138,13 +138,13 @@ bool PluginProcessor::isBusesLayoutSupported( const BusesLayout& layouts ) const
 }
 
 
-std::list<Sample *> &PluginProcessor::samples()
+std::list<SamplerEngine::Sample *> &PluginProcessor::samples()
 {
    return( m_Parts[m_pEditor->currentPart()]->samples() );
 }
 
 
-const std::list<Sample *> &PluginProcessor::constSamples() const
+const std::list<SamplerEngine::Sample *> &PluginProcessor::constSamples() const
 {
    return( m_Parts[m_pEditor->currentPart()]->samples() );
 }
@@ -168,7 +168,7 @@ std::set<int> PluginProcessor::allPlayingMidiNotes() const
 }
 
 
-bool PluginProcessor::isPlaying( const Sample *pSample ) const
+bool PluginProcessor::isPlaying( const SamplerEngine::Sample *pSample ) const
 {
    std::set<int> midiNotes = allPlayingMidiNotes();
    for( auto v : m_Voices )
@@ -200,10 +200,10 @@ void PluginProcessor::handleNoteOn( MidiKeyboardState *pSource, int midiChannel,
 */
    int vel = (int)( 127 * velocity );
 
-   std::list<Sample *> s = getSamplesByMidiNoteAndVelocity( (size_t)( midiChannel - 1 ), midiNoteNumber, vel );
-   for( Sample *pSample : s )
+   std::list<SamplerEngine::Sample *> s = getSamplesByMidiNoteAndVelocity( (size_t)( midiChannel - 1 ), midiNoteNumber, vel );
+   for( SamplerEngine::Sample *pSample : s )
    {
-      Voice *pVoice = new Voice( pSample, midiNoteNumber, vel );
+      SamplerEngine::Voice *pVoice = new SamplerEngine::Voice( pSample, midiNoteNumber, vel );
       m_Voices.insert( std::pair{ midiNoteNumber, pVoice } );
    }
 
@@ -211,11 +211,11 @@ void PluginProcessor::handleNoteOn( MidiKeyboardState *pSource, int midiChannel,
 }
 
 
-std::list<Sample *> PluginProcessor::getSamplesByMidiNoteAndVelocity( size_t part, int note, int vel ) const
+std::list<SamplerEngine::Sample *> PluginProcessor::getSamplesByMidiNoteAndVelocity( size_t part, int note, int vel ) const
 {
-   std::list<Sample *> result;
+   std::list<SamplerEngine::Sample *> result;
 
-   for( Sample *pSample : m_Parts[part]->samples() )
+   for( SamplerEngine::Sample *pSample : m_Parts[part]->samples() )
    {
       if( pSample->matchesMidiNote( note ) && pSample->matchesVelocity( vel ) )
       {
@@ -227,16 +227,14 @@ std::list<Sample *> PluginProcessor::getSamplesByMidiNoteAndVelocity( size_t par
 }
 
 
-void PluginProcessor::handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
+void PluginProcessor::handleNoteOff( MidiKeyboardState */*pSource*/, int /*midiChannel*/, int midiNoteNumber, float /*velocity*/ )
 {
-   juce::ignoreUnused( pSource, midiChannel, midiNoteNumber, velocity );
-
    if( m_Voices.count( midiNoteNumber ) > 0 )
    {
       auto v = m_Voices.equal_range( midiNoteNumber );
       for( auto voice = v.first; voice != v.second; voice++ )
       {
-         Voice *pVoice = voice->second;
+         SamplerEngine::Voice *pVoice = voice->second;
          pVoice->noteOff();
       }
    }
@@ -245,7 +243,7 @@ void PluginProcessor::handleNoteOff( MidiKeyboardState *pSource, int midiChannel
 }
 
 
-void PluginProcessor::stopVoice( const Voice *pVoice )
+void PluginProcessor::stopVoice( const SamplerEngine::Voice *pVoice )
 {
    for( auto v = m_Voices.begin(); v != m_Voices.end(); v++ )
    {
@@ -353,10 +351,10 @@ void PluginProcessor::processBlock( juce::AudioBuffer<float>& buffer,
       }
    }*/
 
-   std::set<Voice *> stoppedVoices;
+   std::set<SamplerEngine::Voice *> stoppedVoices;
    for( auto k = m_Voices.begin(); k != m_Voices.end(); k++ )
    {
-      Voice *pVoice = k->second;
+      SamplerEngine::Voice *pVoice = k->second;
       int busNum = pVoice->sample()->getOutputBus();
       if( busNum < 0 )
          busNum = 0;
@@ -468,7 +466,7 @@ void PluginProcessor::setStateInformation( const void* data, int sizeInBytes )
                   if( peParts->getChildElement( nPart )->getTagName() == "part" )
                   {
                      juce::XmlElement *pePart = peParts->getChildElement( nPart );
-                     Part *pPart = Part::fromXml( pePart );
+                     SamplerEngine::Part *pPart = SamplerEngine::Part::fromXml( pePart );
                      if( pPart )
                      {
                         if( m_Parts[pPart->getPartNum()] )
@@ -494,16 +492,16 @@ juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter()
 }
 
 
-void PluginProcessor::onDeleteSample( size_t part, Sample *pSample )
+void PluginProcessor::onDeleteSample( size_t part, SamplerEngine::Sample *pSample )
 {
    deleteSample( part, pSample );
 }
 
 
-void PluginProcessor::deleteSample( size_t part, Sample *pSample )
+void PluginProcessor::deleteSample( size_t part, SamplerEngine::Sample *pSample )
 {
-   std::vector<Voice *> voicesToStop;
-   for( std::pair<int, Voice *> sv : m_Voices )
+   std::vector<SamplerEngine::Voice *> voicesToStop;
+   for( std::pair<int, SamplerEngine::Voice *> sv : m_Voices )
    {
       if( sv.second->sample() == pSample )
       {
@@ -511,7 +509,7 @@ void PluginProcessor::deleteSample( size_t part, Sample *pSample )
       }
    }
 
-   for( Voice *pVoice : voicesToStop )
+   for( SamplerEngine::Voice *pVoice : voicesToStop )
    {
       stopVoice( pVoice );
    }

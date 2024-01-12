@@ -2,6 +2,8 @@
 
 #include "util.h"
 
+using namespace SamplerEngine;
+
 Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
    m_Name( name ),
    m_OutputBus( 0 ),

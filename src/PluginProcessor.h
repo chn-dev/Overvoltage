@@ -22,7 +22,7 @@ public:
    PluginProcessor();
    ~PluginProcessor() override;
 
-   virtual void onDeleteSample( size_t part, Sample *pSample );
+   virtual void onDeleteSample( size_t part, SamplerEngine::Sample *pSample );
 
    //==============================================================================
    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -59,24 +59,24 @@ public:
    virtual void handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
    virtual void handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
 
-   std::list<Sample *> &samples();
-   const std::list<Sample *> &constSamples() const;
+   std::list<SamplerEngine::Sample *> &samples();
+   const std::list<SamplerEngine::Sample *> &constSamples() const;
    bool midiNoteIsPlaying( int midiNote ) const;
-   bool isPlaying( const Sample *pSample ) const;
+   bool isPlaying( const SamplerEngine::Sample *pSample ) const;
    std::set<int> allPlayingMidiNotes() const;
-   void stopVoice( const Voice *pVoice );
+   void stopVoice( const SamplerEngine::Voice *pVoice );
 
 private:
-   void deleteSample( size_t part, Sample *pSample );
+   void deleteSample( size_t part, SamplerEngine::Sample *pSample );
    bool outputBusReady( juce::AudioBuffer<float>& buffer, int n ) const;
 
    //==============================================================================
    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( PluginProcessor )
    PluginEditor *m_pEditor;
-   std::list<Sample *> getSamplesByMidiNoteAndVelocity( size_t part, int note, int vel ) const;
+   std::list<SamplerEngine::Sample *> getSamplesByMidiNoteAndVelocity( size_t part, int note, int vel ) const;
 
-   std::multimap<int, Voice *> m_Voices;
-   std::vector<Part *> m_Parts;
+   std::multimap<int, SamplerEngine::Voice *> m_Voices;
+   std::vector<SamplerEngine::Part *> m_Parts;
 
    double m_sampleRate;
    int m_samplesPerBlock;

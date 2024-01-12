@@ -15,7 +15,7 @@ public:
    ~AEGUISection();
 
 protected:
-   virtual ENV *getENV( const Sample *pSample ) const;
+   virtual ENV *getENV( const SamplerEngine::Sample *pSample ) const;
 };
 
 #endif

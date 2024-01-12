@@ -12,7 +12,7 @@ AEGUISection::~AEGUISection()
 {
 }
 
-ENV *AEGUISection::getENV( const Sample *pSample ) const
+ENV *AEGUISection::getENV( const SamplerEngine::Sample *pSample ) const
 {
    return( pSample->getAEG() );
 }
