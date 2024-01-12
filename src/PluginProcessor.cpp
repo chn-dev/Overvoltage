@@ -370,7 +370,7 @@ void AudioPluginAudioProcessor::processBlock( juce::AudioBuffer<float>& buffer,
          float *pLeft = buf.getWritePointer( 0 );
          float *pRight = buf.getWritePointer( 1 );
 
-         if( !pVoice->process( pLeft, pRight, buf.getNumSamples(), (float)m_sampleRate ) )
+         if( !pVoice->process( pLeft, pRight, buf.getNumSamples(), m_sampleRate ) )
          {
             stoppedVoices.insert( pVoice );
          }

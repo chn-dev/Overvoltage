@@ -85,19 +85,19 @@ bool ENV::hasEnded() const
 }
 
 
-float ENV::paramToDuration( float p )
+double ENV::paramToDuration( double p )
 {
-   if( p < 0.0f )
-      p = 0.0f;
+   if( p < 0.0 )
+      p = 0.0;
    else
-   if( p > 1.0f )
-      p = 1.0f;
+   if( p > 1.0 )
+      p = 1.0;
 
-   return( 10.0f * powf( p, 2.0f ) );
+   return( 10.0 * pow( p, 2.0 ) );
 }
 
 
-void ENV::step( float s )
+void ENV::step( double s )
 {
    if( m_State == StateAttack )
    {
@@ -119,15 +119,15 @@ void ENV::step( float s )
    {
       if( m_Decay == 0 )
       {
-         m_Value = m_Decay;
+         m_Value = m_Sustain;
       } else
       {
          m_Value -= s / paramToDuration( m_Decay );
       }
 
-      if( m_Value <= m_Decay )
+      if( m_Value <= m_Sustain )
       {
-         m_Value = m_Decay;
+         m_Value = m_Sustain;
          m_State = StateSustain;
       }
    } else
@@ -170,55 +170,55 @@ void ENV::noteOff()
 }
 
 
-float ENV::getValue() const
+double ENV::getValue() const
 {
    return( m_Value );
 }
 
 
-void ENV::setAttack( float a )
+void ENV::setAttack( double a )
 {
    m_Attack = a;
 }
 
 
-float ENV::getAttack() const
+double ENV::getAttack() const
 {
    return( m_Attack );
 }
 
 
-void ENV::setDecay( float d )
+void ENV::setDecay( double d )
 {
    m_Decay = d;
 }
 
 
-float ENV::getDecay() const
+double ENV::getDecay() const
 {
    return( m_Decay );
 }
 
 
-void ENV::setSustain( float s )
+void ENV::setSustain( double s )
 {
    m_Sustain = s;
 }
 
 
-float ENV::getSustain() const
+double ENV::getSustain() const
 {
    return( m_Sustain );
 }
 
 
-void ENV::setRelease( float r )
+void ENV::setRelease( double r )
 {
    m_Release = r;
 }
 
 
-float ENV::getRelease() const
+double ENV::getRelease() const
 {
    return( m_Release );
 }

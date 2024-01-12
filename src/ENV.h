@@ -21,37 +21,37 @@ public:
       StateNone
    };
 
-   void setAttack( float a );
-   float getAttack() const;
-   void setDecay( float d );
-   float getDecay() const;
-   void setSustain( float s );
-   float getSustain() const;
-   void setRelease( float r );
-   float getRelease() const;
+   void setAttack( double a );
+   double getAttack() const;
+   void setDecay( double d );
+   double getDecay() const;
+   void setSustain( double s );
+   double getSustain() const;
+   void setRelease( double r );
+   double getRelease() const;
 
-   float getValue() const;
+   double getValue() const;
 
    bool hasEnded() const;
 
-   static float paramToDuration( float p );
+   static double paramToDuration( double p );
 
    juce::XmlElement *getStateInformation() const;
 
    void noteOn();
    void noteOff();
 
-   void step( float s );
+   void step( double s );
 
    static ENV *fromXml( const juce::XmlElement *pe );
 
 protected:
 
 private:
-   float m_Value;
+   double m_Value;
    State m_State;
-   float m_Attack;
-   float m_Decay;
-   float m_Sustain;
-   float m_Release;
+   double m_Attack;
+   double m_Decay;
+   double m_Sustain;
+   double m_Release;
 };
