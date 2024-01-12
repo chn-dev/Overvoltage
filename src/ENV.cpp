@@ -145,7 +145,7 @@ void ENV::step( double s )
          m_Value -= s / paramToDuration( m_Release );
       }
 
-      if( m_Value < 0.0 )
+      if( m_Value <= 0.0 )
       {
          m_Value = 0.0;
          m_State = StateEnd;

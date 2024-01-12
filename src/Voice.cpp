@@ -53,8 +53,7 @@ bool Voice::handleLoop()
    const WaveFile *pWav = m_pSample->getWave();
    Sample::PlayMode pm = m_pSample->getPlayMode();
 
-   if( !m_NoteIsOn &&
-      ( pm == Sample::PlayModeStandard || pm == Sample::PlayModeLoopUntilRelease ) )
+   if( !m_NoteIsOn && ( pm == Sample::PlayModeLoopUntilRelease ) )
    {
       return( false );
    }
@@ -125,7 +124,7 @@ bool Voice::process( float *pLeft, float *pRight, int nSamples, double sampleRat
 
             if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
                return( false );
-               
+
             int o = (int)m_Ofs;
 
             int16_t lv = pData[( 4 * o ) + 0] | ( pData[( 4 * o ) + 1] << 8 );
