@@ -26,13 +26,13 @@ Keyboard::~Keyboard()
 }
 
 
-std::list<SamplerEngine::Sample *> &Keyboard::samples()
+std::list<Overvoltage::Sample *> &Keyboard::samples()
 {
    return( m_pEditor->processor().samples() );
 }
 
 
-const std::list<SamplerEngine::Sample *> &Keyboard::constSamples() const
+const std::list<Overvoltage::Sample *> &Keyboard::constSamples() const
 {
    return( m_pEditor->processor().constSamples() );
 }

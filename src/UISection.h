@@ -56,14 +56,14 @@ protected:
    };
 
 protected:
-   const std::set<SamplerEngine::Sample *> &samples() const;
-   SamplerEngine::Sample *sample() const;
+   const std::set<Overvoltage::Sample *> &samples() const;
+   Overvoltage::Sample *sample() const;
    PluginEditor *editor() const;
 
 private:
    PluginEditor *m_pEditor;
    juce::Label *m_pLabel;
-   std::set<SamplerEngine::Sample *> m_Samples;
+   std::set<Overvoltage::Sample *> m_Samples;
 };
 
 #endif

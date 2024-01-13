@@ -243,12 +243,12 @@ void UISection::onSampleSelectionUpdated( SamplerKeyboard *pSamplerKeyboard )
 }
 
 
-const std::set<SamplerEngine::Sample *> &UISection::samples() const
+const std::set<Overvoltage::Sample *> &UISection::samples() const
 {
    return( m_Samples );
 }
 
-SamplerEngine::Sample *UISection::sample() const
+Overvoltage::Sample *UISection::sample() const
 {
    if( m_Samples.size() <= 0 )
       return( nullptr );

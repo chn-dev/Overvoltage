@@ -12,7 +12,7 @@ AEGUISection::~AEGUISection()
 {
 }
 
-ENV *AEGUISection::getENV( const SamplerEngine::Sample *pSample ) const
+Overvoltage::ENV *AEGUISection::getENV( const Overvoltage::Sample *pSample ) const
 {
    return( pSample->getAEG() );
 }

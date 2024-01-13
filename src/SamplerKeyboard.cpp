@@ -45,7 +45,7 @@ bool SamplerKeyboard::keyPressed( const KeyPress &key, Component */*pOriginating
 {
    if( key == KeyPress::deleteKey )
    {
-      for( SamplerEngine::Sample *pSample : m_SelectedSamples )
+      for( Overvoltage::Sample *pSample : m_SelectedSamples )
       {
          for( SamplerKeyboardListener *pListener : m_Listeners )
          {
@@ -73,9 +73,9 @@ bool SamplerKeyboard::keyStateChanged( bool /*isKeyDown*/, Component */*pOrigina
 }
 
 
-SamplerEngine::Sample *SamplerKeyboard::getSampleAt( int x, int y ) const
+Overvoltage::Sample *SamplerKeyboard::getSampleAt( int x, int y ) const
 {
-   for( SamplerEngine::Sample *pSample : constSamples() )
+   for( Overvoltage::Sample *pSample : constSamples() )
    {
       juce::Rectangle<int> r = getNoteRect( pSample->getMinNote(), pSample->getMaxNote(), pSample->getMinVelocity(), pSample->getMaxVelocity() );
       if( r.contains( x, y ) )
@@ -86,7 +86,7 @@ SamplerEngine::Sample *SamplerKeyboard::getSampleAt( int x, int y ) const
 }
 
 
-bool SamplerKeyboard::drawSample( juce::Graphics &g, SamplerEngine::Sample *const pSample ) const
+bool SamplerKeyboard::drawSample( juce::Graphics &g, Overvoltage::Sample *const pSample ) const
 {
    bool highlighted = false;
 
@@ -94,7 +94,7 @@ bool SamplerKeyboard::drawSample( juce::Graphics &g, SamplerEngine::Sample *cons
 
    bool isSelected = m_SelectedSamples.find( pSample ) != m_SelectedSamples.end();
 
-   if( m_pEditor->processor().isPlaying( pSample ) )
+   if( m_pEditor->processor().samplerEngine()->isPlaying( pSample ) )
    {
       g.setColour( juce::Colour::fromRGB( 255, 64, 64 ) );
    } else
@@ -132,8 +132,8 @@ void SamplerKeyboard::paint( juce::Graphics &g )
    Keyboard::paint( g );
 
    g.setFont( 13.0 );
-   std::list<SamplerEngine::Sample *> highlighted;
-   for( SamplerEngine::Sample *pSample : samples() )
+   std::list<Overvoltage::Sample *> highlighted;
+   for( Overvoltage::Sample *pSample : samples() )
    {
       if( drawSample( g, pSample ) )
       {
@@ -141,7 +141,7 @@ void SamplerKeyboard::paint( juce::Graphics &g )
       }
    }
 
-   for( SamplerEngine::Sample *pSample : highlighted )
+   for( Overvoltage::Sample *pSample : highlighted )
    {
       drawSample( g, pSample );
    }
@@ -165,7 +165,7 @@ void SamplerKeyboard::paint( juce::Graphics &g )
 }
 
 
-juce::Rectangle<int> SamplerKeyboard::getNoteRect( SamplerEngine::Sample *const pSample ) const
+juce::Rectangle<int> SamplerKeyboard::getNoteRect( Overvoltage::Sample *const pSample ) const
 {
    int minNote = pSample->getMinNote();
    int maxNote = pSample->getMaxNote();
@@ -255,10 +255,10 @@ void SamplerKeyboard::filesDropped( const StringArray &files, int /*x*/, int /*y
    int n = 0;
    for( String f : files )
    {
-      SamplerEngine::WaveFile *pWave = SamplerEngine::WaveFile::load( f.toStdString() );
+      Overvoltage::WaveFile *pWave = Overvoltage::WaveFile::load( f.toStdString() );
       if( pWave )
       {
-         SamplerEngine::Sample *pSample = new SamplerEngine::Sample( std::filesystem::path( f.toStdString() ).stem().string(), pWave, m_DragDropNote + n, m_DragDropNote + n );
+         Overvoltage::Sample *pSample = new Overvoltage::Sample( std::filesystem::path( f.toStdString() ).stem().string(), pWave, m_DragDropNote + n, m_DragDropNote + n );
          samples().push_back( pSample );
          n++;
       }
@@ -274,7 +274,7 @@ void SamplerKeyboard::updateCursor( const MouseEvent &event )
    int x = event.getPosition().getX();
    int y = event.getPosition().getY();
 
-   SamplerEngine::Sample *pSample = getSampleAt( x, y );
+   Overvoltage::Sample *pSample = getSampleAt( x, y );
    if( pSample )
    {
       bool isSelected = m_SelectedSamples.find( pSample ) != m_SelectedSamples.end();
@@ -382,7 +382,7 @@ void SamplerKeyboard::mouseDrag( const MouseEvent &event )
       m_SelectionRectangle = r;
 
       m_SelectedSamples.clear();
-      for( SamplerEngine::Sample *pSample : samples() )
+      for( Overvoltage::Sample *pSample : samples() )
       {
          juce::Rectangle<int> noteRect = getNoteRect( pSample );
          if( m_SelectionRectangle.contains( noteRect ) ||
@@ -414,7 +414,7 @@ void SamplerKeyboard::mouseDrag( const MouseEvent &event )
          // top
          if( m_SelectedSamples.size() == 1 )
          {
-            SamplerEngine::Sample *pSample = *m_SelectedSamples.begin();
+            Overvoltage::Sample *pSample = *m_SelectedSamples.begin();
             if( pSample->getMaxNote() != note )
             {
                pSample->setMaxNote( note );
@@ -429,7 +429,7 @@ void SamplerKeyboard::mouseDrag( const MouseEvent &event )
          // right
          if( m_SelectedSamples.size() == 1 )
          {
-            SamplerEngine::Sample *pSample = *m_SelectedSamples.begin();
+            Overvoltage::Sample *pSample = *m_SelectedSamples.begin();
             if( pSample->getMaxVelocity() != velocity )
             {
                pSample->setMaxVelocity( velocity );
@@ -447,7 +447,7 @@ void SamplerKeyboard::mouseDrag( const MouseEvent &event )
          // left
          if( m_SelectedSamples.size() == 1 )
          {
-            SamplerEngine::Sample *pSample = *m_SelectedSamples.begin();
+            Overvoltage::Sample *pSample = *m_SelectedSamples.begin();
             if( pSample->getMinVelocity() != velocity )
             {
                pSample->setMinVelocity( velocity );
@@ -465,7 +465,7 @@ void SamplerKeyboard::mouseDrag( const MouseEvent &event )
          // bottom
          if( m_SelectedSamples.size() == 1 )
          {
-            SamplerEngine::Sample *pSample = *m_SelectedSamples.begin();
+            Overvoltage::Sample *pSample = *m_SelectedSamples.begin();
             pSample->setMinNote( note );
             pSample->correctMinMaxNote();
             m_pEditor->onSampleSelectionUpdated( this );
@@ -495,7 +495,7 @@ void SamplerKeyboard::mouseDown( const MouseEvent &event )
    int x = event.getMouseDownX();
    int y = event.getMouseDownY();
 
-   SamplerEngine::Sample *pSample = getSampleAt( x, y );
+   Overvoltage::Sample *pSample = getSampleAt( x, y );
    if( pSample )
    {
       bool isCtrlDown = juce::ModifierKeys::getCurrentModifiers().isCtrlDown();
@@ -549,7 +549,7 @@ void SamplerKeyboard::mouseUp( const MouseEvent &event )
    } else
    if( m_CurrentSampleNote >= 0 )
    {
-      for( SamplerEngine::Sample *pSample : m_SelectedSamples )
+      for( Overvoltage::Sample *pSample : m_SelectedSamples )
       {
          pSample->setMinNote( pSample->getMinNote() + m_CurrentSampleNoteOffset );
          pSample->setMaxNote( pSample->getMaxNote() + m_CurrentSampleNoteOffset );
@@ -577,7 +577,7 @@ void SamplerKeyboard::handleNoteOff( MidiKeyboardState *pSource, int midiChannel
 }
 
 
-std::set<SamplerEngine::Sample *> SamplerKeyboard::selectedSamples() const
+std::set<Overvoltage::Sample *> SamplerKeyboard::selectedSamples() const
 {
    return( m_SelectedSamples );
 }

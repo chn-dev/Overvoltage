@@ -22,10 +22,10 @@ public:
 
    virtual void sliderValueChanged( Slider *pSlider );
 
-   void egUpdated( ENV *pENV );
+   void egUpdated( Overvoltage::ENV *pENV );
 
 protected:
-   virtual ENV *getENV( const SamplerEngine::Sample *pSample ) const = 0;
+   virtual Overvoltage::ENV *getENV( const Overvoltage::Sample *pSample ) const = 0;
 
 private:
    juce::Slider *m_psAttack;

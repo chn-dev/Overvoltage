@@ -3,7 +3,7 @@
 #include "Part.h"
 #include "util.h"
 
-using namespace SamplerEngine;
+using namespace Overvoltage;
 
 Part::Part( size_t partNum ) :
    m_PartNum( partNum )

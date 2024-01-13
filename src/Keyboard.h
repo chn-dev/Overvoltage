@@ -40,8 +40,8 @@ protected:
    static int keyOfs( int note );
    static int maxKeyOfs();
    static int keySize( int note );
-   std::list<SamplerEngine::Sample *> &samples();
-   const std::list<SamplerEngine::Sample *> &constSamples() const;
+   std::list<Overvoltage::Sample *> &samples();
+   const std::list<Overvoltage::Sample *> &constSamples() const;
 
 private:
    void drawNote( juce::Graphics &g, int note );

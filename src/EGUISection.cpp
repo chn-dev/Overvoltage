@@ -85,7 +85,7 @@ void EGUISection::resized()
 }
 
 
-void EGUISection::egUpdated( ENV *pENV )
+void EGUISection::egUpdated( Overvoltage::ENV *pENV )
 {
    if( !pENV )
       return;
@@ -122,28 +122,28 @@ void EGUISection::sliderValueChanged( Slider *pSlider )
 
    if( pSlider == m_psAttack )
    {
-      for( SamplerEngine::Sample *pSample : samples() )
+      for( Overvoltage::Sample *pSample : samples() )
       {
          getENV( pSample )->setAttack( m_psAttack->getValue() );
       }
    } else
    if( pSlider == m_psDecay )
    {
-      for( SamplerEngine::Sample *pSample : samples() )
+      for( Overvoltage::Sample *pSample : samples() )
       {
          getENV( pSample )->setDecay( m_psDecay->getValue() );
       }
    } else
    if( pSlider == m_psSustain )
    {
-      for( SamplerEngine::Sample *pSample : samples() )
+      for( Overvoltage::Sample *pSample : samples() )
       {
          getENV( pSample )->setSustain( m_psSustain->getValue() );
       }
    } else
    if( pSlider == m_psRelease )
    {
-      for( SamplerEngine::Sample *pSample : samples() )
+      for( Overvoltage::Sample *pSample : samples() )
       {
          getENV( pSample )->setRelease( m_psRelease->getValue() );
       }

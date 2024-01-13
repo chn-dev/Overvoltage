@@ -1,7 +1,7 @@
 #include <math.h>
 #include "Voice.h"
 
-using namespace SamplerEngine;
+using namespace Overvoltage;
 
 Voice::Voice( const Sample *pSample, int note, int velocity ) :
    m_pSample( pSample ),

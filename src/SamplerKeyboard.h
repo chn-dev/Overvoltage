@@ -12,7 +12,7 @@
 class SamplerKeyboardListener
 {
 public:
-   virtual void onDeleteSample( size_t part, SamplerEngine::Sample *pSample ) = 0;
+   virtual void onDeleteSample( size_t part, Overvoltage::Sample *pSample ) = 0;
 };
 
 //==============================================================================
@@ -51,25 +51,25 @@ public:
    virtual void fileDragExit( const StringArray &files );
    virtual void filesDropped( const StringArray &files, int x, int y );
 
-   std::set<SamplerEngine::Sample *> selectedSamples() const;
+   std::set<Overvoltage::Sample *> selectedSamples() const;
    void clearSelectedSamples();
 
 protected:
    int dragDropNote( int y ) const;
    int dragDropVelocity( int x ) const;
-   SamplerEngine::Sample *getSampleAt( int x, int y ) const;
-   juce::Rectangle<int> getNoteRect( SamplerEngine::Sample *const pSample ) const;
+   Overvoltage::Sample *getSampleAt( int x, int y ) const;
+   juce::Rectangle<int> getNoteRect( Overvoltage::Sample *const pSample ) const;
    juce::Rectangle<int> getNoteRect( int minNote, int maxNote, int minVel, int maxVel ) const;
-   bool drawSample( juce::Graphics &g, SamplerEngine::Sample *const pSample ) const;
+   bool drawSample( juce::Graphics &g, Overvoltage::Sample *const pSample ) const;
 
 private:
    void updateCursor( const MouseEvent &event );
 
 private:
-   std::set<SamplerEngine::Sample *> m_SelectedSamples;
+   std::set<Overvoltage::Sample *> m_SelectedSamples;
    std::vector<SamplerKeyboardListener *> m_Listeners;
 
-   SamplerEngine::Sample *m_pCurrentSample;
+   Overvoltage::Sample *m_pCurrentSample;
    int m_CurrentSampleNote;
    int m_CurrentSampleNoteOffset;
    int m_CurrentSampleHandle;

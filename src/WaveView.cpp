@@ -58,7 +58,7 @@ void WaveView::paint( juce::Graphics &g )
       g.drawLine( (float)getBounds().getWidth(), 0, 0, (float)totalHeight );
    } else
    {
-      const SamplerEngine::WaveFile *pWave = sample()->getWave();
+      const Overvoltage::WaveFile *pWave = sample()->getWave();
 
       if( ( m_SelectionStart != ~(decltype( m_SelectionStart ))0 ) && ( m_SelectionEnd != ~(decltype( m_SelectionEnd ))0 ) )
       {
@@ -238,7 +238,7 @@ void WaveView::mouseMove( const MouseEvent &event )
    if( !sample() )
       return;
 
-   const SamplerEngine::WaveFile *pWave = sample()->getWave();
+   const Overvoltage::WaveFile *pWave = sample()->getWave();
    int loopStartX = getXPosFromSampleNum( pWave->loopStart() );
    int loopEndX = getXPosFromSampleNum( pWave->loopEnd() );
 
@@ -341,7 +341,7 @@ void WaveView::mouseDrag( const MouseEvent &event )
    if( !m_IsDraggingLoopStart && !m_IsDraggingLoopEnd && !m_IsSelecting )
       return;
 
-   SamplerEngine::WaveFile *pWave = sample()->getWave();
+   Overvoltage::WaveFile *pWave = sample()->getWave();
 
    if( m_IsSelecting )
    {

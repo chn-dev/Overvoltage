@@ -5,6 +5,8 @@
 
 #include <util.h>
 
+using namespace Overvoltage;
+
 ENV::ENV() :
    m_Value( 0.0 ),
    m_State( StateNone ),
