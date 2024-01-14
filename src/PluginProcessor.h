@@ -9,13 +9,13 @@
 #include <SamplerEngine/Voice.h>
 #include <SamplerEngine/Part.h>
 
-#include "SamplerKeyboard.h"
+#include <SamplerGUI/SamplerKeyboard.h>
 
 //==============================================================================
 class PluginProcessor : public juce::AudioProcessor,
                         public juce::MidiKeyboardStateListener,
                         public juce::MidiKeyboardState,
-                        public SamplerKeyboardListener
+                        public SamplerGUI::SamplerKeyboardListener
 {
 public:
    //==============================================================================

@@ -1,6 +1,6 @@
 #include "PluginEditor.h"
-#include "AEGUISection.h"
 
+using namespace SamplerGUI;
 
 AEGUISection::AEGUISection( PluginEditor *pEditor ) :
    EGUISection( pEditor, "AEG" )

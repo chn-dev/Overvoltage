@@ -1,6 +1,8 @@
 #include "PluginEditor.h"
 #include "OutputUISection.h"
 
+using namespace SamplerGUI;
+
 OutputUISection::OutputUISection( PluginEditor *pEditor ) :
    UISection( pEditor, "Output" )
 {

@@ -7,6 +7,8 @@
 
 #include "util.h"
 
+using namespace SamplerGUI;
+
 SamplerKeyboard::SamplerKeyboard( PluginEditor *pEditor ) :
    Keyboard( pEditor ),
    m_pCurrentSample( nullptr ),

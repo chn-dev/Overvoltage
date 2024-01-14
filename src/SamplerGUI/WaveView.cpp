@@ -3,6 +3,8 @@
 
 #include "util.h"
 
+using namespace SamplerGUI;
+
 WaveView::WaveView( PluginEditor *pEditor ) :
    UISection( pEditor ),
    m_IsDraggingLoopStart( false ),

@@ -1,14 +1,8 @@
 #ifndef __PLUGINEDITOR_H__
 #define __PLUGINEDITOR_H__
 
+#include <SamplerGUI/SamplerGUI.h>
 #include "PluginProcessor.h"
-
-#include "SamplerKeyboard.h"
-#include "WaveView.h"
-#include "SampleUISection.h"
-#include "NameRangesUISection.h"
-#include "AEGUISection.h"
-#include "OutputUISection.h"
 
 //==============================================================================
 class PluginEditor : public juce::AudioProcessorEditor,
@@ -26,10 +20,10 @@ public:
    virtual void handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
    virtual void handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
 
-   void addUISection( UISection *pSection );
-   void removeUISection( UISection *pSection );
+   void addUISection( SamplerGUI::UISection *pSection );
+   void removeUISection( SamplerGUI::UISection *pSection );
 
-   void onSampleSelectionUpdated( SamplerKeyboard *pSamplerKeyboard );
+   void onSampleSelectionUpdated( SamplerGUI::SamplerKeyboard *pSamplerKeyboard );
 
    virtual void buttonClicked( juce::Button *pButton );
    virtual void buttonStateChanged( juce::Button *pButton );
@@ -45,14 +39,14 @@ private:
    // access the processor object that created it.
    PluginProcessor &processorRef;
 
-   std::set<UISection *> m_UISections;
+   std::set<SamplerGUI::UISection *> m_UISections;
 
-   SamplerKeyboard *m_pKeyboard;
-   WaveView *m_pWaveView;
-   SampleUISection *m_pSampleSection;
-   NameRangesUISection *m_pNameRangesUISection;
-   AEGUISection *m_pAEGUISection;
-   OutputUISection *m_pOutputUISection;
+   SamplerGUI::SamplerKeyboard *m_pKeyboard;
+   SamplerGUI::WaveView *m_pWaveView;
+   SamplerGUI::SampleUISection *m_pSampleSection;
+   SamplerGUI::NameRangesUISection *m_pNameRangesUISection;
+   SamplerGUI::AEGUISection *m_pAEGUISection;
+   SamplerGUI::OutputUISection *m_pOutputUISection;
 
    size_t m_CurrentPart;
    std::vector<juce::TextButton *> m_PartButtons;

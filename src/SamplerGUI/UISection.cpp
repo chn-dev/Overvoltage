@@ -1,6 +1,8 @@
 #include "UISection.h"
 #include "PluginEditor.h"
 
+using namespace SamplerGUI;
+
 UISection::UISection( PluginEditor *pEditor, std::string label ) :
    m_pEditor( pEditor ),
    m_pLabel( nullptr )

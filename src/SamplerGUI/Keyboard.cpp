@@ -3,6 +3,8 @@
 
 #include "util.h"
 
+using namespace SamplerGUI;
+
 Keyboard::Keyboard( PluginEditor *pEditor ) :
    m_pEditor( pEditor ),
    m_KeyHeight( 28 ),

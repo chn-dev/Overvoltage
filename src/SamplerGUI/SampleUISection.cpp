@@ -1,6 +1,8 @@
 #include "PluginEditor.h"
 #include "SampleUISection.h"
 
+using namespace SamplerGUI;
+
 SampleUISection::SampleUISection( PluginEditor *pEditor ) :
    UISection( pEditor, "Sample" )
 {

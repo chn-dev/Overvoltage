@@ -26,7 +26,7 @@ PluginEditor::PluginEditor( PluginProcessor& p )
 
    int yofs = 32;
 
-   m_pKeyboard = new SamplerKeyboard( this );
+   m_pKeyboard = new SamplerGUI::SamplerKeyboard( this );
    addKeyListener( m_pKeyboard );
    m_pKeyboard->setBounds( 0, yofs, 64 + 128, 640 - yofs );
    m_pKeyboard->addListener( &p );
@@ -35,27 +35,27 @@ PluginEditor::PluginEditor( PluginProcessor& p )
    processorRef.juce::MidiKeyboardState::addListener( m_pKeyboard );
    addAndMakeVisible( m_pKeyboard );
 
-   m_pWaveView = new WaveView( this );
+   m_pWaveView = new SamplerGUI::WaveView( this );
    m_pWaveView->setBounds( 64 + 128 + 4, yofs, 1024 - ( 64 + 128 + 4 ), 196 );
    addAndMakeVisible( m_pWaveView );
 
-   m_pSampleSection = new SampleUISection( this );
+   m_pSampleSection = new SamplerGUI::SampleUISection( this );
    m_pSampleSection->setBounds( 64 + 128 + 4, 196 + 4 + yofs, 192, 128 );
    addAndMakeVisible( m_pSampleSection );
 
-   m_pNameRangesUISection = new NameRangesUISection( this );
+   m_pNameRangesUISection = new SamplerGUI::NameRangesUISection( this );
    m_pNameRangesUISection->setBounds( 64 + 128 + 4, 196 + 4 + 128 + 4 + yofs, 192, 128 );
    addAndMakeVisible( m_pNameRangesUISection );
 
-   m_pAEGUISection = new AEGUISection( this );
+   m_pAEGUISection = new SamplerGUI::AEGUISection( this );
    m_pAEGUISection->setBounds( 64 + 128 + 4, 196 + 4 + 128 + 4 + 128 + 4 + yofs, 192, 128 );
    addAndMakeVisible( m_pAEGUISection );
 
-   m_pOutputUISection = new OutputUISection( this );
+   m_pOutputUISection = new SamplerGUI::OutputUISection( this );
    m_pOutputUISection->setBounds( 1024 - 64 - 128 - 4, 196 + 4 + yofs, 192, 128 );
    addAndMakeVisible( m_pOutputUISection );
 
-   for( UISection *pSection : m_UISections )
+   for( SamplerGUI::UISection *pSection : m_UISections )
    {
       pSection->samplesUpdated();
    }
@@ -119,7 +119,7 @@ void PluginEditor::buttonStateChanged( Button */*pButton*/ )
 }
 
 
-void PluginEditor::addUISection( UISection *pSection )
+void PluginEditor::addUISection( SamplerGUI::UISection *pSection )
 {
    if( pSection )
    {
@@ -128,7 +128,7 @@ void PluginEditor::addUISection( UISection *pSection )
 }
 
 
-void PluginEditor::removeUISection( UISection *pSection )
+void PluginEditor::removeUISection( SamplerGUI::UISection *pSection )
 {
    if( pSection && ( m_UISections.find( pSection ) != m_UISections.end() ) )
    {
@@ -171,9 +171,9 @@ void PluginEditor::resized()
 }
 
 
-void PluginEditor::onSampleSelectionUpdated( SamplerKeyboard *pSamplerKeyboard )
+void PluginEditor::onSampleSelectionUpdated( SamplerGUI::SamplerKeyboard *pSamplerKeyboard )
 {
-   for( UISection *pSection : m_UISections )
+   for( SamplerGUI::UISection *pSection : m_UISections )
    {
       pSection->onSampleSelectionUpdated( pSamplerKeyboard );
    }

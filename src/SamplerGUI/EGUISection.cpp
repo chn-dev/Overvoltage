@@ -1,6 +1,7 @@
 #include "PluginEditor.h"
-#include "EGUISection.h"
+#include "SamplerGUI.h"
 
+using namespace SamplerGUI;
 
 EGUISection::EGUISection( PluginEditor *pEditor, std::string label ) :
    UISection( pEditor, label )
