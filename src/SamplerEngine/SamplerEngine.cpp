@@ -23,100 +23,19 @@ Engine::~Engine()
 
 bool Engine::process( std::vector<OutputBus> &buses, double sampleRate )
 {
-   std::set<Voice *> stoppedVoices;
-   for( auto k = m_Voices.begin(); k != m_Voices.end(); k++ )
+   bool update = false;
+   for( Part *pPart : m_Parts )
    {
-      Voice *pVoice = k->second;
-      size_t busNum;
-      if( pVoice->sample()->getOutputBus() < 0 )
-         busNum = 0;
-      else
-         busNum = (size_t)pVoice->sample()->getOutputBus();
-
-      if( busNum >= buses.size() )
-      {
-         stoppedVoices.insert( pVoice );
-      } else
-      if( !buses[busNum].isValid() )
-      {
-         stoppedVoices.insert( pVoice );
-      } else
-      if( buses[busNum].getWritePointers().size() != 2 )
-      {
-         stoppedVoices.insert( pVoice );
-      } else
-      {
-         float *pLeft = buses[busNum].getWritePointers()[0];
-         float *pRight = buses[busNum].getWritePointers()[1];
-
-         if( !pVoice->process( pLeft, pRight, buses[busNum].getNumSamples(), sampleRate ) )
-         {
-            stoppedVoices.insert( pVoice );
-         }
-      }
+      update = update || pPart->process( buses, sampleRate );
    }
 
-   if( stoppedVoices.size() > 0 )
-   {
-      for( auto v : stoppedVoices )
-      {
-         stopVoice( v );
-      }
-      return( true );
-   } else
-   {
-      return( false );
-   }
-}
-
-
-std::list<Sample *> Engine::getSamplesByMidiNoteAndVelocity( size_t part, int note, int vel ) const
-{
-   std::list<Sample *> result;
-
-   for( Sample *pSample : m_Parts[part]->samples() )
-   {
-      if( pSample->matchesMidiNote( note ) && pSample->matchesVelocity( vel ) )
-      {
-         result.push_back( pSample );
-      }
-   }
-
-   return( result );
+   return( update );
 }
 
 
 void Engine::deleteSample( size_t part, Sample *pSample )
 {
-   std::vector<Voice *> voicesToStop;
-   for( std::pair<int, Voice *> sv : m_Voices )
-   {
-      if( sv.second->sample() == pSample )
-      {
-         voicesToStop.push_back( sv.second );
-      }
-   }
-
-   for( Voice *pVoice : voicesToStop )
-   {
-      stopVoice( pVoice );
-   }
-
    m_Parts[part]->deleteSample( pSample );
-}
-
-
-void Engine::stopVoice( const Voice *pVoice )
-{
-   for( auto v = m_Voices.begin(); v != m_Voices.end(); v++ )
-   {
-      if( v->second == pVoice )
-      {
-         m_Voices.erase( v );
-         delete pVoice;
-         return;
-      }
-   }
 }
 
 
@@ -128,26 +47,19 @@ std::list<Sample *> Engine::samples( size_t nPart ) const
 
 void Engine::noteOn( size_t nPart, int note, int vel )
 {
-   std::list<Sample *> s = getSamplesByMidiNoteAndVelocity( nPart, note, vel );
-   for( Sample *pSample : s )
-   {
-      Voice *pVoice = new Voice( pSample, note, vel );
-      m_Voices.insert( std::pair{ note, pVoice } );
-   }
+   if( nPart >= m_Parts.size() )
+      return;
+
+   m_Parts[nPart]->noteOn( note, vel );
 }
 
 
-void Engine::noteOff( size_t nPart, int note, int /*vel*/ )
+void Engine::noteOff( size_t nPart, int note, int vel )
 {
-   if( m_Voices.count( note ) > 0 )
-   {
-      auto v = m_Voices.equal_range( note );
-      for( auto voice = v.first; voice != v.second; voice++ )
-      {
-         Voice *pVoice = voice->second;
-         pVoice->noteOff();
-      }
-   }
+   if( nPart >= m_Parts.size() )
+      return;
+
+   m_Parts[nPart]->noteOff( note, vel );
 }
 
 
@@ -195,7 +107,7 @@ juce::XmlElement *Engine::toXml() const
    juce::XmlElement *peParts = new juce::XmlElement( "parts" );
    for( size_t i = 0; i < m_Parts.size(); i++ )
    {
-      juce::XmlElement *pePart = m_Parts[i]->getStateInformation();
+      juce::XmlElement *pePart = m_Parts[i]->toXml();
       peParts->addChildElement( pePart );
    }
 
@@ -217,30 +129,12 @@ const std::list<Sample *> &Engine::constSamples( size_t nPart ) const
 }
 
 
-std::set<int> Engine::allPlayingMidiNotes() const
+bool Engine::isPlaying( size_t nPart, const Sample *pSample ) const
 {
-   std::set<int> result;
-   for( auto i = m_Voices.begin(); i != m_Voices.end(); i++ )
-   {
-      result.insert( i->first );
-   }
-
-   return( result );
-}
-
-
-bool Engine::isPlaying( const Sample *pSample ) const
-{
-   std::set<int> midiNotes = allPlayingMidiNotes();
-   for( auto v : m_Voices )
-   {
-      if( v.second->sample() == pSample )
-      {
-         return( true );
-      }
-   }
-
-   return( false );
+   if( nPart >= m_Parts.size() )
+      return( false );
+   else
+      return( m_Parts[nPart]->isPlaying( pSample ) );
 }
 
 

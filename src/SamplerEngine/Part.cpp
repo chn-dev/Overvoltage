@@ -1,6 +1,6 @@
 #include <string>
 
-#include "Part.h"
+#include "SamplerEngine.h"
 #include "util.h"
 
 using namespace SamplerEngine;
@@ -16,7 +16,70 @@ Part::~Part()
 }
 
 
-juce::XmlElement *Part::getStateInformation() const
+bool Part::process( std::vector<OutputBus> &buses, double sampleRate )
+{
+   std::set<Voice *> stoppedVoices;
+   for( auto k = m_Voices.begin(); k != m_Voices.end(); k++ )
+   {
+      Voice *pVoice = k->second;
+      size_t busNum;
+      if( pVoice->sample()->getOutputBus() < 0 )
+         busNum = 0;
+      else
+         busNum = (size_t)pVoice->sample()->getOutputBus();
+
+      if( busNum >= buses.size() )
+      {
+         stoppedVoices.insert( pVoice );
+      } else
+         if( !buses[busNum].isValid() )
+         {
+            stoppedVoices.insert( pVoice );
+         } else
+            if( buses[busNum].getWritePointers().size() != 2 )
+            {
+               stoppedVoices.insert( pVoice );
+            } else
+            {
+               float *pLeft = buses[busNum].getWritePointers()[0];
+               float *pRight = buses[busNum].getWritePointers()[1];
+
+               if( !pVoice->process( pLeft, pRight, (int)buses[busNum].getNumSamples(), sampleRate ) )
+               {
+                  stoppedVoices.insert( pVoice );
+               }
+            }
+   }
+
+   if( stoppedVoices.size() > 0 )
+   {
+      for( auto v : stoppedVoices )
+      {
+         stopVoice( v );
+      }
+      return( true );
+   } else
+   {
+      return( false );
+   }
+}
+
+
+void Part::stopVoice( const Voice *pVoice )
+{
+   for( auto v = m_Voices.begin(); v != m_Voices.end(); v++ )
+   {
+      if( v->second == pVoice )
+      {
+         m_Voices.erase( v );
+         delete pVoice;
+         return;
+      }
+   }
+}
+
+
+juce::XmlElement *Part::toXml() const
 {
    juce::XmlElement *pePart = new juce::XmlElement( "part" );
    pePart->setAttribute( "num", stdformat( "{}", m_PartNum ) );
@@ -24,7 +87,7 @@ juce::XmlElement *Part::getStateInformation() const
    juce::XmlElement *peSamples = new juce::XmlElement( "samples" );
    for( Sample *pSample : m_Samples )
    {
-      juce::XmlElement *peSample = pSample->getStateInformation();
+      juce::XmlElement *peSample = pSample->toXml();
       peSamples->addChildElement( peSample );
 
    }
@@ -87,9 +150,78 @@ const std::list<Sample *> &Part::constSamples() const
 
 void Part::deleteSample( Sample *pSample )
 {
+   std::vector<Voice *> voicesToStop;
+   for( std::pair<int, Voice *> sv : m_Voices )
+   {
+      if( sv.second->sample() == pSample )
+      {
+         voicesToStop.push_back( sv.second );
+      }
+   }
+
+   for( Voice *pVoice : voicesToStop )
+   {
+      stopVoice( pVoice );
+   }
+
    if( std::find( m_Samples.begin(), m_Samples.end(), pSample ) != m_Samples.end() )
    {
       m_Samples.remove( pSample );
       delete pSample;
+   }
+}
+
+
+std::list<Sample *> Part::getSamplesByMidiNoteAndVelocity( int note, int vel ) const
+{
+   std::list<Sample *> result;
+
+   for( Sample *pSample : m_Samples )
+   {
+      if( pSample->matchesMidiNote( note ) && pSample->matchesVelocity( vel ) )
+      {
+         result.push_back( pSample );
+      }
+   }
+
+   return( result );
+}
+
+
+bool Part::isPlaying( const Sample *pSample ) const
+{
+   for( auto v : m_Voices )
+   {
+      if( v.second->sample() == pSample )
+      {
+         return( true );
+      }
+   }
+
+   return( false );
+}
+
+
+void Part::noteOn( int note, int vel )
+{
+   std::list<Sample *> s = getSamplesByMidiNoteAndVelocity( note, vel );
+   for( Sample *pSample : s )
+   {
+      Voice *pVoice = new Voice( pSample, note, vel );
+      m_Voices.insert( std::pair{ note, pVoice } );
+   }
+}
+
+
+void Part::noteOff( int note, int /*vel*/ )
+{
+   if( m_Voices.count( note ) > 0 )
+   {
+      auto v = m_Voices.equal_range( note );
+      for( auto voice = v.first; voice != v.second; voice++ )
+      {
+         Voice *pVoice = voice->second;
+         pVoice->noteOff();
+      }
    }
 }

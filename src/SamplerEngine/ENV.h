@@ -39,7 +39,6 @@ namespace SamplerEngine
 
       static double paramToDuration( double p );
 
-      juce::XmlElement *getStateInformation() const;
 
       void noteOn();
       void noteOff();
@@ -47,6 +46,7 @@ namespace SamplerEngine
       void step( double s );
 
       static ENV *fromXml( const juce::XmlElement *pe );
+      juce::XmlElement *toXml() const;
 
    protected:
 

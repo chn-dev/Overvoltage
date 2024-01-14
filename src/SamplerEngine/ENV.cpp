@@ -57,7 +57,7 @@ ENV *ENV::fromXml( const juce::XmlElement *pe )
 }
 
 
-juce::XmlElement *ENV::getStateInformation() const
+juce::XmlElement *ENV::toXml() const
 {
    juce::XmlElement *pe = new juce::XmlElement( "envelope" );
 

@@ -34,7 +34,7 @@ namespace SamplerEngine
 
       uint32_t size() const;
 
-      juce::XmlElement *getStateInformation() const;
+      juce::XmlElement *toXml() const;
       static WaveFile *fromXml( const juce::XmlElement *pe );
 
    protected:

@@ -94,7 +94,7 @@ bool SamplerKeyboard::drawSample( juce::Graphics &g, SamplerEngine::Sample *cons
 
    bool isSelected = m_SelectedSamples.find( pSample ) != m_SelectedSamples.end();
 
-   if( m_pEditor->processor().samplerEngine()->isPlaying( pSample ) )
+   if( m_pEditor->processor().samplerEngine()->isPlaying( m_pEditor->currentPart(), pSample ) )
    {
       g.setColour( juce::Colour::fromRGB( 255, 64, 64 ) );
    } else

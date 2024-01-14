@@ -27,7 +27,7 @@ namespace SamplerEngine
       ~Sample();
 
       static Sample *fromXml( const juce::XmlElement *pe );
-      juce::XmlElement *getStateInformation() const;
+      juce::XmlElement *toXml() const;
 
       std::string getName() const;
       void setName( std::string name );

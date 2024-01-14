@@ -50,7 +50,7 @@ Sample::~Sample()
 }
 
 
-juce::XmlElement *Sample::getStateInformation() const
+juce::XmlElement *Sample::toXml() const
 {
    juce::XmlElement *peSample = new juce::XmlElement( "sample" );
    peSample->setAttribute( "name", juce::String( m_Name ) );
@@ -99,11 +99,11 @@ juce::XmlElement *Sample::getStateInformation() const
    peOutputBus->addTextElement( stdformat( "{}", m_OutputBus ) );
    peSample->addChildElement( peOutputBus );
 
-   juce::XmlElement *peAEG = m_pAEG->getStateInformation();
+   juce::XmlElement *peAEG = m_pAEG->toXml();
    peAEG->setAttribute( "type", "amplitude" );
    peSample->addChildElement( peAEG );
 
-   juce::XmlElement *peWave = m_pWave->getStateInformation();
+   juce::XmlElement *peWave = m_pWave->toXml();
    peSample->addChildElement( peWave );
 
    return( peSample );

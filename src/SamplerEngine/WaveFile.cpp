@@ -29,7 +29,7 @@ WaveFile::~WaveFile()
 }
 
 
-juce::XmlElement *WaveFile::getStateInformation() const
+juce::XmlElement *WaveFile::toXml() const
 {
    juce::XmlElement *pe = new juce::XmlElement( "wave" );
 

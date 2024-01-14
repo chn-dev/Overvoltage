@@ -40,18 +40,12 @@ namespace SamplerEngine
       std::list<Sample *> &samples( size_t nPart );
       const std::list<Sample *> &constSamples( size_t nPart ) const;
 
-      bool isPlaying( const Sample *pSample ) const;
+      bool isPlaying( size_t nPart, const Sample *pSample ) const;
 
       static Engine *fromXml( const juce::XmlElement *peOvervoltage );
       juce::XmlElement *toXml() const;
 
    private:
-      std::list<Sample *> getSamplesByMidiNoteAndVelocity( size_t part, int note, int vel ) const;
-      void stopVoice( const Voice *pVoice );
-      std::set<int> allPlayingMidiNotes() const;
-
-   private:
-      std::multimap<int, Voice *> m_Voices;
       std::vector<Part *> m_Parts;
 
    };
