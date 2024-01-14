@@ -7,7 +7,7 @@
 #include "JuceHeader.h"
 
 //==============================================================================
-namespace Overvoltage
+namespace SamplerEngine
 {
    class WaveFile
    {

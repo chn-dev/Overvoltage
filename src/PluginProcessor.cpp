@@ -14,7 +14,7 @@ PluginProcessor::PluginProcessor()
       .withOutput( "Output 8", juce::AudioChannelSet::stereo(), true )
    ), m_pEditor( nullptr )
 {
-   m_pEngine = new Overvoltage::SamplerEngine();
+   m_pEngine = new SamplerEngine::Engine();
 }
 
 
@@ -127,13 +127,13 @@ bool PluginProcessor::isBusesLayoutSupported( const BusesLayout& layouts ) const
    return( true );
 }
 
-std::list<Overvoltage::Sample *> &PluginProcessor::samples()
+std::list<SamplerEngine::Sample *> &PluginProcessor::samples()
 {
    return( m_pEngine->samples( m_pEditor->currentPart() ) );
 }
 
 
-const std::list<Overvoltage::Sample *> &PluginProcessor::constSamples() const
+const std::list<SamplerEngine::Sample *> &PluginProcessor::constSamples() const
 {
    return( m_pEngine->constSamples( m_pEditor->currentPart() ) );
 }
@@ -215,7 +215,7 @@ void PluginProcessor::processBlock( juce::AudioBuffer<float>& buffer,
    // the samples and the outer loop is handling the channels.
    // Alternatively, you can process the samples with the channels
    // interleaved by keeping the same state.
-   std::vector<Overvoltage::OutputBus> buses;
+   std::vector<SamplerEngine::OutputBus> buses;
    buses.resize( (size_t)getBusCount( false ) );
 
    for( int i = 0; i < getBusCount( false ); i++ )
@@ -235,7 +235,7 @@ void PluginProcessor::processBlock( juce::AudioBuffer<float>& buffer,
                pChannelData[j] = 0.0;
             }
          }
-         buses[(size_t)i] = Overvoltage::OutputBus( (size_t)b.getNumSamples(), channelWritePointers );
+         buses[(size_t)i] = SamplerEngine::OutputBus( (size_t)b.getNumSamples(), channelWritePointers );
       }
    }
 
@@ -283,7 +283,7 @@ void PluginProcessor::setStateInformation( const void* data, int sizeInBytes )
    std::unique_ptr<juce::XmlElement> xmlState( getXmlFromBinary( data, sizeInBytes ) );
    if( xmlState.get() )
    {
-      Overvoltage::SamplerEngine *pEngine = Overvoltage::SamplerEngine::fromXml( xmlState.get() );
+      SamplerEngine::Engine *pEngine = SamplerEngine::Engine::fromXml( xmlState.get() );
       if( pEngine )
       {
          delete m_pEngine;
@@ -301,13 +301,13 @@ juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter()
 }
 
 
-void PluginProcessor::onDeleteSample( size_t part, Overvoltage::Sample *pSample )
+void PluginProcessor::onDeleteSample( size_t part, SamplerEngine::Sample *pSample )
 {
    m_pEngine->deleteSample( part, pSample );
 }
 
 
-Overvoltage::SamplerEngine *PluginProcessor::samplerEngine() const
+SamplerEngine::Engine *PluginProcessor::samplerEngine() const
 {
    return( m_pEngine );
 }

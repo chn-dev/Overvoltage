@@ -4,7 +4,7 @@
 #include "Part.h"
 #include "Voice.h"
 
-namespace Overvoltage
+namespace SamplerEngine
 {
    class OutputBus
    {
@@ -23,11 +23,11 @@ namespace Overvoltage
       std::vector<float *> m_WritePointers;
    };
 
-   class SamplerEngine
+   class Engine
    {
    public:
-      SamplerEngine();
-      ~SamplerEngine();
+      Engine();
+      ~Engine();
 
       bool process( std::vector<OutputBus> &buses, double sampleRate );
 
@@ -42,7 +42,7 @@ namespace Overvoltage
 
       bool isPlaying( const Sample *pSample ) const;
 
-      static SamplerEngine *fromXml( const juce::XmlElement *peOvervoltage );
+      static Engine *fromXml( const juce::XmlElement *peOvervoltage );
       juce::XmlElement *toXml() const;
 
    private:

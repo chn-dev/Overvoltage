@@ -22,7 +22,7 @@ public:
    PluginProcessor();
    ~PluginProcessor() override;
 
-   virtual void onDeleteSample( size_t part, Overvoltage::Sample *pSample );
+   virtual void onDeleteSample( size_t part, SamplerEngine::Sample *pSample );
 
    //==============================================================================
    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -59,9 +59,9 @@ public:
    virtual void handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
    virtual void handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
 
-   std::list<Overvoltage::Sample *> &samples();
-   const std::list<Overvoltage::Sample *> &constSamples() const;
-   Overvoltage::SamplerEngine *samplerEngine() const;
+   std::list<SamplerEngine::Sample *> &samples();
+   const std::list<SamplerEngine::Sample *> &constSamples() const;
+   SamplerEngine::Engine *samplerEngine() const;
 
 private:
    bool outputBusReady( juce::AudioBuffer<float>& buffer, int n ) const;
@@ -69,7 +69,7 @@ private:
    //==============================================================================
    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( PluginProcessor )
 
-   Overvoltage::SamplerEngine *m_pEngine;
+   SamplerEngine::Engine *m_pEngine;
    PluginEditor *m_pEditor;
 
    double m_sampleRate;

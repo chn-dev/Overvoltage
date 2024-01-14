@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-using namespace Overvoltage;
+using namespace SamplerEngine;
 
 Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
    m_Name( name ),

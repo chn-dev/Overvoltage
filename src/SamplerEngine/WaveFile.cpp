@@ -4,7 +4,7 @@
 #include "WaveFile.h"
 #include "util.h"
 
-using namespace Overvoltage;
+using namespace SamplerEngine;
 
 WaveFile::WaveFile() :
    m_Format( (decltype( m_Format ))-1 ),

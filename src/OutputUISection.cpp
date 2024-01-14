@@ -58,7 +58,7 @@ void OutputUISection::comboBoxChanged( ComboBox *pComboBox )
    {
       if( pComboBox == m_pcbOutputBus )
       {
-         for( Overvoltage::Sample *pSample : samples() )
+         for( SamplerEngine::Sample *pSample : samples() )
          {
             pSample->setOutputBus( m_pcbOutputBus->getSelectedId() - 1 );
          }
@@ -73,14 +73,14 @@ void OutputUISection::sliderValueChanged( Slider *pSlider )
    {
       if( pSlider == m_psPan )
       {
-         for( Overvoltage::Sample *pSample : samples() )
+         for( SamplerEngine::Sample *pSample : samples() )
          {
             pSample->setPan( (float)m_psPan->getValue() / 100.0f );
          }
       } else
       if( pSlider == m_psGain )
       {
-         for( Overvoltage::Sample *pSample : samples() )
+         for( SamplerEngine::Sample *pSample : samples() )
          {
             pSample->setGain( powf( 10.0f, ( ( (float)m_psGain->getValue() ) / 20.0f ) ) );
          }

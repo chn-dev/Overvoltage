@@ -6,7 +6,7 @@
 #include "Sample.h"
 
 //==============================================================================
-namespace Overvoltage
+namespace SamplerEngine
 {
    class Voice
    {

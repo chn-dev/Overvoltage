@@ -10,7 +10,7 @@
 #include "ENV.h"
 
 //==============================================================================
-namespace Overvoltage
+namespace SamplerEngine
 {
    class Sample
    {

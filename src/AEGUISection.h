@@ -15,7 +15,7 @@ public:
    ~AEGUISection();
 
 protected:
-   virtual Overvoltage::ENV *getENV( const Overvoltage::Sample *pSample ) const;
+   virtual SamplerEngine::ENV *getENV( const SamplerEngine::Sample *pSample ) const;
 };
 
 #endif

@@ -5,7 +5,7 @@
 
 #include <util.h>
 
-using namespace Overvoltage;
+using namespace SamplerEngine;
 
 ENV::ENV() :
    m_Value( 0.0 ),

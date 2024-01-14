@@ -1,8 +1,8 @@
 #include "SamplerEngine.h"
 
-using namespace Overvoltage;
+using namespace SamplerEngine;
 
-SamplerEngine::SamplerEngine()
+Engine::Engine()
 {
    for( size_t i = 0; i < 16; i++ )
    {
@@ -11,7 +11,7 @@ SamplerEngine::SamplerEngine()
 }
 
 
-SamplerEngine::~SamplerEngine()
+Engine::~Engine()
 {
    for( size_t i = 0; i < m_Parts.size(); i++ )
    {
@@ -21,7 +21,7 @@ SamplerEngine::~SamplerEngine()
 }
 
 
-bool SamplerEngine::process( std::vector<OutputBus> &buses, double sampleRate )
+bool Engine::process( std::vector<OutputBus> &buses, double sampleRate )
 {
    std::set<Voice *> stoppedVoices;
    for( auto k = m_Voices.begin(); k != m_Voices.end(); k++ )
@@ -70,7 +70,7 @@ bool SamplerEngine::process( std::vector<OutputBus> &buses, double sampleRate )
 }
 
 
-std::list<Sample *> SamplerEngine::getSamplesByMidiNoteAndVelocity( size_t part, int note, int vel ) const
+std::list<Sample *> Engine::getSamplesByMidiNoteAndVelocity( size_t part, int note, int vel ) const
 {
    std::list<Sample *> result;
 
@@ -86,7 +86,7 @@ std::list<Sample *> SamplerEngine::getSamplesByMidiNoteAndVelocity( size_t part,
 }
 
 
-void SamplerEngine::deleteSample( size_t part, Sample *pSample )
+void Engine::deleteSample( size_t part, Sample *pSample )
 {
    std::vector<Voice *> voicesToStop;
    for( std::pair<int, Voice *> sv : m_Voices )
@@ -106,7 +106,7 @@ void SamplerEngine::deleteSample( size_t part, Sample *pSample )
 }
 
 
-void SamplerEngine::stopVoice( const Voice *pVoice )
+void Engine::stopVoice( const Voice *pVoice )
 {
    for( auto v = m_Voices.begin(); v != m_Voices.end(); v++ )
    {
@@ -120,13 +120,13 @@ void SamplerEngine::stopVoice( const Voice *pVoice )
 }
 
 
-std::list<Sample *> SamplerEngine::samples( size_t nPart ) const
+std::list<Sample *> Engine::samples( size_t nPart ) const
 {
    return( m_Parts[nPart]->samples() );
 }
 
 
-void SamplerEngine::noteOn( size_t nPart, int note, int vel )
+void Engine::noteOn( size_t nPart, int note, int vel )
 {
    std::list<Sample *> s = getSamplesByMidiNoteAndVelocity( nPart, note, vel );
    for( Sample *pSample : s )
@@ -137,7 +137,7 @@ void SamplerEngine::noteOn( size_t nPart, int note, int vel )
 }
 
 
-void SamplerEngine::noteOff( size_t nPart, int note, int /*vel*/ )
+void Engine::noteOff( size_t nPart, int note, int /*vel*/ )
 {
    if( m_Voices.count( note ) > 0 )
    {
@@ -151,11 +151,11 @@ void SamplerEngine::noteOff( size_t nPart, int note, int /*vel*/ )
 }
 
 
-SamplerEngine *SamplerEngine::fromXml( const juce::XmlElement *peOvervoltage )
+Engine *Engine::fromXml( const juce::XmlElement *peOvervoltage )
 {
    if( peOvervoltage->getTagName() == "overvoltage" )
    {
-      SamplerEngine *pEngine = new SamplerEngine();
+      Engine *pEngine = new Engine();
 
       for( int i = 0; peOvervoltage->getChildElement( i ); i++ )
       {
@@ -188,7 +188,7 @@ SamplerEngine *SamplerEngine::fromXml( const juce::XmlElement *peOvervoltage )
 }
 
 
-juce::XmlElement *SamplerEngine::toXml() const
+juce::XmlElement *Engine::toXml() const
 {
    juce::XmlElement *pVt = new juce::XmlElement( "overvoltage" );
 
@@ -205,19 +205,19 @@ juce::XmlElement *SamplerEngine::toXml() const
 }
 
 
-std::list<Sample *> &SamplerEngine::samples( size_t nPart )
+std::list<Sample *> &Engine::samples( size_t nPart )
 {
    return( m_Parts[nPart]->samples() );
 }
 
 
-const std::list<Sample *> &SamplerEngine::constSamples( size_t nPart ) const
+const std::list<Sample *> &Engine::constSamples( size_t nPart ) const
 {
    return( m_Parts[nPart]->samples() );
 }
 
 
-std::set<int> SamplerEngine::allPlayingMidiNotes() const
+std::set<int> Engine::allPlayingMidiNotes() const
 {
    std::set<int> result;
    for( auto i = m_Voices.begin(); i != m_Voices.end(); i++ )
@@ -229,7 +229,7 @@ std::set<int> SamplerEngine::allPlayingMidiNotes() const
 }
 
 
-bool SamplerEngine::isPlaying( const Sample *pSample ) const
+bool Engine::isPlaying( const Sample *pSample ) const
 {
    std::set<int> midiNotes = allPlayingMidiNotes();
    for( auto v : m_Voices )
