@@ -18,7 +18,7 @@ namespace SamplerGUI
                     public juce::ScrollBar::Listener
    {
    public:
-      WaveView( PluginEditor *pEditor );
+      WaveView( UIPage *pUIPage );
       ~WaveView();
 
       void paint( juce::Graphics & ) override;

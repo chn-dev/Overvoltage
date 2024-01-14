@@ -13,7 +13,7 @@ namespace SamplerGUI
    class AEGUISection : public EGUISection
    {
    public:
-      AEGUISection( PluginEditor *pEditor );
+      AEGUISection( UIPage *pUIPage );
       ~AEGUISection();
 
    protected:

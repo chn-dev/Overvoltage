@@ -23,6 +23,7 @@ public:
    ~PluginProcessor() override;
 
    virtual void onDeleteSample( size_t part, SamplerEngine::Sample *pSample );
+   virtual void onSampleSelectionUpdated( SamplerGUI::SamplerKeyboard *pKeyboard );
 
    //==============================================================================
    void prepareToPlay (double sampleRate, int samplesPerBlock) override;

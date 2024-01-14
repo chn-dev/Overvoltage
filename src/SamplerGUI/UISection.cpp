@@ -1,13 +1,14 @@
 #include "UISection.h"
+#include "UIPage.h"
 #include "PluginEditor.h"
 
 using namespace SamplerGUI;
 
-UISection::UISection( PluginEditor *pEditor, std::string label ) :
-   m_pEditor( pEditor ),
+UISection::UISection( UIPage *pUIPage, std::string label ) :
+   m_pUIPage( pUIPage ),
    m_pLabel( nullptr )
 {
-   m_pEditor->addUISection( this );
+   m_pUIPage->addUISection( this );
 
    if( label != std::string() )
    {
@@ -25,7 +26,7 @@ UISection::UISection( PluginEditor *pEditor, std::string label ) :
 
 UISection::~UISection()
 {
-   m_pEditor->removeUISection( this );
+   m_pUIPage->removeUISection( this );
 
    if( m_pLabel )
    {
@@ -34,9 +35,9 @@ UISection::~UISection()
 }
 
 
-PluginEditor *UISection::editor() const
+UIPage *UISection::uiPage() const
 {
-   return( m_pEditor );
+   return( m_pUIPage );
 }
 
 

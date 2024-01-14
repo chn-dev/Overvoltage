@@ -2,6 +2,7 @@
 #define __PLUGINEDITOR_H__
 
 #include <SamplerGUI/SamplerGUI.h>
+#include <SamplerGUI/UIPage.h>
 #include "PluginProcessor.h"
 
 //==============================================================================
@@ -20,9 +21,6 @@ public:
    virtual void handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
    virtual void handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
 
-   void addUISection( SamplerGUI::UISection *pSection );
-   void removeUISection( SamplerGUI::UISection *pSection );
-
    void onSampleSelectionUpdated( SamplerGUI::SamplerKeyboard *pSamplerKeyboard );
 
    virtual void buttonClicked( juce::Button *pButton );
@@ -39,14 +37,7 @@ private:
    // access the processor object that created it.
    PluginProcessor &processorRef;
 
-   std::set<SamplerGUI::UISection *> m_UISections;
-
-   SamplerGUI::SamplerKeyboard *m_pKeyboard;
-   SamplerGUI::WaveView *m_pWaveView;
-   SamplerGUI::SampleUISection *m_pSampleSection;
-   SamplerGUI::NameRangesUISection *m_pNameRangesUISection;
-   SamplerGUI::AEGUISection *m_pAEGUISection;
-   SamplerGUI::OutputUISection *m_pOutputUISection;
+   std::vector<SamplerGUI::UIPage *> m_UIPages;
 
    size_t m_CurrentPart;
    std::vector<juce::TextButton *> m_PartButtons;

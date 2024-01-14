@@ -3,13 +3,13 @@
 
 using namespace SamplerGUI;
 
-OutputUISection::OutputUISection( PluginEditor *pEditor ) :
-   UISection( pEditor, "Output" )
+OutputUISection::OutputUISection( UIPage *pUIPage ) :
+   UISection( pUIPage, "Output" )
 {
    m_pcbOutputBus = new juce::ComboBox( "Output Bus" );
-   for( int i = 0; i < editor()->processor().getBusCount( false ); i++ )
+   for( int i = 0; i < uiPage()->editor()->processor().getBusCount(false); i++ )
    {
-      m_pcbOutputBus->addItem( editor()->processor().getBus( false, i )->getName(), i + 1 );
+      m_pcbOutputBus->addItem( uiPage()->editor()->processor().getBus( false, i )->getName(), i + 1 );
    }
    m_pcbOutputBus->addListener( this );
    addAndMakeVisible( m_pcbOutputBus );

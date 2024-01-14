@@ -16,7 +16,7 @@ namespace SamplerGUI
                            public juce::ComboBox::Listener
    {
    public:
-      SampleUISection( PluginEditor *pEditor );
+      SampleUISection( UIPage *pUIPage );
       ~SampleUISection();
 
       virtual void paint( juce::Graphics &g );

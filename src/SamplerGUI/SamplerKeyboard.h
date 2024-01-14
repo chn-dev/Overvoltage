@@ -11,10 +11,13 @@
 
 namespace SamplerGUI
 {
+   class SamplerKeyboard;
+
    class SamplerKeyboardListener
    {
    public:
       virtual void onDeleteSample( size_t part, SamplerEngine::Sample *pSample ) = 0;
+      virtual void onSampleSelectionUpdated( SamplerKeyboard *pKeyboard ) = 0;
    };
 
    //==============================================================================
@@ -66,6 +69,8 @@ namespace SamplerGUI
 
    private:
       void updateCursor( const MouseEvent &event );
+      void emitSampleSelectionUpdated();
+      void emitDeleteSample( size_t nPart, SamplerEngine::Sample *pSample );
 
    private:
       std::set<SamplerEngine::Sample *> m_SelectedSamples;

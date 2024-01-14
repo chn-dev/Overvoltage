@@ -49,14 +49,11 @@ bool SamplerKeyboard::keyPressed( const KeyPress &key, Component */*pOriginating
    {
       for( SamplerEngine::Sample *pSample : m_SelectedSamples )
       {
-         for( SamplerKeyboardListener *pListener : m_Listeners )
-         {
-            pListener->onDeleteSample( m_pEditor->currentPart(), pSample );
-         }
+         emitDeleteSample( m_pEditor->currentPart(), pSample );
       }
 
       m_SelectedSamples.clear();
-      m_pEditor->onSampleSelectionUpdated( this );
+      emitSampleSelectionUpdated();
       repaint();
    }
    return( true );
@@ -394,8 +391,7 @@ void SamplerKeyboard::mouseDrag( const MouseEvent &event )
          }
       }
 
-      m_pEditor->onSampleSelectionUpdated( this );
-
+      emitSampleSelectionUpdated();
       repaint();
    } else
    {
@@ -421,7 +417,7 @@ void SamplerKeyboard::mouseDrag( const MouseEvent &event )
             {
                pSample->setMaxNote( note );
                pSample->correctMinMaxNote();
-               m_pEditor->onSampleSelectionUpdated( this );
+               emitSampleSelectionUpdated();
                repaint();
             }
          }
@@ -439,7 +435,7 @@ void SamplerKeyboard::mouseDrag( const MouseEvent &event )
                {
                   pSample->setMaxVelocity( pSample->getMinVelocity() );
                }
-               m_pEditor->onSampleSelectionUpdated( this );
+               emitSampleSelectionUpdated();
                repaint();
             }
          }
@@ -457,7 +453,7 @@ void SamplerKeyboard::mouseDrag( const MouseEvent &event )
                {
                   pSample->setMinVelocity( pSample->getMaxVelocity() );
                }
-               m_pEditor->onSampleSelectionUpdated( this );
+               emitSampleSelectionUpdated();
                repaint();
             }
          }
@@ -470,7 +466,7 @@ void SamplerKeyboard::mouseDrag( const MouseEvent &event )
             SamplerEngine::Sample *pSample = *m_SelectedSamples.begin();
             pSample->setMinNote( note );
             pSample->correctMinMaxNote();
-            m_pEditor->onSampleSelectionUpdated( this );
+            emitSampleSelectionUpdated();
             repaint();
          }
       }
@@ -520,7 +516,7 @@ void SamplerKeyboard::mouseDown( const MouseEvent &event )
       m_CurrentSampleNote = dragDropNote( event.getMouseDownY() );
       m_CurrentSampleNoteOffset = 0;
 
-      m_pEditor->onSampleSelectionUpdated( this );
+      emitSampleSelectionUpdated();
    } else
    if( x >= m_Width )
    {
@@ -530,7 +526,7 @@ void SamplerKeyboard::mouseDown( const MouseEvent &event )
       m_SelectionRectangle = juce::Rectangle<int>( x, y, 0, 0 );
       m_SelectionStartPoint = juce::Point<int>( x, y );
 
-      m_pEditor->onSampleSelectionUpdated( this );
+      emitSampleSelectionUpdated();
    }
 
    updateCursor( event );
@@ -556,7 +552,7 @@ void SamplerKeyboard::mouseUp( const MouseEvent &event )
          pSample->setMinNote( pSample->getMinNote() + m_CurrentSampleNoteOffset );
          pSample->setMaxNote( pSample->getMaxNote() + m_CurrentSampleNoteOffset );
          pSample->correctMinMaxNote();
-         m_pEditor->onSampleSelectionUpdated( this );
+         emitSampleSelectionUpdated();
       }
 
       m_CurrentSampleNote = -1;
@@ -588,6 +584,24 @@ std::set<SamplerEngine::Sample *> SamplerKeyboard::selectedSamples() const
 void SamplerKeyboard::clearSelectedSamples()
 {
    m_SelectedSamples.clear();
-   m_pEditor->onSampleSelectionUpdated( this );
+   emitSampleSelectionUpdated();
    repaint();
+}
+
+
+void SamplerKeyboard::emitSampleSelectionUpdated()
+{
+   for( SamplerKeyboardListener *pListener : m_Listeners )
+   {
+      pListener->onSampleSelectionUpdated( this );
+   }
+}
+
+
+void SamplerKeyboard::emitDeleteSample( size_t nPart, SamplerEngine::Sample *pSample )
+{
+   for( SamplerKeyboardListener *pListener : m_Listeners )
+   {
+      pListener->onDeleteSample( nPart, pSample );
+   }
 }

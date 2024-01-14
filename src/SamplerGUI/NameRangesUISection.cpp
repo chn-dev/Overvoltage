@@ -5,8 +5,8 @@
 
 using namespace SamplerGUI;
 
-NameRangesUISection::NameRangesUISection( PluginEditor *pEditor ) :
-   UISection( pEditor, "Name & Ranges" )
+NameRangesUISection::NameRangesUISection( UIPage *pUIPage ) :
+   UISection( pUIPage, "Name & Ranges" )
 {
    std::vector<std::string> noteNames;
    for( int i = 0; i < 128; i++ )
@@ -101,7 +101,7 @@ void NameRangesUISection::labelTextChanged( Label *pLabel )
    if( pLabel == m_plName )
    {
       sample()->setName( m_plName->getText().toStdString() );
-      editor()->repaint();
+      uiPage()->editor()->repaint();
    } else
    if( pLabel == m_pcMinVelocity )
    {
@@ -110,7 +110,7 @@ void NameRangesUISection::labelTextChanged( Label *pLabel )
       {
          sample()->setMaxVelocity( sample()->getMinVelocity() );
       }
-      editor()->repaint();
+      uiPage()->editor()->repaint();
    } else
    if( pLabel == m_pcMaxVelocity )
    {
@@ -119,7 +119,7 @@ void NameRangesUISection::labelTextChanged( Label *pLabel )
       {
          sample()->setMinVelocity( sample()->getMaxVelocity() );
       }
-      editor()->repaint();
+      uiPage()->editor()->repaint();
    } else
    if( pLabel == m_pcMinNote )
    {
@@ -128,7 +128,7 @@ void NameRangesUISection::labelTextChanged( Label *pLabel )
       {
          sample()->setMaxNote( sample()->getMinNote() );
       }
-      editor()->repaint();
+      uiPage()->editor()->repaint();
    } else
    if( pLabel == m_pcMaxNote )
    {
@@ -137,13 +137,13 @@ void NameRangesUISection::labelTextChanged( Label *pLabel )
       {
          sample()->setMinNote( sample()->getMaxNote() );
       }
-      editor()->repaint();
+      uiPage()->editor()->repaint();
    } else
    if( pLabel == m_pcBaseNote )
    {
       sample()->setBaseNote( m_pcBaseNote->getCurrentItem() );
    }
-   editor()->repaint();
+   uiPage()->editor()->repaint();
 
    samplesUpdated();
 }

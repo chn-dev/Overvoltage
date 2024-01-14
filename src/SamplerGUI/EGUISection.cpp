@@ -1,10 +1,10 @@
-#include "PluginEditor.h"
 #include "SamplerGUI.h"
+#include "EGUISection.h"
 
 using namespace SamplerGUI;
 
-EGUISection::EGUISection( PluginEditor *pEditor, std::string label ) :
-   UISection( pEditor, label )
+EGUISection::EGUISection( UIPage *pUIPage, std::string label ) :
+   UISection( pUIPage, label )
 {
    m_psAttack = new juce::Slider( "Attack" );
    m_psAttack->setRange( 0.0, 1.0, 0.001 );

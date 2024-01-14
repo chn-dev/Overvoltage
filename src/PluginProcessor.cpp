@@ -307,6 +307,15 @@ void PluginProcessor::onDeleteSample( size_t part, SamplerEngine::Sample *pSampl
 }
 
 
+void PluginProcessor::onSampleSelectionUpdated( SamplerGUI::SamplerKeyboard *pKeyboard )
+{
+   if( m_pEditor )
+   {
+      m_pEditor->onSampleSelectionUpdated( pKeyboard );
+   }
+}
+
+
 SamplerEngine::Engine *PluginProcessor::samplerEngine() const
 {
    return( m_pEngine );

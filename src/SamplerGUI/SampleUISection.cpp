@@ -3,8 +3,8 @@
 
 using namespace SamplerGUI;
 
-SampleUISection::SampleUISection( PluginEditor *pEditor ) :
-   UISection( pEditor, "Sample" )
+SampleUISection::SampleUISection( UIPage *pUIPage ) :
+   UISection( pUIPage, "Sample" )
 {
    m_plDetune = new juce::Label( "Detune", "Detune:" );
    addAndMakeVisible( m_plDetune );

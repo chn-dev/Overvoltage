@@ -2,7 +2,6 @@
 #define __EGUISECTION_H__
 
 #include "JuceHeader.h"
-
 #include "UISection.h"
 
 class PluginEditor;
@@ -14,7 +13,7 @@ namespace SamplerGUI
                        public juce::Slider::Listener
    {
    public:
-      EGUISection( PluginEditor *pEditor, std::string label );
+      EGUISection( UIPage *pUIPage, std::string label );
       ~EGUISection();
 
       virtual void paint( juce::Graphics &g );

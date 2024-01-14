@@ -5,8 +5,8 @@
 
 using namespace SamplerGUI;
 
-WaveView::WaveView( PluginEditor *pEditor ) :
-   UISection( pEditor ),
+WaveView::WaveView( UIPage *pUIPage ) :
+   UISection( pUIPage ),
    m_IsDraggingLoopStart( false ),
    m_IsDraggingLoopEnd( false ),
    m_IsSelecting( false ),

@@ -3,6 +3,7 @@
 
 #include "JuceHeader.h"
 #include "SamplerKeyboard.h"
+#include "UIPage.h"
 
 class PluginEditor;
 
@@ -10,10 +11,12 @@ class PluginEditor;
 //==============================================================================
 namespace SamplerGUI
 {
+   class UIPage;
+
    class UISection : public juce::Component
    {
    public:
-      UISection( PluginEditor *pEditor, std::string label = std::string() );
+      UISection( UIPage *pUIPage, std::string label = std::string() );
       ~UISection();
 
       virtual void paint( juce::Graphics &g ) override;
@@ -60,10 +63,10 @@ namespace SamplerGUI
    protected:
       const std::set<SamplerEngine::Sample *> &samples() const;
       SamplerEngine::Sample *sample() const;
-      PluginEditor *editor() const;
+      UIPage *uiPage() const;
 
    private:
-      PluginEditor *m_pEditor;
+      UIPage *m_pUIPage;
       juce::Label *m_pLabel;
       std::set<SamplerEngine::Sample *> m_Samples;
    };

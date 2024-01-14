@@ -1,6 +1,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+#include <SamplerGUI/UIPageZones.h>
+
 #include "util.h"
 
 //==============================================================================
@@ -11,6 +13,12 @@ PluginEditor::PluginEditor( PluginProcessor& p )
    // Make sure that before the constructor has finished, you've set the
    // editor's size to whatever you need it to be.
    setSize( 1024, 640 );
+
+   m_UIPages.push_back( new SamplerGUI::UIPageZones( this ) );
+   for( SamplerGUI::UIPage *pPage : m_UIPages )
+   {
+      addAndMakeVisible( pPage );
+   }
 
    for( int i = 0; i < 16; i++ )
    {
@@ -24,54 +32,17 @@ PluginEditor::PluginEditor( PluginProcessor& p )
       addAndMakeVisible( pButton );
    }
 
-   int yofs = 32;
-
-   m_pKeyboard = new SamplerGUI::SamplerKeyboard( this );
-   addKeyListener( m_pKeyboard );
-   m_pKeyboard->setBounds( 0, yofs, 64 + 128, 640 - yofs );
-   m_pKeyboard->addListener( &p );
-   m_pKeyboard->addSamplerKeyboardListener( &p );
-   m_pKeyboard->setWidth( 64 );
-   processorRef.juce::MidiKeyboardState::addListener( m_pKeyboard );
-   addAndMakeVisible( m_pKeyboard );
-
-   m_pWaveView = new SamplerGUI::WaveView( this );
-   m_pWaveView->setBounds( 64 + 128 + 4, yofs, 1024 - ( 64 + 128 + 4 ), 196 );
-   addAndMakeVisible( m_pWaveView );
-
-   m_pSampleSection = new SamplerGUI::SampleUISection( this );
-   m_pSampleSection->setBounds( 64 + 128 + 4, 196 + 4 + yofs, 192, 128 );
-   addAndMakeVisible( m_pSampleSection );
-
-   m_pNameRangesUISection = new SamplerGUI::NameRangesUISection( this );
-   m_pNameRangesUISection->setBounds( 64 + 128 + 4, 196 + 4 + 128 + 4 + yofs, 192, 128 );
-   addAndMakeVisible( m_pNameRangesUISection );
-
-   m_pAEGUISection = new SamplerGUI::AEGUISection( this );
-   m_pAEGUISection->setBounds( 64 + 128 + 4, 196 + 4 + 128 + 4 + 128 + 4 + yofs, 192, 128 );
-   addAndMakeVisible( m_pAEGUISection );
-
-   m_pOutputUISection = new SamplerGUI::OutputUISection( this );
-   m_pOutputUISection->setBounds( 1024 - 64 - 128 - 4, 196 + 4 + yofs, 192, 128 );
-   addAndMakeVisible( m_pOutputUISection );
-
-   for( SamplerGUI::UISection *pSection : m_UISections )
-   {
-      pSection->samplesUpdated();
-   }
-
    activatePart( 0 );
 }
 
 
 PluginEditor::~PluginEditor()
 {
-   delete m_pKeyboard;
-   delete m_pWaveView;
-   delete m_pSampleSection;
-   delete m_pNameRangesUISection;
-   delete m_pAEGUISection;
-   delete m_pOutputUISection;
+   for( SamplerGUI::UIPage *pPage : m_UIPages )
+   {
+      delete pPage;
+   }
+   m_UIPages.clear();
 
    for( juce::TextButton *pButton : m_PartButtons )
    {
@@ -98,6 +69,11 @@ void PluginEditor::activatePart( size_t nPart )
    {
       m_PartButtons[i]->setToggleState( i == nPart, dontSendNotification );
    }
+
+   for( SamplerGUI::UIPage *pPage : m_UIPages )
+   {
+      pPage->currentPartChanged( nPart );
+   }
 }
 
 
@@ -108,7 +84,6 @@ void PluginEditor::buttonClicked( Button *pButton )
    {
       size_t partIndex = (size_t)( partIter - m_PartButtons.begin() );
       activatePart( partIndex );
-      m_pKeyboard->clearSelectedSamples();
       repaint();
    }
 }
@@ -116,24 +91,6 @@ void PluginEditor::buttonClicked( Button *pButton )
 
 void PluginEditor::buttonStateChanged( Button */*pButton*/ )
 {
-}
-
-
-void PluginEditor::addUISection( SamplerGUI::UISection *pSection )
-{
-   if( pSection )
-   {
-      m_UISections.insert( pSection );
-   }
-}
-
-
-void PluginEditor::removeUISection( SamplerGUI::UISection *pSection )
-{
-   if( pSection && ( m_UISections.find( pSection ) != m_UISections.end() ) )
-   {
-      m_UISections.erase( pSection );
-   }
 }
 
 
@@ -173,8 +130,8 @@ void PluginEditor::resized()
 
 void PluginEditor::onSampleSelectionUpdated( SamplerGUI::SamplerKeyboard *pSamplerKeyboard )
 {
-   for( SamplerGUI::UISection *pSection : m_UISections )
+   for( SamplerGUI::UIPage *pPage : m_UIPages )
    {
-      pSection->onSampleSelectionUpdated( pSamplerKeyboard );
+      pPage->onSampleSelectionUpdated( pSamplerKeyboard );
    }
 }

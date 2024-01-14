@@ -14,7 +14,7 @@ namespace SamplerGUI
                                public juce::Label::Listener
    {
    public:
-      NameRangesUISection( PluginEditor *pEditor );
+      NameRangesUISection( UIPage *pUIPage );
       ~NameRangesUISection();
 
       virtual void paint( juce::Graphics &g );
