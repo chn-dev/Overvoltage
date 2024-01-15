@@ -1,20 +1,20 @@
-#ifndef __AEGUISECTION_H__
-#define __AEGUISECTION_H__
+#ifndef __UISECTIONAEG_H__
+#define __UISECTIONAEG_H__
 
 #include "JuceHeader.h"
 
-#include "EGUISection.h"
+#include "UISectionEG.h"
 
 class PluginEditor;
 
 //==============================================================================
 namespace SamplerGUI
 {
-   class AEGUISection : public EGUISection
+   class UISectionAEG : public UISectionEG
    {
    public:
-      AEGUISection( UIPage *pUIPage );
-      ~AEGUISection();
+      UISectionAEG( UIPage *pUIPage );
+      ~UISectionAEG();
 
    protected:
       virtual SamplerEngine::ENV *getENV( const SamplerEngine::Sample *pSample ) const;

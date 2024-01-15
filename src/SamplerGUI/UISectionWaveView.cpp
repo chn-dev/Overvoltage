@@ -1,11 +1,11 @@
 #include "PluginEditor.h"
-#include "WaveView.h"
+#include "UISectionWaveView.h"
 
 #include "util.h"
 
 using namespace SamplerGUI;
 
-WaveView::WaveView( UIPage *pUIPage ) :
+UISectionWaveView::UISectionWaveView( UIPage *pUIPage ) :
    UISection( pUIPage ),
    m_IsDraggingLoopStart( false ),
    m_IsDraggingLoopEnd( false ),
@@ -37,7 +37,7 @@ WaveView::WaveView( UIPage *pUIPage ) :
 }
 
 
-WaveView::~WaveView()
+UISectionWaveView::~UISectionWaveView()
 {
    delete m_pbZoom;
    delete m_pbShowAll;
@@ -47,7 +47,7 @@ WaveView::~WaveView()
 }
 
 
-void WaveView::paint( juce::Graphics &g )
+void UISectionWaveView::paint( juce::Graphics &g )
 {
    UISection::paint( g );
 
@@ -172,7 +172,7 @@ void WaveView::paint( juce::Graphics &g )
 }
 
 
-void WaveView::resized()
+void UISectionWaveView::resized()
 {
    UISection::resized();
 
@@ -208,7 +208,7 @@ void WaveView::resized()
 }
 
 
-void WaveView::samplesUpdated()
+void UISectionWaveView::samplesUpdated()
 {
    m_IsSelecting = false;
    m_SelectionStart = ~(decltype( m_SelectionStart ))0;
@@ -232,7 +232,7 @@ void WaveView::samplesUpdated()
 }
 
 
-void WaveView::mouseMove( const MouseEvent &event )
+void UISectionWaveView::mouseMove( const MouseEvent &event )
 {
    m_IsDraggingLoopStart = false;
    m_IsDraggingLoopEnd = false;
@@ -264,7 +264,7 @@ void WaveView::mouseMove( const MouseEvent &event )
 }
 
 
-void WaveView::mouseDown( const MouseEvent &event )
+void UISectionWaveView::mouseDown( const MouseEvent &event )
 {
    if( !sample() )
       return;
@@ -288,7 +288,7 @@ void WaveView::mouseDown( const MouseEvent &event )
 }
 
 
-uint32_t WaveView::getSampleNumFromXPos( int xPos ) const
+uint32_t UISectionWaveView::getSampleNumFromXPos( int xPos ) const
 {
    uint32_t numSamples = getSampleViewEnd() - getSampleViewStart() + 1;
    float fDx = (float)xPos / ( (float)getBounds().getWidth() - 2 );
@@ -298,7 +298,7 @@ uint32_t WaveView::getSampleNumFromXPos( int xPos ) const
 }
 
 
-int WaveView::getXPosFromSampleNum( uint32_t sampleNum ) const
+int UISectionWaveView::getXPosFromSampleNum( uint32_t sampleNum ) const
 {
    uint32_t numSamples = getSampleViewEnd() - getSampleViewStart() + 1;
    sampleNum = sampleNum - getSampleViewStart();
@@ -306,7 +306,7 @@ int WaveView::getXPosFromSampleNum( uint32_t sampleNum ) const
 }
 
 
-uint32_t WaveView::getSampleViewStart() const
+uint32_t UISectionWaveView::getSampleViewStart() const
 {
    if( ( m_SampleViewStart == ~(decltype( m_SampleViewStart ))0 ) || ( m_SampleViewEnd == ~(decltype( m_SampleViewEnd ))0 ) )
    {
@@ -320,7 +320,7 @@ uint32_t WaveView::getSampleViewStart() const
 }
 
 
-uint32_t WaveView::getSampleViewEnd() const
+uint32_t UISectionWaveView::getSampleViewEnd() const
 {
    if( ( m_SampleViewStart == ~(decltype( m_SampleViewStart ))0 ) || ( m_SampleViewEnd == ~(decltype( m_SampleViewEnd ))0 ) )
    {
@@ -335,7 +335,7 @@ uint32_t WaveView::getSampleViewEnd() const
 
 
 
-void WaveView::mouseDrag( const MouseEvent &event )
+void UISectionWaveView::mouseDrag( const MouseEvent &event )
 {
    if( !sample() )
       return;
@@ -374,7 +374,7 @@ void WaveView::mouseDrag( const MouseEvent &event )
 }
 
 
-void WaveView::mouseUp( const MouseEvent &/*event*/ )
+void UISectionWaveView::mouseUp( const MouseEvent &/*event*/ )
 {
    m_IsSelecting = false;
    if( m_SelectionStart == m_SelectionEnd )
@@ -387,7 +387,7 @@ void WaveView::mouseUp( const MouseEvent &/*event*/ )
 }
 
 
-void WaveView::buttonClicked( Button *pButton )
+void UISectionWaveView::buttonClicked( Button *pButton )
 {
    if( pButton == m_pbZoomIn )
    {
@@ -449,12 +449,12 @@ void WaveView::buttonClicked( Button *pButton )
 }
 
 
-void WaveView::buttonStateChanged( Button */*pButton*/ )
+void UISectionWaveView::buttonStateChanged( Button */*pButton*/ )
 {
 }
 
 
-void WaveView::scrollBarMoved( ScrollBar *pScrollBar, double /*newRangeStart*/ )
+void UISectionWaveView::scrollBarMoved( ScrollBar *pScrollBar, double /*newRangeStart*/ )
 {
    if( pScrollBar == m_psScrollBar )
    {

@@ -1,5 +1,5 @@
-#ifndef __EGUISECTION_H__
-#define __EGUISECTION_H__
+#ifndef __UISECTIONEG_H__
+#define __UISECTIONEG_H__
 
 #include "JuceHeader.h"
 #include "UISection.h"
@@ -9,12 +9,12 @@ class PluginEditor;
 //==============================================================================
 namespace SamplerGUI
 {
-   class EGUISection : public UISection,
+   class UISectionEG : public UISection,
                        public juce::Slider::Listener
    {
    public:
-      EGUISection( UIPage *pUIPage, std::string label );
-      ~EGUISection();
+      UISectionEG( UIPage *pUIPage, std::string label );
+      ~UISectionEG();
 
       virtual void paint( juce::Graphics &g );
       virtual void resized();

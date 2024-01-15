@@ -1,9 +1,9 @@
 #include "SamplerGUI.h"
-#include "EGUISection.h"
+#include "UISectionEG.h"
 
 using namespace SamplerGUI;
 
-EGUISection::EGUISection( UIPage *pUIPage, std::string label ) :
+UISectionEG::UISectionEG( UIPage *pUIPage, std::string label ) :
    UISection( pUIPage, label )
 {
    m_psAttack = new juce::Slider( "Attack" );
@@ -48,7 +48,7 @@ EGUISection::EGUISection( UIPage *pUIPage, std::string label ) :
 }
 
 
-EGUISection::~EGUISection()
+UISectionEG::~UISectionEG()
 {
    delete m_psAttack;
    delete m_plAttack;
@@ -61,14 +61,14 @@ EGUISection::~EGUISection()
 }
 
 
-void EGUISection::paint( juce::Graphics &g )
+void UISectionEG::paint( juce::Graphics &g )
 {
    g.setColour( juce::Colour::fromRGB( 32, 64, 64 ) );
    g.fillAll();
 }
 
 
-void EGUISection::resized()
+void UISectionEG::resized()
 {
    UISection::resized();
 
@@ -86,7 +86,7 @@ void EGUISection::resized()
 }
 
 
-void EGUISection::egUpdated( SamplerEngine::ENV *pENV )
+void UISectionEG::egUpdated( SamplerEngine::ENV *pENV )
 {
    if( !pENV )
       return;
@@ -98,7 +98,7 @@ void EGUISection::egUpdated( SamplerEngine::ENV *pENV )
 }
 
 
-void EGUISection::samplesUpdated()
+void UISectionEG::samplesUpdated()
 {
    if( sample() )
    {
@@ -116,7 +116,7 @@ void EGUISection::samplesUpdated()
 }
 
 
-void EGUISection::sliderValueChanged( Slider *pSlider )
+void UISectionEG::sliderValueChanged( Slider *pSlider )
 {
    if( samples().size() <= 0 )
       return;

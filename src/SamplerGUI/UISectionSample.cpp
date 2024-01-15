@@ -1,9 +1,9 @@
 #include "PluginEditor.h"
-#include "SampleUISection.h"
+#include "UISectionSample.h"
 
 using namespace SamplerGUI;
 
-SampleUISection::SampleUISection( UIPage *pUIPage ) :
+UISectionSample::UISectionSample( UIPage *pUIPage ) :
    UISection( pUIPage, "Sample" )
 {
    m_plDetune = new juce::Label( "Detune", "Detune:" );
@@ -37,7 +37,7 @@ SampleUISection::SampleUISection( UIPage *pUIPage ) :
 }
 
 
-SampleUISection::~SampleUISection()
+UISectionSample::~UISectionSample()
 {
    delete m_plDetune;
    delete m_psDetune;
@@ -46,7 +46,7 @@ SampleUISection::~SampleUISection()
 }
 
 
-void SampleUISection::paint( juce::Graphics &g )
+void UISectionSample::paint( juce::Graphics &g )
 {
    UISection::paint( g );
 
@@ -55,7 +55,7 @@ void SampleUISection::paint( juce::Graphics &g )
 }
 
 
-void SampleUISection::resized()
+void UISectionSample::resized()
 {
    UISection::resized();
 
@@ -66,7 +66,7 @@ void SampleUISection::resized()
 }
 
 
-void SampleUISection::buttonClicked( Button *pButton )
+void UISectionSample::buttonClicked( Button *pButton )
 {
    if( pButton == m_pbReverse )
    {
@@ -78,12 +78,12 @@ void SampleUISection::buttonClicked( Button *pButton )
 }
 
 
-void SampleUISection::buttonStateChanged( Button */*pButton*/ )
+void UISectionSample::buttonStateChanged( Button */*pButton*/ )
 {
 }
 
 
-void SampleUISection::comboBoxChanged( ComboBox *pComboBox )
+void UISectionSample::comboBoxChanged( ComboBox *pComboBox )
 {
    if( m_pcbPlayMode == pComboBox )
    {
@@ -94,7 +94,7 @@ void SampleUISection::comboBoxChanged( ComboBox *pComboBox )
    }
 }
 
-void SampleUISection::samplesUpdated()
+void UISectionSample::samplesUpdated()
 {
    const SamplerEngine::Sample *pSample = sample();
 
@@ -112,7 +112,7 @@ void SampleUISection::samplesUpdated()
 }
 
 
-void SampleUISection::sliderValueChanged( Slider *pSlider )
+void UISectionSample::sliderValueChanged( Slider *pSlider )
 {
    if( ( m_psDetune == pSlider ) && ( samples().size() > 0 ) )
    {

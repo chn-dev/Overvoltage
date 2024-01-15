@@ -1,9 +1,9 @@
 #include "PluginEditor.h"
-#include "OutputUISection.h"
+#include "UISectionOutput.h"
 
 using namespace SamplerGUI;
 
-OutputUISection::OutputUISection( UIPage *pUIPage ) :
+UISectionOutput::UISectionOutput( UIPage *pUIPage ) :
    UISection( pUIPage, "Output" )
 {
    m_pcbOutputBus = new juce::ComboBox( "Output Bus" );
@@ -44,7 +44,7 @@ OutputUISection::OutputUISection( UIPage *pUIPage ) :
 }
 
 
-OutputUISection::~OutputUISection()
+UISectionOutput::~UISectionOutput()
 {
    delete m_plPan;
    delete m_psPan;
@@ -54,7 +54,7 @@ OutputUISection::~OutputUISection()
 }
 
 
-void OutputUISection::comboBoxChanged( ComboBox *pComboBox )
+void UISectionOutput::comboBoxChanged( ComboBox *pComboBox )
 {
    if( samples().size() > 0 )
    {
@@ -69,7 +69,7 @@ void OutputUISection::comboBoxChanged( ComboBox *pComboBox )
 }
 
 
-void OutputUISection::sliderValueChanged( Slider *pSlider )
+void UISectionOutput::sliderValueChanged( Slider *pSlider )
 {
    if( samples().size() > 0 )
    {
@@ -91,7 +91,7 @@ void OutputUISection::sliderValueChanged( Slider *pSlider )
 }
 
 
-void OutputUISection::paint( juce::Graphics &g )
+void UISectionOutput::paint( juce::Graphics &g )
 {
    UISection::paint( g );
 
@@ -100,7 +100,7 @@ void OutputUISection::paint( juce::Graphics &g )
 }
 
 
-void OutputUISection::resized()
+void UISectionOutput::resized()
 {
    UISection::resized();
 
@@ -114,7 +114,7 @@ void OutputUISection::resized()
 }
 
 
-void OutputUISection::samplesUpdated()
+void UISectionOutput::samplesUpdated()
 {
    m_plPan->setVisible( sample() != nullptr );
    m_psPan->setVisible( sample() != nullptr );
@@ -133,7 +133,7 @@ void OutputUISection::samplesUpdated()
 }
 
 
-void OutputUISection::labelTextChanged( Label */*pLabel*/ )
+void UISectionOutput::labelTextChanged( Label */*pLabel*/ )
 {
 }
 

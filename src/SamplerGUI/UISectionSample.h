@@ -1,5 +1,5 @@
-#ifndef __OUTPUTUISECTION_H__
-#define __OUTPUTUISECTION_H__
+#ifndef __UISECTIONSAMPLE_H__
+#define __UISECTIONSAMPLE_H__
 
 #include "JuceHeader.h"
 
@@ -10,30 +10,35 @@ class PluginEditor;
 //==============================================================================
 namespace SamplerGUI
 {
-   class OutputUISection : public UISection,
-                           public juce::Label::Listener,
+   class UISectionSample : public UISection,
                            public juce::Slider::Listener,
+                           public juce::Button::Listener,
                            public juce::ComboBox::Listener
    {
    public:
-      OutputUISection( UIPage *pUIPage );
-      ~OutputUISection();
+      UISectionSample( UIPage *pUIPage );
+      ~UISectionSample();
 
       virtual void paint( juce::Graphics &g );
       virtual void resized();
+
       virtual void samplesUpdated();
-      virtual void labelTextChanged( Label *pLabel );
+
       virtual void sliderValueChanged( Slider *pSlider );
+
+      virtual void buttonClicked( Button *pButton );
+      virtual void buttonStateChanged( Button *pButton );
+
       virtual void comboBoxChanged( ComboBox *pComboBox );
 
    protected:
 
    private:
-      juce::ComboBox *m_pcbOutputBus;
-      juce::Slider *m_psPan;
-      juce::Label *m_plPan;
-      juce::Slider *m_psGain;
-      juce::Label *m_plGain;
+      juce::Label *m_plDetune;
+      juce::Slider *m_psDetune;
+
+      juce::ComboBox *m_pcbPlayMode;
+      juce::TextButton *m_pbReverse;
    };
 }
 #endif

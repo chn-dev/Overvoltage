@@ -1,11 +1,11 @@
 #include "PluginEditor.h"
-#include "NameRangesUISection.h"
+#include "UISectionNameRanges.h"
 
 #include "util.h"
 
 using namespace SamplerGUI;
 
-NameRangesUISection::NameRangesUISection( UIPage *pUIPage ) :
+UISectionNameRanges::UISectionNameRanges( UIPage *pUIPage ) :
    UISection( pUIPage, "Name & Ranges" )
 {
    std::vector<std::string> noteNames;
@@ -75,7 +75,7 @@ NameRangesUISection::NameRangesUISection( UIPage *pUIPage ) :
 }
 
 
-NameRangesUISection::~NameRangesUISection()
+UISectionNameRanges::~UISectionNameRanges()
 {
    delete m_pcMinNote;
    delete m_pcMaxNote;
@@ -93,7 +93,7 @@ NameRangesUISection::~NameRangesUISection()
 }
 
 
-void NameRangesUISection::labelTextChanged( Label *pLabel )
+void UISectionNameRanges::labelTextChanged( Label *pLabel )
 {
    if( samples().size() != 1 )
       return;
@@ -149,7 +149,7 @@ void NameRangesUISection::labelTextChanged( Label *pLabel )
 }
 
 
-void NameRangesUISection::paint( juce::Graphics &g )
+void UISectionNameRanges::paint( juce::Graphics &g )
 {
    UISection::paint( g );
 
@@ -158,7 +158,7 @@ void NameRangesUISection::paint( juce::Graphics &g )
 }
 
 
-void NameRangesUISection::resized()
+void UISectionNameRanges::resized()
 {
    UISection::resized();
    int d = 20;
@@ -180,7 +180,7 @@ void NameRangesUISection::resized()
 }
 
 
-void NameRangesUISection::samplesUpdated()
+void UISectionNameRanges::samplesUpdated()
 {
    bool ok = samples().size() == 1;
 

@@ -1,5 +1,5 @@
-#ifndef __NAMERANGESUISECTION_H__
-#define __NAMERANGESUISECTION_H__
+#ifndef __UISECTIONNAMERANGES_H__
+#define __UISECTIONNAMERANGES_H__
 
 #include "JuceHeader.h"
 
@@ -10,12 +10,12 @@ class AudioPluginAudioProcessorEditor;
 //==============================================================================
 namespace SamplerGUI
 {
-   class NameRangesUISection : public UISection,
+   class UISectionNameRanges : public UISection,
                                public juce::Label::Listener
    {
    public:
-      NameRangesUISection( UIPage *pUIPage );
-      ~NameRangesUISection();
+      UISectionNameRanges( UIPage *pUIPage );
+      ~UISectionNameRanges();
 
       virtual void paint( juce::Graphics &g );
       virtual void resized();

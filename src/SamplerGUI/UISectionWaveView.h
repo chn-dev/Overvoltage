@@ -1,5 +1,5 @@
-#ifndef __WAVEVIEW_H__
-#define __WAVEVIEW_H__
+#ifndef __UISECTIONWAVEVIEW_H__
+#define __UISECTIONWAVEVIEW_H__
 
 #include "JuceHeader.h"
 
@@ -13,13 +13,13 @@ class PluginEditor;
 //==============================================================================
 namespace SamplerGUI
 {
-   class WaveView : public UISection,
-                    public juce::Button::Listener,
-                    public juce::ScrollBar::Listener
+   class UISectionWaveView : public UISection,
+                             public juce::Button::Listener,
+                             public juce::ScrollBar::Listener
    {
    public:
-      WaveView( UIPage *pUIPage );
-      ~WaveView();
+      UISectionWaveView( UIPage *pUIPage );
+      ~UISectionWaveView();
 
       void paint( juce::Graphics & ) override;
       void resized() override;

@@ -18,25 +18,25 @@ UIPageZones::UIPageZones( PluginEditor *pEditor ) :
    editor()->processor().juce::MidiKeyboardState::addListener( m_pKeyboard );
    addAndMakeVisible( m_pKeyboard );
 
-   m_pWaveView = new SamplerGUI::WaveView( this );
-   m_pWaveView->setBounds( 64 + 128 + 4, yofs, 1024 - ( 64 + 128 + 4 ), 196 );
-   addAndMakeVisible( m_pWaveView );
+   m_pUISectionWaveView = new SamplerGUI::UISectionWaveView( this );
+   m_pUISectionWaveView->setBounds( 64 + 128 + 4, yofs, 1024 - ( 64 + 128 + 4 ), 196 );
+   addAndMakeVisible( m_pUISectionWaveView );
 
-   m_pSampleSection = new SamplerGUI::SampleUISection( this );
-   m_pSampleSection->setBounds( 64 + 128 + 4, 196 + 4 + yofs, 192, 128 );
-   addAndMakeVisible( m_pSampleSection );
+   m_pUISectionSample = new SamplerGUI::UISectionSample( this );
+   m_pUISectionSample->setBounds( 64 + 128 + 4, 196 + 4 + yofs, 192, 128 );
+   addAndMakeVisible( m_pUISectionSample );
 
-   m_pNameRangesUISection = new SamplerGUI::NameRangesUISection( this );
-   m_pNameRangesUISection->setBounds( 64 + 128 + 4, 196 + 4 + 128 + 4 + yofs, 192, 128 );
-   addAndMakeVisible( m_pNameRangesUISection );
+   m_pUISectionNameRanges = new SamplerGUI::UISectionNameRanges( this );
+   m_pUISectionNameRanges->setBounds( 64 + 128 + 4, 196 + 4 + 128 + 4 + yofs, 192, 128 );
+   addAndMakeVisible( m_pUISectionNameRanges );
 
-   m_pAEGUISection = new SamplerGUI::AEGUISection( this );
-   m_pAEGUISection->setBounds( 64 + 128 + 4, 196 + 4 + 128 + 4 + 128 + 4 + yofs, 192, 128 );
-   addAndMakeVisible( m_pAEGUISection );
+   m_pUISectionAEG = new SamplerGUI::UISectionAEG( this );
+   m_pUISectionAEG->setBounds( 64 + 128 + 4, 196 + 4 + 128 + 4 + 128 + 4 + yofs, 192, 128 );
+   addAndMakeVisible( m_pUISectionAEG );
 
-   m_pOutputUISection = new SamplerGUI::OutputUISection( this );
-   m_pOutputUISection->setBounds( 1024 - 64 - 128 - 4, 196 + 4 + yofs, 192, 128 );
-   addAndMakeVisible( m_pOutputUISection );
+   m_pUISectionOutput = new SamplerGUI::UISectionOutput( this );
+   m_pUISectionOutput->setBounds( 1024 - 64 - 128 - 4, 196 + 4 + yofs, 192, 128 );
+   addAndMakeVisible( m_pUISectionOutput );
 
    updateUISections();
 }
@@ -45,11 +45,11 @@ UIPageZones::UIPageZones( PluginEditor *pEditor ) :
 UIPageZones::~UIPageZones()
 {
    delete m_pKeyboard;
-   delete m_pWaveView;
-   delete m_pSampleSection;
-   delete m_pNameRangesUISection;
-   delete m_pAEGUISection;
-   delete m_pOutputUISection;
+   delete m_pUISectionWaveView;
+   delete m_pUISectionSample;
+   delete m_pUISectionNameRanges;
+   delete m_pUISectionAEG;
+   delete m_pUISectionOutput;
 }
 
 
