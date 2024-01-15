@@ -52,7 +52,6 @@ bool UISectionSamplerKeyboard::keyPressed( const KeyPress &key, Component */*pOr
 {
    if( key == KeyPress::deleteKey )
    {
-      int s = m_SelectedSamples.size();
       for( SamplerEngine::Sample *pSample : m_SelectedSamples )
       {
          emitDeleteSample( m_pPage->editor()->currentPart(), pSample );
