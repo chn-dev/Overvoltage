@@ -21,7 +21,7 @@ public:
    virtual void handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
    virtual void handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
 
-   void onSampleSelectionUpdated( SamplerGUI::SamplerKeyboard *pSamplerKeyboard );
+   void onSampleSelectionUpdated( SamplerGUI::UISectionSamplerKeyboard *pSamplerKeyboard );
 
    virtual void buttonClicked( juce::Button *pButton );
    virtual void buttonStateChanged( juce::Button *pButton );

@@ -239,7 +239,7 @@ void UISection::resized()
 }
 
 
-void UISection::onSampleSelectionUpdated( SamplerKeyboard *pSamplerKeyboard )
+void UISection::onSampleSelectionUpdated( UISectionSamplerKeyboard *pSamplerKeyboard )
 {
    m_Samples = pSamplerKeyboard->selectedSamples();
    samplesUpdated();

@@ -2,8 +2,7 @@
 #define __UISECTION_H__
 
 #include "JuceHeader.h"
-#include "SamplerKeyboard.h"
-#include "UIPage.h"
+#include <SamplerEngine/SamplerEngine.h>
 
 class PluginEditor;
 
@@ -12,6 +11,7 @@ class PluginEditor;
 namespace SamplerGUI
 {
    class UIPage;
+   class UISectionSamplerKeyboard;
 
    class UISection : public juce::Component
    {
@@ -22,7 +22,7 @@ namespace SamplerGUI
       virtual void paint( juce::Graphics &g ) override;
       virtual void resized() override;
 
-      void onSampleSelectionUpdated( SamplerKeyboard *pSamplerKeyboard );
+      void onSampleSelectionUpdated( UISectionSamplerKeyboard *pSamplerKeyboard );
 
       virtual void samplesUpdated() = 0;
 

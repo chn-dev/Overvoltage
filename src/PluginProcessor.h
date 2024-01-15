@@ -9,13 +9,13 @@
 #include <SamplerEngine/Voice.h>
 #include <SamplerEngine/Part.h>
 
-#include <SamplerGUI/SamplerKeyboard.h>
+#include <SamplerGUI/UISectionSamplerKeyboard.h>
 
 //==============================================================================
 class PluginProcessor : public juce::AudioProcessor,
                         public juce::MidiKeyboardStateListener,
                         public juce::MidiKeyboardState,
-                        public SamplerGUI::SamplerKeyboardListener
+                        public SamplerGUI::UISectionSamplerKeyboardListener
 {
 public:
    //==============================================================================
@@ -23,7 +23,7 @@ public:
    ~PluginProcessor() override;
 
    virtual void onDeleteSample( size_t part, SamplerEngine::Sample *pSample );
-   virtual void onSampleSelectionUpdated( SamplerGUI::SamplerKeyboard *pKeyboard );
+   virtual void onSampleSelectionUpdated( SamplerGUI::UISectionSamplerKeyboard *pKeyboard );
 
    //==============================================================================
    void prepareToPlay (double sampleRate, int samplesPerBlock) override;

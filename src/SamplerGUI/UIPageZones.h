@@ -23,7 +23,7 @@ namespace SamplerGUI
       virtual void currentPartChanged( size_t nPart );
 
    protected:
-      SamplerGUI::SamplerKeyboard *m_pKeyboard;
+      SamplerGUI::UISectionSamplerKeyboard *m_pUISectionKeyboard;
       SamplerGUI::UISectionWaveView *m_pUISectionWaveView;
       SamplerGUI::UISectionSample *m_pUISectionSample;
       SamplerGUI::UISectionNameRanges *m_pUISectionNameRanges;

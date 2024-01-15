@@ -1,7 +1,8 @@
-#ifndef __KEYBOARD_H__
-#define __KEYBOARD_H__
+#ifndef __UISECTIONKEYBOARD_H__
+#define __UISECTIONKEYBOARD_H__
 
 #include <SamplerEngine/SamplerEngine.h>
+#include "UISection.h"
 
 #include "JuceHeader.h"
 
@@ -10,13 +11,15 @@ class PluginEditor;
 //==============================================================================
 namespace SamplerGUI
 {
-   class Keyboard  : public juce::Component,
-                     public juce::MidiKeyboardState,
-                     public juce::MidiKeyboardStateListener
+   class UIPage;
+
+   class UISectionKeyboard  : public UISection,
+                               public juce::MidiKeyboardState,
+                               public juce::MidiKeyboardStateListener
    {
    public:
-      explicit Keyboard( PluginEditor *pEditor );
-      ~Keyboard() override;
+      explicit UISectionKeyboard( UIPage *pPage );
+      ~UISectionKeyboard() override;
 
       //==============================================================================
       virtual void paint( juce::Graphics &g );
@@ -53,7 +56,7 @@ namespace SamplerGUI
       int getKeyboardHeight( int noteStart, int noteEnd ) const;
 
    protected:
-      PluginEditor *m_pEditor;
+      UIPage *m_pPage;
       int m_KeyHeight;
       int m_NoteOffset;
       int m_MaxNoteOffset;

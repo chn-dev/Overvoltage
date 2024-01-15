@@ -11,7 +11,7 @@ UISectionNameRanges::UISectionNameRanges( UIPage *pUIPage ) :
    std::vector<std::string> noteNames;
    for( int i = 0; i < 128; i++ )
    {
-      noteNames.push_back( Keyboard::noteNameWithOctave( i ).toStdString() );
+      noteNames.push_back( UISectionKeyboard::noteNameWithOctave( i ).toStdString() );
    }
 
    m_plLow = new juce::Label( juce::String(), "low" );

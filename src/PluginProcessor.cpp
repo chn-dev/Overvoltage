@@ -307,7 +307,7 @@ void PluginProcessor::onDeleteSample( size_t part, SamplerEngine::Sample *pSampl
 }
 
 
-void PluginProcessor::onSampleSelectionUpdated( SamplerGUI::SamplerKeyboard *pKeyboard )
+void PluginProcessor::onSampleSelectionUpdated( SamplerGUI::UISectionSamplerKeyboard *pKeyboard )
 {
    if( m_pEditor )
    {

@@ -3,14 +3,15 @@
 #include <SamplerEngine/WaveFile.h>
 
 #include "PluginEditor.h"
-#include "SamplerKeyboard.h"
+#include "UISectionSamplerKeyboard.h"
+#include "UIPage.h"
 
 #include "util.h"
 
 using namespace SamplerGUI;
 
-SamplerKeyboard::SamplerKeyboard( PluginEditor *pEditor ) :
-   Keyboard( pEditor ),
+UISectionSamplerKeyboard::UISectionSamplerKeyboard( UIPage *pPage ) :
+   UISectionKeyboard( pPage ),
    m_pCurrentSample( nullptr ),
    m_CurrentSampleNote( -1 ),
    m_CurrentSampleNoteOffset( 0 ),
@@ -23,12 +24,17 @@ SamplerKeyboard::SamplerKeyboard( PluginEditor *pEditor ) :
 }
 
 
-SamplerKeyboard::~SamplerKeyboard()
+UISectionSamplerKeyboard::~UISectionSamplerKeyboard()
 {
 }
 
 
-void SamplerKeyboard::addSamplerKeyboardListener( SamplerKeyboardListener *pListener )
+void UISectionSamplerKeyboard::samplesUpdated()
+{
+}
+
+
+void UISectionSamplerKeyboard::addSamplerKeyboardListener( UISectionSamplerKeyboardListener *pListener )
 {
    if( pListener )
    {
@@ -37,19 +43,19 @@ void SamplerKeyboard::addSamplerKeyboardListener( SamplerKeyboardListener *pList
 }
 
 
-bool SamplerKeyboard::keyPressed( const KeyPress &/*key*/ )
+bool UISectionSamplerKeyboard::keyPressed( const KeyPress &/*key*/ )
 {
    return( false );
 }
 
 
-bool SamplerKeyboard::keyPressed( const KeyPress &key, Component */*pOriginatingComponent*/ )
+bool UISectionSamplerKeyboard::keyPressed( const KeyPress &key, Component */*pOriginatingComponent*/ )
 {
    if( key == KeyPress::deleteKey )
    {
       for( SamplerEngine::Sample *pSample : m_SelectedSamples )
       {
-         emitDeleteSample( m_pEditor->currentPart(), pSample );
+         emitDeleteSample( m_pPage->editor()->currentPart(), pSample );
       }
 
       m_SelectedSamples.clear();
@@ -60,19 +66,19 @@ bool SamplerKeyboard::keyPressed( const KeyPress &key, Component */*pOriginating
 }
 
 
-bool SamplerKeyboard::keyStateChanged( bool /*isKeyDown*/ )
+bool UISectionSamplerKeyboard::keyStateChanged( bool /*isKeyDown*/ )
 {
    return( false );
 }
 
 
-bool SamplerKeyboard::keyStateChanged( bool /*isKeyDown*/, Component */*pOriginatingComponent*/ )
+bool UISectionSamplerKeyboard::keyStateChanged( bool /*isKeyDown*/, Component */*pOriginatingComponent*/ )
 {
    return( true );
 }
 
 
-SamplerEngine::Sample *SamplerKeyboard::getSampleAt( int x, int y ) const
+SamplerEngine::Sample *UISectionSamplerKeyboard::getSampleAt( int x, int y ) const
 {
    for( SamplerEngine::Sample *pSample : constSamples() )
    {
@@ -85,7 +91,7 @@ SamplerEngine::Sample *SamplerKeyboard::getSampleAt( int x, int y ) const
 }
 
 
-bool SamplerKeyboard::drawSample( juce::Graphics &g, SamplerEngine::Sample *const pSample ) const
+bool UISectionSamplerKeyboard::drawSample( juce::Graphics &g, SamplerEngine::Sample *const pSample ) const
 {
    bool highlighted = false;
 
@@ -93,7 +99,7 @@ bool SamplerKeyboard::drawSample( juce::Graphics &g, SamplerEngine::Sample *cons
 
    bool isSelected = m_SelectedSamples.find( pSample ) != m_SelectedSamples.end();
 
-   if( m_pEditor->processor().samplerEngine()->isPlaying( m_pEditor->currentPart(), pSample ) )
+   if( m_pPage->editor()->processor().samplerEngine()->isPlaying( m_pPage->editor()->currentPart(), pSample ) )
    {
       g.setColour( juce::Colour::fromRGB( 255, 64, 64 ) );
    } else
@@ -126,9 +132,9 @@ bool SamplerKeyboard::drawSample( juce::Graphics &g, SamplerEngine::Sample *cons
 }
 
 
-void SamplerKeyboard::paint( juce::Graphics &g )
+void UISectionSamplerKeyboard::paint( juce::Graphics &g )
 {
-   Keyboard::paint( g );
+   UISectionKeyboard::paint( g );
 
    g.setFont( 13.0 );
    std::list<SamplerEngine::Sample *> highlighted;
@@ -164,7 +170,7 @@ void SamplerKeyboard::paint( juce::Graphics &g )
 }
 
 
-juce::Rectangle<int> SamplerKeyboard::getNoteRect( SamplerEngine::Sample *const pSample ) const
+juce::Rectangle<int> UISectionSamplerKeyboard::getNoteRect( SamplerEngine::Sample *const pSample ) const
 {
    int minNote = pSample->getMinNote();
    int maxNote = pSample->getMaxNote();
@@ -182,7 +188,7 @@ juce::Rectangle<int> SamplerKeyboard::getNoteRect( SamplerEngine::Sample *const 
 }
 
 
-juce::Rectangle<int> SamplerKeyboard::getNoteRect( int minNote, int maxNote, int minVel, int maxVel ) const
+juce::Rectangle<int> UISectionSamplerKeyboard::getNoteRect( int minNote, int maxNote, int minVel, int maxVel ) const
 {
    int y = getBounds().getHeight() - ( ( ( maxNote - m_NoteOffset + 1 ) * m_KeyHeight ) / 2 );
    int maxW = getBounds().getWidth() - m_Width - 1;
@@ -195,7 +201,7 @@ juce::Rectangle<int> SamplerKeyboard::getNoteRect( int minNote, int maxNote, int
 }
 
 
-bool SamplerKeyboard::isInterestedInFileDrag( const StringArray &files )
+bool UISectionSamplerKeyboard::isInterestedInFileDrag( const StringArray &files )
 {
    for( String f : files )
    {
@@ -209,13 +215,13 @@ bool SamplerKeyboard::isInterestedInFileDrag( const StringArray &files )
 }
 
 
-int SamplerKeyboard::dragDropNote( int y ) const
+int UISectionSamplerKeyboard::dragDropNote( int y ) const
 {
    return( ( ( getBounds().getHeight() - y ) / ( m_KeyHeight / 2 ) ) + m_NoteOffset );
 }
 
 
-int SamplerKeyboard::dragDropVelocity( int x ) const
+int UISectionSamplerKeyboard::dragDropVelocity( int x ) const
 {
    x -= m_Width;
    int w = getBounds().getWidth() - m_Width;
@@ -228,28 +234,28 @@ int SamplerKeyboard::dragDropVelocity( int x ) const
 }
 
 
-void SamplerKeyboard::fileDragEnter( const StringArray &/*files*/, int /*x*/, int y )
+void UISectionSamplerKeyboard::fileDragEnter( const StringArray &/*files*/, int /*x*/, int y )
 {
    m_DragDropNote = dragDropNote( y );
    repaint();
 }
 
 
-void SamplerKeyboard::fileDragMove( const StringArray &/*files*/, int /*x*/, int y )
+void UISectionSamplerKeyboard::fileDragMove( const StringArray &/*files*/, int /*x*/, int y )
 {
    m_DragDropNote = dragDropNote( y );
    repaint();
 }
 
 
-void SamplerKeyboard::fileDragExit( const StringArray &/*files*/ )
+void UISectionSamplerKeyboard::fileDragExit( const StringArray &/*files*/ )
 {
    m_DragDropNote = -1;
    repaint();
 }
 
 
-void SamplerKeyboard::filesDropped( const StringArray &files, int /*x*/, int /*y*/ )
+void UISectionSamplerKeyboard::filesDropped( const StringArray &files, int /*x*/, int /*y*/ )
 {
    int n = 0;
    for( String f : files )
@@ -268,7 +274,7 @@ void SamplerKeyboard::filesDropped( const StringArray &files, int /*x*/, int /*y
 }
 
 
-void SamplerKeyboard::updateCursor( const MouseEvent &event )
+void UISectionSamplerKeyboard::updateCursor( const MouseEvent &event )
 {
    int x = event.getPosition().getX();
    int y = event.getPosition().getY();
@@ -333,9 +339,9 @@ void SamplerKeyboard::updateCursor( const MouseEvent &event )
 }
 
 
-void SamplerKeyboard::mouseMove( const MouseEvent &event)
+void UISectionSamplerKeyboard::mouseMove( const MouseEvent &event)
 {
-   Keyboard::mouseMove( event );
+   UISectionKeyboard::mouseMove( event );
 
    if( m_CurrentSampleNote >= 0 )
    {
@@ -348,9 +354,9 @@ void SamplerKeyboard::mouseMove( const MouseEvent &event)
 }
 
 
-void SamplerKeyboard::mouseDrag( const MouseEvent &event )
+void UISectionSamplerKeyboard::mouseDrag( const MouseEvent &event )
 {
-   Keyboard::mouseDrag( event );
+   UISectionKeyboard::mouseDrag( event );
 
    int x = event.getPosition().getX();
    int y = event.getPosition().getY();
@@ -474,21 +480,21 @@ void SamplerKeyboard::mouseDrag( const MouseEvent &event )
 }
 
 
-void SamplerKeyboard::mouseEnter( const MouseEvent &event )
+void UISectionSamplerKeyboard::mouseEnter( const MouseEvent &event )
 {
-   Keyboard::mouseEnter( event );
+   UISectionKeyboard::mouseEnter( event );
 }
 
 
-void SamplerKeyboard::mouseExit( const MouseEvent &event )
+void UISectionSamplerKeyboard::mouseExit( const MouseEvent &event )
 {
-   Keyboard::mouseExit( event );
+   UISectionKeyboard::mouseExit( event );
 }
 
 
-void SamplerKeyboard::mouseDown( const MouseEvent &event )
+void UISectionSamplerKeyboard::mouseDown( const MouseEvent &event )
 {
-   Keyboard::mouseDown( event );
+   UISectionKeyboard::mouseDown( event );
 
    int x = event.getMouseDownX();
    int y = event.getMouseDownY();
@@ -535,9 +541,9 @@ void SamplerKeyboard::mouseDown( const MouseEvent &event )
 }
 
 
-void SamplerKeyboard::mouseUp( const MouseEvent &event )
+void UISectionSamplerKeyboard::mouseUp( const MouseEvent &event )
 {
-   Keyboard::mouseUp( event );
+   UISectionKeyboard::mouseUp( event );
 
    if( m_Selecting )
    {
@@ -563,25 +569,25 @@ void SamplerKeyboard::mouseUp( const MouseEvent &event )
 }
 
 
-void SamplerKeyboard::handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
+void UISectionSamplerKeyboard::handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
 {
-   Keyboard::handleNoteOn( pSource, midiChannel, midiNoteNumber, velocity );
+   UISectionKeyboard::handleNoteOn( pSource, midiChannel, midiNoteNumber, velocity );
 }
 
 
-void SamplerKeyboard::handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
+void UISectionSamplerKeyboard::handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
 {
-   Keyboard::handleNoteOff( pSource, midiChannel, midiNoteNumber, velocity );
+   UISectionKeyboard::handleNoteOff( pSource, midiChannel, midiNoteNumber, velocity );
 }
 
 
-std::set<SamplerEngine::Sample *> SamplerKeyboard::selectedSamples() const
+std::set<SamplerEngine::Sample *> UISectionSamplerKeyboard::selectedSamples() const
 {
    return( m_SelectedSamples );
 }
 
 
-void SamplerKeyboard::clearSelectedSamples()
+void UISectionSamplerKeyboard::clearSelectedSamples()
 {
    m_SelectedSamples.clear();
    emitSampleSelectionUpdated();
@@ -589,18 +595,18 @@ void SamplerKeyboard::clearSelectedSamples()
 }
 
 
-void SamplerKeyboard::emitSampleSelectionUpdated()
+void UISectionSamplerKeyboard::emitSampleSelectionUpdated()
 {
-   for( SamplerKeyboardListener *pListener : m_Listeners )
+   for( UISectionSamplerKeyboardListener *pListener : m_Listeners )
    {
       pListener->onSampleSelectionUpdated( this );
    }
 }
 
 
-void SamplerKeyboard::emitDeleteSample( size_t nPart, SamplerEngine::Sample *pSample )
+void UISectionSamplerKeyboard::emitDeleteSample( size_t nPart, SamplerEngine::Sample *pSample )
 {
-   for( SamplerKeyboardListener *pListener : m_Listeners )
+   for( UISectionSamplerKeyboardListener *pListener : m_Listeners )
    {
       pListener->onDeleteSample( nPart, pSample );
    }

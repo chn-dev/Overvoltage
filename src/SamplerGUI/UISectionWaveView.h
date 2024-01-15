@@ -6,7 +6,6 @@
 #include <SamplerEngine/Sample.h>
 
 #include "UISection.h"
-#include "SamplerKeyboard.h"
 
 class PluginEditor;
 

@@ -1,12 +1,14 @@
-#include "Keyboard.h"
+#include "UISectionKeyboard.h"
 #include "PluginEditor.h"
+#include "UIPage.h"
 
 #include "util.h"
 
 using namespace SamplerGUI;
 
-Keyboard::Keyboard( PluginEditor *pEditor ) :
-   m_pEditor( pEditor ),
+UISectionKeyboard::UISectionKeyboard( UIPage *pPage ) :
+   UISection( pPage ),
+   m_pPage( pPage ),
    m_KeyHeight( 28 ),
    m_NoteOffset( 36 ),
    m_MaxNoteOffset( 128 ),
@@ -23,24 +25,24 @@ Keyboard::Keyboard( PluginEditor *pEditor ) :
 }
 
 
-Keyboard::~Keyboard()
+UISectionKeyboard::~UISectionKeyboard()
 {
 }
 
 
-std::list<SamplerEngine::Sample *> &Keyboard::samples()
+std::list<SamplerEngine::Sample *> &UISectionKeyboard::samples()
 {
-   return( m_pEditor->processor().samples() );
+   return( m_pPage->editor()->processor().samples() );
 }
 
 
-const std::list<SamplerEngine::Sample *> &Keyboard::constSamples() const
+const std::list<SamplerEngine::Sample *> &UISectionKeyboard::constSamples() const
 {
-   return( m_pEditor->processor().constSamples() );
+   return( m_pPage->editor()->processor().constSamples() );
 }
 
 
-juce::String Keyboard::noteNameWithOctave( int note )
+juce::String UISectionKeyboard::noteNameWithOctave( int note )
 {
    std::string name = noteName( note ).toStdString();
    int octave = ( note / 12 ) - 2;
@@ -58,7 +60,7 @@ juce::String Keyboard::noteNameWithOctave( int note )
 }
 
 
-juce::String Keyboard::noteName( int note )
+juce::String UISectionKeyboard::noteName( int note )
 {
    note %= 12;
 
@@ -94,27 +96,27 @@ juce::String Keyboard::noteName( int note )
 }
 
 
-int Keyboard::keyOfs( int note )
+int UISectionKeyboard::keyOfs( int note )
 {
    static int ko[12] = { 0, 2, 3, 6, 7, 10, 12, 13, 16, 17, 20, 21 };
    return( ko[note % 12] );
 }
 
 
-int Keyboard::maxKeyOfs()
+int UISectionKeyboard::maxKeyOfs()
 {
    return( 24 );
 }
 
 
-int Keyboard::keySize( int note )
+int UISectionKeyboard::keySize( int note )
 {
    static int ks[12] = { 3, 2, 4, 2, 3, 3, 2, 4, 2, 4, 2, 3 };
    return( ks[note % 12] );
 }
 
 
-void Keyboard::handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
+void UISectionKeyboard::handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
 {
    juce::ignoreUnused( pSource, midiChannel );
 
@@ -129,7 +131,7 @@ void Keyboard::handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int mi
 }
 
 
-void Keyboard::handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
+void UISectionKeyboard::handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
 {
    juce::ignoreUnused( pSource, midiChannel );
 
@@ -144,7 +146,7 @@ void Keyboard::handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int m
 }
 
 
-void Keyboard::getNoteShape( int note, juce::Colour &c, juce::Rectangle<int> &r )
+void UISectionKeyboard::getNoteShape( int note, juce::Colour &c, juce::Rectangle<int> &r )
 {
    int x = 0;
    int ko = keyOfs(note ) - keyOfs( m_NoteOffset );
@@ -166,7 +168,7 @@ void Keyboard::getNoteShape( int note, juce::Colour &c, juce::Rectangle<int> &r 
    r = juce::Rectangle<int>( x, y, w, h );
 }
 
-void Keyboard::drawNote( juce::Graphics &g, int note )
+void UISectionKeyboard::drawNote( juce::Graphics &g, int note )
 {
    juce::Colour c;
    juce::Rectangle<int> r;
@@ -175,7 +177,7 @@ void Keyboard::drawNote( juce::Graphics &g, int note )
    if( r.getY() + r.getHeight() < 0 )
       return;
 
-   if( m_Notes[m_pEditor->currentPart()][note] >= 0 )
+   if( m_Notes[m_pPage->editor()->currentPart()][note] >= 0 )
       g.setColour( juce::Colour::fromRGB( 255, 64, 64 ) );
    else
       g.setColour( c );
@@ -194,7 +196,7 @@ void Keyboard::drawNote( juce::Graphics &g, int note )
 }
 
 
-void Keyboard::paint( juce::Graphics &g )
+void UISectionKeyboard::paint( juce::Graphics &g )
 {
    g.setColour( juce::Colour::fromRGB( 16, 32, 16 ) );
    g.fillAll();
@@ -220,7 +222,7 @@ void Keyboard::paint( juce::Graphics &g )
 }
 
 
-void Keyboard::resized()
+void UISectionKeyboard::resized()
 {
    m_MaxNoteOffset = getMaxNoteOffset();
    if( m_Width < 0 )
@@ -230,7 +232,7 @@ void Keyboard::resized()
 }
 
 
-void Keyboard::setWidth( int w )
+void UISectionKeyboard::setWidth( int w )
 {
    if( m_Width != w )
    {
@@ -240,7 +242,7 @@ void Keyboard::setWidth( int w )
 }
 
 
-int Keyboard::getMaxNoteOffset() const
+int UISectionKeyboard::getMaxNoteOffset() const
 {
    for( int noteStart = 0; noteStart <= 128; noteStart++ )
    {
@@ -254,7 +256,7 @@ int Keyboard::getMaxNoteOffset() const
 }
 
 
-int Keyboard::getKeyboardHeight( int noteStart, int noteEnd ) const
+int UISectionKeyboard::getKeyboardHeight( int noteStart, int noteEnd ) const
 {
    int ko = keyOfs( noteStart ) - keyOfs( m_NoteOffset );
    int octaveOfs = ( ( noteStart / 12 ) - ( m_NoteOffset / 12 ) ) * maxKeyOfs();
@@ -268,7 +270,7 @@ int Keyboard::getKeyboardHeight( int noteStart, int noteEnd ) const
 }
 
 
-int Keyboard::getNoteNumberAt( int x, int y )
+int UISectionKeyboard::getNoteNumberAt( int x, int y )
 {
    juce::Colour c;
    juce::Rectangle<int> r;
@@ -303,7 +305,7 @@ int Keyboard::getNoteNumberAt( int x, int y )
    return( -1 );
 }
 
-void Keyboard::mouseDrag( const MouseEvent &event )
+void UISectionKeyboard::mouseDrag( const MouseEvent &event )
 {
    int x = event.getPosition().getX();
    int y = event.getPosition().getY();
@@ -314,16 +316,16 @@ void Keyboard::mouseDrag( const MouseEvent &event )
    {
       if( m_CurrentNote != note )
       {
-         m_Notes[m_pEditor->currentPart()][m_CurrentNote] = -1;
-         noteOff( (int)m_pEditor->currentPart() + 1, m_CurrentNote, 1.0 );
+         m_Notes[m_pPage->editor()->currentPart()][m_CurrentNote] = -1;
+         noteOff( (int)m_pPage->editor()->currentPart() + 1, m_CurrentNote, 1.0 );
 
          m_CurrentNote = -1;
 
          if( note >= 0 )
          {
-            m_Notes[m_pEditor->currentPart()][note] = 127;
+            m_Notes[m_pPage->editor()->currentPart()][note] = 127;
             m_CurrentNote = note;
-            noteOn( (int)m_pEditor->currentPart() + 1, m_CurrentNote, 1.0 );
+            noteOn( (int)m_pPage->editor()->currentPart() + 1, m_CurrentNote, 1.0 );
          }
 
          repaint();
@@ -331,7 +333,7 @@ void Keyboard::mouseDrag( const MouseEvent &event )
    }
 }
 
-void Keyboard::mouseMove( const MouseEvent &event )
+void UISectionKeyboard::mouseMove( const MouseEvent &event )
 {
    int x = event.getPosition().getX();
    int y = event.getPosition().getY();
@@ -342,19 +344,19 @@ void Keyboard::mouseMove( const MouseEvent &event )
 }
 
 
-void Keyboard::mouseEnter( const MouseEvent &event )
+void UISectionKeyboard::mouseEnter( const MouseEvent &event )
 {
    juce::ignoreUnused( event );
 }
 
 
-void Keyboard::mouseExit( const MouseEvent &event )
+void UISectionKeyboard::mouseExit( const MouseEvent &event )
 {
    juce::ignoreUnused( event );
 }
 
 
-void Keyboard::mouseDown( const MouseEvent &event )
+void UISectionKeyboard::mouseDown( const MouseEvent &event )
 {
    int x = event.getMouseDownPosition().getX();
    int y = event.getMouseDownPosition().getY();
@@ -363,18 +365,18 @@ void Keyboard::mouseDown( const MouseEvent &event )
 
    if( note >= 0 )
    {
-      if( m_Notes[m_pEditor->currentPart()][note] < 0 )
+      if( m_Notes[m_pPage->editor()->currentPart()][note] < 0 )
       {
-         m_Notes[m_pEditor->currentPart()][note] = 127;
+         m_Notes[m_pPage->editor()->currentPart()][note] = 127;
          m_CurrentNote = note;
-         noteOn( (int)m_pEditor->currentPart() + 1, note, 1.0 );
+         noteOn( (int)m_pPage->editor()->currentPart() + 1, note, 1.0 );
          repaint();
       }
    }
 }
 
 
-void Keyboard::mouseUp( const MouseEvent &event )
+void UISectionKeyboard::mouseUp( const MouseEvent &event )
 {
    int x = event.getPosition().getX();
    int y = event.getPosition().getY();
@@ -383,15 +385,15 @@ void Keyboard::mouseUp( const MouseEvent &event )
 
    if( m_CurrentNote >= 0 )
    {
-      m_Notes[m_pEditor->currentPart()][m_CurrentNote] = -1;
+      m_Notes[m_pPage->editor()->currentPart()][m_CurrentNote] = -1;
       m_CurrentNote = -1;
-      noteOff( (int)m_pEditor->currentPart() + 1, note, 1.0 );
+      noteOff( (int)m_pPage->editor()->currentPart() + 1, note, 1.0 );
       repaint();
    }
 }
 
 
-void Keyboard::mouseWheelMove( const MouseEvent &event, const MouseWheelDetails &wheel )
+void UISectionKeyboard::mouseWheelMove( const MouseEvent &event, const MouseWheelDetails &wheel )
 {
    juce::ignoreUnused( event );
 

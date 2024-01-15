@@ -41,7 +41,7 @@ void UIPage::removeUISection( SamplerGUI::UISection *pSection )
 }
 
 
-void UIPage::onSampleSelectionUpdated( SamplerKeyboard *pKeyboard )
+void UIPage::onSampleSelectionUpdated( UISectionSamplerKeyboard *pKeyboard )
 {
    for( UISection *pSection : m_UISections )
    {

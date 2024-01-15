@@ -128,7 +128,7 @@ void PluginEditor::resized()
 }
 
 
-void PluginEditor::onSampleSelectionUpdated( SamplerGUI::SamplerKeyboard *pSamplerKeyboard )
+void PluginEditor::onSampleSelectionUpdated( SamplerGUI::UISectionSamplerKeyboard *pSamplerKeyboard )
 {
    for( SamplerGUI::UIPage *pPage : m_UIPages )
    {

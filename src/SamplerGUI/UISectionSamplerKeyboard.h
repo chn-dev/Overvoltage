@@ -1,5 +1,5 @@
-#ifndef __SAMPLERKEYBOARD_H__
-#define __SAMPLERKEYBOARD_H__
+#ifndef __UISECTIONSAMPLERKEYBOARD_H__
+#define __UISECTIONSAMPLERKEYBOARD_H__
 
 #include <list>
 #include <set>
@@ -7,33 +7,37 @@
 #include <SamplerEngine/Sample.h>
 
 #include "JuceHeader.h"
-#include "Keyboard.h"
+#include "UISectionKeyboard.h"
 
 namespace SamplerGUI
 {
-   class SamplerKeyboard;
+   class UISectionSamplerKeyboard;
+   class UISectionKeyboard;
+   class UIPage;
 
-   class SamplerKeyboardListener
+   class UISectionSamplerKeyboardListener
    {
    public:
       virtual void onDeleteSample( size_t part, SamplerEngine::Sample *pSample ) = 0;
-      virtual void onSampleSelectionUpdated( SamplerKeyboard *pKeyboard ) = 0;
+      virtual void onSampleSelectionUpdated( UISectionSamplerKeyboard *pKeyboard ) = 0;
    };
 
    //==============================================================================
-   class SamplerKeyboard : public Keyboard,
-                           public juce::FileDragAndDropTarget,
-                           public juce::KeyListener
+   class UISectionSamplerKeyboard : public UISectionKeyboard,
+                                    public juce::FileDragAndDropTarget,
+                                    public juce::KeyListener
 
    {
    public:
-      SamplerKeyboard( PluginEditor *pEditor );
-      ~SamplerKeyboard();
+      UISectionSamplerKeyboard( UIPage *pPage );
+      ~UISectionSamplerKeyboard();
 
       //==============================================================================
       virtual void paint( juce::Graphics &g ) override;
 
-      void addSamplerKeyboardListener( SamplerKeyboardListener *pListener );
+      virtual void samplesUpdated();
+
+      void addSamplerKeyboardListener( UISectionSamplerKeyboardListener *pListener );
 
       virtual void mouseMove( const MouseEvent &event);
       virtual void mouseDrag( const MouseEvent &event );
@@ -74,7 +78,7 @@ namespace SamplerGUI
 
    private:
       std::set<SamplerEngine::Sample *> m_SelectedSamples;
-      std::vector<SamplerKeyboardListener *> m_Listeners;
+      std::vector<UISectionSamplerKeyboardListener *> m_Listeners;
 
       SamplerEngine::Sample *m_pCurrentSample;
       int m_CurrentSampleNote;

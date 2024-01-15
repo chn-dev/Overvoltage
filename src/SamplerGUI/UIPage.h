@@ -18,7 +18,7 @@ namespace SamplerGUI
       ~UIPage();
 
       virtual void currentPartChanged( size_t nPart ) = 0;
-      void onSampleSelectionUpdated( SamplerKeyboard *pKeyboard );
+      void onSampleSelectionUpdated( UISectionSamplerKeyboard *pKeyboard );
 
       virtual void paint( juce::Graphics &g ) override;
       virtual void resized() override;
