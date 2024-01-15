@@ -2,14 +2,13 @@
 #define __UIPAGE_H__
 
 #include "JuceHeader.h"
-#include "SamplerGUI.h"
-#include "UISection.h"
 
 class PluginEditor;
 
 namespace SamplerGUI
 {
    class UISection;
+   class UISectionSamplerKeyboard;
 
    class UIPage : public juce::Component
    {

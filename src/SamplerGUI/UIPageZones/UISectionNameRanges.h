@@ -3,7 +3,7 @@
 
 #include "JuceHeader.h"
 
-#include "UISection.h"
+#include <SamplerGUI/UISection.h>
 
 class AudioPluginAudioProcessorEditor;
 

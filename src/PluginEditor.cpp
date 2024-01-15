@@ -1,7 +1,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-#include <SamplerGUI/UIPageZones.h>
+#include <SamplerGUI/UIPageZones/UIPageZones.h>
 
 #include "util.h"
 

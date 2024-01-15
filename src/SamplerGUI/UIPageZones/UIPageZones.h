@@ -1,14 +1,14 @@
 #ifndef __UIPAGEZONES_H__
 #define __UIPAGEZONES_H__
 
-#include "SamplerGUI.h"
-#include "UIPage.h"
+#include <SamplerGUI/UIPage.h>
 
 #include "UISectionWaveView.h"
 #include "UISectionSample.h"
 #include "UISectionNameRanges.h"
 #include "UISectionAEG.h"
 #include "UISectionOutput.h"
+#include "UISectionSamplerKeyboard.h"
 
 class PluginEditor;
 

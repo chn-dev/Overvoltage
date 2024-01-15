@@ -2,7 +2,7 @@
 #define __UISECTIONKEYBOARD_H__
 
 #include <SamplerEngine/SamplerEngine.h>
-#include "UISection.h"
+#include <SamplerGUI/UISection.h>
 
 #include "JuceHeader.h"
 

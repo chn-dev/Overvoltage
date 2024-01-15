@@ -1,6 +1,6 @@
 #include "UISectionKeyboard.h"
 #include "PluginEditor.h"
-#include "UIPage.h"
+#include <SamplerGUI/UIPage.h>
 
 #include "util.h"
 

@@ -4,8 +4,7 @@
 #include "JuceHeader.h"
 
 #include <SamplerEngine/Sample.h>
-
-#include "UISection.h"
+#include <SamplerGUI/UISection.h>
 
 class PluginEditor;
 

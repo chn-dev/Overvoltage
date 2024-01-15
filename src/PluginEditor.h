@@ -2,7 +2,6 @@
 #define __PLUGINEDITOR_H__
 
 #include <SamplerGUI/SamplerGUI.h>
-#include <SamplerGUI/UIPage.h>
 #include "PluginProcessor.h"
 
 //==============================================================================

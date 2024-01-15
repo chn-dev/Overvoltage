@@ -2,7 +2,8 @@
 #define __UISECTIONEG_H__
 
 #include "JuceHeader.h"
-#include "UISection.h"
+
+#include <SamplerGUI/UISection.h>
 
 class PluginEditor;
 

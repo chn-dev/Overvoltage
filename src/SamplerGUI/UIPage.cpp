@@ -1,4 +1,5 @@
 #include "UIPage.h"
+#include "UIPageZones/UISectionSamplerKeyboard.h"
 
 using namespace SamplerGUI;
 

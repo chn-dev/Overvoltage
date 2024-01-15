@@ -2,7 +2,6 @@
 #define __SAMPLERGUI_H__
 
 #include "UISection.h"
-#include "UISectionKeyboard.h"
-#include "UISectionSamplerKeyboard.h"
+#include "UIPage.h"
 
 #endif

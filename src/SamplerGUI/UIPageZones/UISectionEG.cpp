@@ -1,4 +1,3 @@
-#include "SamplerGUI.h"
 #include "UISectionEG.h"
 
 using namespace SamplerGUI;

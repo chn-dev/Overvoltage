@@ -9,7 +9,7 @@
 #include <SamplerEngine/Voice.h>
 #include <SamplerEngine/Part.h>
 
-#include <SamplerGUI/UISectionSamplerKeyboard.h>
+#include <SamplerGUI/UIPageZones/UISectionSamplerKeyboard.h>
 
 //==============================================================================
 class PluginProcessor : public juce::AudioProcessor,
