@@ -11,7 +11,7 @@ UIPageZones::UIPageZones( PluginEditor *pEditor ) :
    int yofs = 0;
 
    m_pUISectionKeyboard = new SamplerGUI::UISectionSamplerKeyboard( this );
-   addKeyListener( m_pUISectionKeyboard );
+   pEditor->addKeyListener( m_pUISectionKeyboard );
    m_pUISectionKeyboard->setBounds( 0, yofs, 64 + 128, 640 - yofs );
    m_pUISectionKeyboard->addListener( &( editor()->processor() ) );
    m_pUISectionKeyboard->addSamplerKeyboardListener( &( editor()->processor() ) );
