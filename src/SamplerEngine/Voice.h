@@ -29,6 +29,7 @@ namespace SamplerEngine
 
       const Sample *m_pSample;
       ENV *m_pAEG;
+      Filter *m_pFilter;
       bool m_NoteIsOn;
       int m_Note;
       int m_Velocity;

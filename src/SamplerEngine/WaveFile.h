@@ -6,20 +6,17 @@
 
 #include "JuceHeader.h"
 
+#include <DSP/Wave.h>
+
 //==============================================================================
 namespace SamplerEngine
 {
-   class WaveFile
+   class WaveFile : public DSP::Wave
    {
    public:
       ~WaveFile();
 
       static WaveFile *load( std::string fname );
-
-      int numChannels() const;
-      uint32_t sampleRate() const;
-      int numBits() const;
-      uint32_t numSamples() const;
 
       uint32_t loopStart() const;
       uint32_t loopEnd() const;
@@ -30,7 +27,13 @@ namespace SamplerEngine
       uint16_t *data16() const;
       uint8_t *data8() const;
 
-      float floatValue( int nChannel, uint32_t nSample ) const;
+      virtual float floatValue( int nChannel, uint32_t nSample ) const;
+      virtual int numChannels() const;
+      virtual uint32_t sampleRate() const;
+      virtual int numBits() const;
+      virtual uint32_t numSamples() const;
+
+      void dft() const;
 
       uint32_t size() const;
 

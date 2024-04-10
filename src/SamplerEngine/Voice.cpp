@@ -6,6 +6,7 @@ using namespace SamplerEngine;
 Voice::Voice( const Sample *pSample, int note, int velocity ) :
    m_pSample( pSample ),
    m_pAEG( nullptr ),
+   m_pFilter( nullptr ),
    m_NoteIsOn( true ),
    m_Note( note ),
    m_Velocity( velocity ),
@@ -19,6 +20,8 @@ Voice::Voice( const Sample *pSample, int note, int velocity ) :
 
    m_pAEG = new ENV( *pSample->getAEG() );
    m_pAEG->noteOn();
+
+   m_pFilter = new Filter( *pSample->getFilter() );
 }
 
 

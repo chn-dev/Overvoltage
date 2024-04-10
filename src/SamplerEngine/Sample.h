@@ -8,6 +8,7 @@
 
 #include "WaveFile.h"
 #include "ENV.h"
+#include "Filter.h"
 
 //==============================================================================
 namespace SamplerEngine
@@ -56,6 +57,7 @@ namespace SamplerEngine
       void setGain( float gain );
       Sample::PlayMode getPlayMode() const;
       ENV *getAEG() const;
+      Filter *getFilter() const;
       int getOutputBus() const;
       void setOutputBus( int n );
 
@@ -73,6 +75,7 @@ namespace SamplerEngine
       ENV *m_pAEG;
       WaveFile *m_pWave;
       PlayMode m_PlayMode;
+      Filter *m_pFilter;
       float m_DetuneCents;
       float m_Pan;
       float m_Gain;

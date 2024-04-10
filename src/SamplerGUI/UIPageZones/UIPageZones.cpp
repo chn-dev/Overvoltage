@@ -35,6 +35,10 @@ UIPageZones::UIPageZones( PluginEditor *pEditor ) :
    m_pUISectionAEG->setBounds( 64 + 128 + 4, 196 + 4 + 128 + 4 + 128 + 4 + yofs, 192, 128 );
    addAndMakeVisible( m_pUISectionAEG );
 
+   m_pUISectionFilter = new SamplerGUI::UISectionFilter( this );
+   m_pUISectionFilter->setBounds( 64 + 128 + 4 + 192 + 4, 196 + 4 + yofs, 192, 128 );
+   addAndMakeVisible( m_pUISectionFilter );
+
    m_pUISectionOutput = new SamplerGUI::UISectionOutput( this );
    m_pUISectionOutput->setBounds( 1024 - 64 - 128 - 4, 196 + 4 + yofs, 192, 128 );
    addAndMakeVisible( m_pUISectionOutput );
@@ -50,6 +54,7 @@ UIPageZones::~UIPageZones()
    delete m_pUISectionSample;
    delete m_pUISectionNameRanges;
    delete m_pUISectionAEG;
+   delete m_pUISectionFilter;
    delete m_pUISectionOutput;
 }
 

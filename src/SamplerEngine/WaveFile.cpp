@@ -1,6 +1,8 @@
 #include <math.h>
 #include <string>
 
+#include <DSP/DFT.h>
+
 #include "WaveFile.h"
 #include "util.h"
 
@@ -413,4 +415,22 @@ WaveFile *WaveFile::load( std::string fname )
 uint32_t WaveFile::numSamples() const
 {
    return( m_nSamples );
+}
+
+
+void WaveFile::dft() const
+{
+   std::vector<DSP::Complex> d;
+   
+   bool ok = DSP::DFT::dft( *this, 0, 0, 512, d, DSP::DFT::WindowHamming );
+
+   double p = d[0].getA() * d[0].getA();
+   double pdb = 10.0 * log10( p );
+   std::vector<double> db;
+   for( int i = 0; i < d.size(); i++ )
+   {
+      //db.push_back( log10( d[i].getR() / (double)(d.size()/2) ) );
+      db.push_back( 10.0 * log10( sqrt( d[i].getA() * d[i].getA() + d[i].getB() * d[i].getB() ) ) );
+   }
+   printf("\n");
 }

@@ -8,6 +8,7 @@ Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
    m_Name( name ),
    m_OutputBus( 0 ),
    m_pAEG( nullptr ),
+   m_pFilter( nullptr ),
    m_pWave( pWave ),
    m_PlayMode( Sample::PlayModeStandard ),
    m_DetuneCents( 0.0 ),
@@ -21,6 +22,7 @@ Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
    m_MaxVelocity( 127 )
 {
    m_pAEG = new ENV();
+   m_pFilter = new Filter();
 }
 
 
@@ -28,6 +30,7 @@ Sample::Sample() :
    m_Name( "" ),
    m_OutputBus( 0 ),
    m_pAEG( nullptr ),
+   m_pFilter( nullptr ),
    m_pWave( nullptr ),
    m_PlayMode( Sample::PlayModeStandard ),
    m_DetuneCents( 0.0 ),
@@ -47,6 +50,7 @@ Sample::~Sample()
 {
    delete m_pWave;
    delete m_pAEG;
+   delete m_pFilter;
 }
 
 
@@ -103,6 +107,9 @@ juce::XmlElement *Sample::toXml() const
    peAEG->setAttribute( "type", "amplitude" );
    peSample->addChildElement( peAEG );
 
+   juce::XmlElement *peFilter = m_pFilter->toXml();
+   peSample->addChildElement( peFilter );
+
    juce::XmlElement *peWave = m_pWave->toXml();
    peSample->addChildElement( peWave );
 
@@ -130,6 +137,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
    int maxVelocity = -1;
    int outputBus = 0;
    ENV *pAEG = nullptr;
+   Filter *pFilter = nullptr;
    WaveFile *pWave = nullptr;
 
    for( int i = 0; pe->getChildElement( i ); i++ )
@@ -181,6 +189,10 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       {
          outputBus = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
       } else
+      if( tagName == "filter" )
+      {
+         pFilter = Filter::fromXml( pChild );
+      } else
       if( tagName == "envelope" )
       {
          std::string envType = pChild->getStringAttribute( "type" ).toStdString();
@@ -200,6 +212,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       if( tagName == "wave" )
       {
          pWave = WaveFile::fromXml( pChild );
+         pWave->dft();
       }
    }
 
@@ -213,6 +226,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
 
       pSample->m_Name = name;
       pSample->m_pAEG = pAEG;
+      pSample->m_pFilter = pFilter;
       pSample->m_pWave = pWave;
       pSample->m_PlayMode = playMode;
       pSample->m_DetuneCents = detune;
@@ -234,6 +248,11 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
          delete pAEG;
       }
 
+      if( pFilter )
+      {
+         delete pFilter;
+      }
+
       if( pWave )
       {
          delete pWave;
@@ -247,6 +266,12 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
 ENV *Sample::getAEG() const
 {
    return( m_pAEG );
+}
+
+
+Filter *Sample::getFilter() const
+{
+   return( m_pFilter );
 }
 
 

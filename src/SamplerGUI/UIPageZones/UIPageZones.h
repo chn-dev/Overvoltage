@@ -7,6 +7,7 @@
 #include "UISectionSample.h"
 #include "UISectionNameRanges.h"
 #include "UISectionAEG.h"
+#include "UISectionFilter.h"
 #include "UISectionOutput.h"
 #include "UISectionSamplerKeyboard.h"
 
@@ -28,6 +29,7 @@ namespace SamplerGUI
       SamplerGUI::UISectionSample *m_pUISectionSample;
       SamplerGUI::UISectionNameRanges *m_pUISectionNameRanges;
       SamplerGUI::UISectionAEG *m_pUISectionAEG;
+      SamplerGUI::UISectionFilter *m_pUISectionFilter;
       SamplerGUI::UISectionOutput *m_pUISectionOutput;
    };
 }
