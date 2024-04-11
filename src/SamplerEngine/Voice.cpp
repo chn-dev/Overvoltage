@@ -6,7 +6,8 @@ using namespace SamplerEngine;
 Voice::Voice( const Sample *pSample, int note, int velocity ) :
    m_pSample( pSample ),
    m_pAEG( nullptr ),
-   m_pFilter( nullptr ),
+   m_pLFilter( nullptr ),
+   m_pRFilter( nullptr ),
    m_NoteIsOn( true ),
    m_Note( note ),
    m_Velocity( velocity ),
@@ -21,13 +22,17 @@ Voice::Voice( const Sample *pSample, int note, int velocity ) :
    m_pAEG = new ENV( *pSample->getAEG() );
    m_pAEG->noteOn();
 
-   m_pFilter = new Filter( *pSample->getFilter() );
+   Filter *pFilter = pSample->getFilter();
+   m_pLFilter = new Filter( *pSample->getFilter() );
+   m_pRFilter = new Filter( *pSample->getFilter() );
 }
 
 
 Voice::~Voice()
 {
    delete m_pAEG;
+   delete m_pLFilter;
+   delete m_pRFilter;
 }
 
 
@@ -106,8 +111,16 @@ void Voice::handleModulations( double sampleRate)
 }
 
 
-bool Voice::process( float *pLeft, float *pRight, int nSamples, double sampleRate )
+bool Voice::process( float *pL, float *pR, int nSamples, double sampleRate )
 {
+   std::vector<float> left;
+   std::vector<float> right;
+   left.resize( nSamples );
+   right.resize( nSamples );
+
+   float *pLeft = left.data();;
+   float *pRight = right.data();;
+
    double f = (double)m_pSample->getWave()->sampleRate() * pow( 2.0, (double)( (double)m_Note + ( (double)m_pSample->getDetune() / 100.0 ) - (double)m_pSample->getBaseNote() ) / 12.0 );
    if( m_pSample->getReverse() )
    {
@@ -245,6 +258,19 @@ bool Voice::process( float *pLeft, float *pRight, int nSamples, double sampleRat
             m_Ofs += relSpeed;
          }
       }
+   }
+
+   m_pLFilter->setCutoff( m_pSample->getFilter()->getCutoff() );
+   m_pLFilter->setResonance( m_pSample->getFilter()->getResonance() );
+   m_pRFilter->setCutoff( m_pSample->getFilter()->getCutoff() );
+   m_pRFilter->setResonance( m_pSample->getFilter()->getResonance() );
+   m_pLFilter->process( pLeft, nSamples, sampleRate );
+   m_pRFilter->process( pRight, nSamples, sampleRate );
+
+   for( int n = 0; n < nSamples; n++ )
+   {
+      pL[n] += pLeft[n];
+      pR[n] += pRight[n];
    }
 
    return( true );
