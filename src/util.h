@@ -26,6 +26,7 @@ namespace util
    std::vector<std::string> strsplit( std::string str, std::string sep, bool keepEmpty );
    double randomValue( double min, double max );
    std::string toLower( const std::string &str );
+   double clamp( double min, double max, double v );
 }
 
 #endif

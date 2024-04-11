@@ -44,7 +44,7 @@ bool Part::process( std::vector<OutputBus> &buses, double sampleRate )
                float *pLeft = buses[busNum].getWritePointers()[0];
                float *pRight = buses[busNum].getWritePointers()[1];
 
-               if( !pVoice->process( pLeft, pRight, (int)buses[busNum].getNumSamples(), sampleRate ) )
+               if( !pVoice->process( pLeft, pRight, buses[busNum].getNumSamples(), sampleRate ) )
                {
                   stoppedVoices.insert( pVoice );
                }

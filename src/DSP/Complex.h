@@ -18,6 +18,8 @@ namespace DSP
          double getB() const;
          double getR() const;
          double getPhi() const;
+
+         Complex operator=( const Complex &d );
          
          Complex operator+( const Complex &d ) const;
          Complex operator+=( const Complex &d );

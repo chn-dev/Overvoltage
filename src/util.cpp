@@ -133,4 +133,15 @@ namespace util
 
       return( r );
    }
+
+   double clamp( double min, double max, double v )
+   {
+      if( v < min )
+         return( min );
+      else
+      if( v > max )
+         return( max );
+      else
+         return( v );
+   }
 }

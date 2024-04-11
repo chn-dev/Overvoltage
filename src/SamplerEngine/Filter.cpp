@@ -11,6 +11,7 @@ Filter::Filter( const Filter &d )
    m_Cutoff = d.m_Cutoff;
    m_Resonance = d.m_Resonance;
    m_Type = d.m_Type;
+   m_CutoffMod = d.m_CutoffMod;
 
    for( int c = 0; c < 2; c++ )
    {
@@ -24,9 +25,10 @@ Filter::Filter( const Filter &d )
 
 
 Filter::Filter() :
+   m_Type( TYPE_NONE ),
+   m_CutoffMod( 0.0 ),
    m_Cutoff( 1.0 ),
-   m_Resonance( 0.0 ),
-   m_Type( TYPE_NONE )
+   m_Resonance( 0.0 )
 {
    for( int c = 0; c < 2; c++ )
    {
@@ -194,9 +196,9 @@ void Filter::process( float *pLSamples, float *pRSamples, const uint32_t n, doub
       b2 = ( 1.0 - ( r * c ) + ( c * c ) ) * a1;
    }
 
-   for( int nChan = 0; nChan < 2; nChan++ )
+   for( size_t nChan = 0; nChan < 2; nChan++ )
    {
-      for( uint32_t i = 0; i < n; i++ )
+      for( size_t i = 0; i < n; i++ )
       {
          float result =
             + ( samples[nChan][i] * a1 )
@@ -216,7 +218,7 @@ void Filter::process( float *pLSamples, float *pRSamples, const uint32_t n, doub
 
 void Filter::process( float *pLSamples, float *pRSamples, const uint32_t n, double sampleRate )
 {
-   process( pLSamples, pRSamples, n, sampleRate, m_Type, m_Cutoff, m_Resonance, m_X[0], m_X[1], m_Y[0], m_Y[1] );
+   process( pLSamples, pRSamples, n, sampleRate, m_Type, util::clamp( 0.0, 1.0, m_Cutoff + m_CutoffMod ), m_Resonance, m_X[0], m_X[1], m_Y[0], m_Y[1] );
 }
 
 
@@ -255,4 +257,16 @@ Filter::Type Filter::fromString( const std::string &str )
 std::set<Filter::Type> Filter::allTypes()
 {
    return( std::set<Filter::Type>( { TYPE_HIGHPASS, TYPE_LOWPASS, TYPE_NONE } ) );
+}
+
+
+void Filter::setCutoffMod( double v )
+{
+   m_CutoffMod = v;
+}
+
+
+double Filter::getCutoffMod() const
+{
+   return( m_CutoffMod );
 }

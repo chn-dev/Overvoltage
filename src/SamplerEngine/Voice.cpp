@@ -6,6 +6,7 @@ using namespace SamplerEngine;
 Voice::Voice( const Sample *pSample, int note, int velocity ) :
    m_pSample( pSample ),
    m_pAEG( nullptr ),
+   m_pFEG( nullptr ),
    m_pFilter( nullptr ),
    m_NoteIsOn( true ),
    m_Note( note ),
@@ -21,7 +22,9 @@ Voice::Voice( const Sample *pSample, int note, int velocity ) :
    m_pAEG = new ENV( *pSample->getAEG() );
    m_pAEG->noteOn();
 
-   Filter *pFilter = pSample->getFilter();
+   m_pFEG = new ENV( *pSample->getFEG() );
+   m_pFEG->noteOn();
+
    m_pFilter = new Filter( *pSample->getFilter() );
 }
 
@@ -29,6 +32,7 @@ Voice::Voice( const Sample *pSample, int note, int velocity ) :
 Voice::~Voice()
 {
    delete m_pAEG;
+   delete m_pFEG;
    delete m_pFilter;
 }
 
@@ -40,6 +44,7 @@ void Voice::noteOff()
 
    m_NoteIsOn = false;
    m_pAEG->noteOff();
+   m_pFEG->noteOff();
 }
 
 
@@ -104,11 +109,14 @@ void Voice::handleModulations( double sampleRate)
    {
       double secs = (double)MODSTEP_SAMPLES / sampleRate;
       m_pAEG->step( secs );
+      m_pFEG->step( secs );
+
+      m_pFilter->setCutoffMod( m_pFEG->getValue() );
    }
 }
 
 
-bool Voice::process( float *pL, float *pR, int nSamples, double sampleRate )
+bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
 {
    std::vector<float> left;
    std::vector<float> right;
@@ -128,11 +136,15 @@ bool Voice::process( float *pL, float *pR, int nSamples, double sampleRate )
    uint8_t *pData = m_pSample->getWave()->data8();
    float velocity = (float)m_Velocity / 127.0f;
 
+   m_pFilter->setCutoff( m_pSample->getFilter()->getCutoff() );
+   m_pFilter->setResonance( m_pSample->getFilter()->getResonance() );
+   m_pFilter->setType( m_pSample->getFilter()->getType() );
+
    if( m_pSample->getWave()->numBits() == 16 )
    {
       if( m_pSample->getWave()->numChannels() == 2 )
       {
-         for( int i = 0; i < nSamples; i++ )
+         for( size_t i = 0; i < nSamples; i++ )
          {
             if( !handleLoop() )
                return( false );
@@ -156,6 +168,8 @@ bool Voice::process( float *pL, float *pR, int nSamples, double sampleRate )
             pLeft[i] += velocity * ( (float)lv / 32768 ) * lAmp;
             pRight[i] += velocity * ( (float)rv / 32768 ) * rAmp;
 
+            m_pFilter->process( &pLeft[i], &pRight[i], 1, sampleRate );
+
             handleModulations( sampleRate );
 
             m_Ofs += relSpeed;
@@ -163,7 +177,7 @@ bool Voice::process( float *pL, float *pR, int nSamples, double sampleRate )
       } else
       if( m_pSample->getWave()->numChannels() == 1 )
       {
-         for( int i = 0; i < nSamples; i++ )
+         for( size_t i = 0; i < nSamples; i++ )
          {
             if( !handleLoop() )
                return( false );
@@ -186,6 +200,8 @@ bool Voice::process( float *pL, float *pR, int nSamples, double sampleRate )
             pLeft[i] += velocity * ( (float)v / 32768 ) * lAmp;
             pRight[i] += velocity * ( (float)v / 32768 ) * rAmp;
 
+            m_pFilter->process( &pLeft[i], &pRight[i], 1, sampleRate );
+
             handleModulations( sampleRate );
 
             m_Ofs += relSpeed;
@@ -196,7 +212,7 @@ bool Voice::process( float *pL, float *pR, int nSamples, double sampleRate )
    {
       if( m_pSample->getWave()->numChannels() == 2 )
       {
-         for( int i = 0; i < nSamples; i++ )
+         for( size_t i = 0; i < nSamples; i++ )
          {
             if( !handleLoop() )
                return( false );
@@ -220,6 +236,8 @@ bool Voice::process( float *pL, float *pR, int nSamples, double sampleRate )
             pLeft[i] += velocity * ( (float)lv / 128 ) * lAmp;
             pRight[i] += velocity * ( (float)rv / 128 ) * rAmp;
 
+            m_pFilter->process( &pLeft[i], &pRight[i], 1, sampleRate );
+
             handleModulations( sampleRate );
 
             m_Ofs += relSpeed;
@@ -227,7 +245,7 @@ bool Voice::process( float *pL, float *pR, int nSamples, double sampleRate )
       } else
       if( m_pSample->getWave()->numChannels() == 1 )
       {
-         for( int i = 0; i < nSamples; i++ )
+         for( size_t i = 0; i < nSamples; i++ )
          {
             if( !handleLoop() )
                return( false );
@@ -250,6 +268,8 @@ bool Voice::process( float *pL, float *pR, int nSamples, double sampleRate )
             pLeft[i] += velocity * ( (float)v / 128 ) * lAmp;
             pRight[i] += velocity * ( (float)v / 128 ) * rAmp;
 
+            m_pFilter->process( &pLeft[i], &pRight[i], 1, sampleRate );
+
             handleModulations( sampleRate );
 
             m_Ofs += relSpeed;
@@ -257,12 +277,7 @@ bool Voice::process( float *pL, float *pR, int nSamples, double sampleRate )
       }
    }
 
-   m_pFilter->setCutoff( m_pSample->getFilter()->getCutoff() );
-   m_pFilter->setResonance( m_pSample->getFilter()->getResonance() );
-   m_pFilter->setType( m_pSample->getFilter()->getType() );
-   m_pFilter->process( pLeft, pRight, nSamples, sampleRate );
-
-   for( int n = 0; n < nSamples; n++ )
+   for( size_t n = 0; n < nSamples; n++ )
    {
       pL[n] += pLeft[n];
       pR[n] += pRight[n];

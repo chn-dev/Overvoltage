@@ -25,7 +25,7 @@ UISectionFilter::UISectionFilter( UIPage *pUIPage ) :
    m_psResonance->addListener( this );
    m_psResonance->setTextBoxStyle( juce::Slider::NoTextBox, true, 1, 1 );
    addAndMakeVisible( m_psResonance );
-   m_plResonance = new juce::Label( juce::String(), "Resonance:" );
+   m_plResonance = new juce::Label( juce::String(), "Reso:" );
    addAndMakeVisible( m_plResonance );
 
    m_pcbType = new juce::ComboBox( "Type" );
@@ -61,13 +61,13 @@ void UISectionFilter::resized()
 {
    UISection::resized();
 
-   m_psCutoff->setBounds( 48, 32, 150, 20 );
-   m_plCutoff->setBounds( 4, 32, 48, 10 );
+   m_psCutoff->setBounds( 48, 64, 150, 16 );
+   m_plCutoff->setBounds( 4, 64, 64, 12 );
 
-   m_psResonance->setBounds( 48, 64, 150, 20 );
-   m_plResonance->setBounds( 4, 64, 48, 10 );
+   m_psResonance->setBounds( 48, 96, 150, 16 );
+   m_plResonance->setBounds( 4, 96, 64, 12 );
 
-   m_pcbType->setBounds( 4, 96, 180, 20 );
+   m_pcbType->setBounds( 4, 32, 180, 16 );
 }
 
 

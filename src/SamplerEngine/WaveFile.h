@@ -14,7 +14,7 @@ namespace SamplerEngine
    class WaveFile : public DSP::Wave
    {
    public:
-      ~WaveFile();
+      virtual ~WaveFile();
 
       static WaveFile *load( std::string fname );
 

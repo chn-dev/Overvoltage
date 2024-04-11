@@ -14,7 +14,7 @@ namespace SamplerEngine
       Voice( const Sample *pSample, int note, int velocity );
       ~Voice();
 
-      bool process( float *pLeft, float *pRight, int nSamples, double sampleRate );
+      bool process( float *pLeft, float *pRight, size_t nSamples, double sampleRate );
       const Sample *sample() const;
       int midiNote() const;
       void noteOff();
@@ -29,6 +29,7 @@ namespace SamplerEngine
 
       const Sample *m_pSample;
       ENV *m_pAEG;
+      ENV *m_pFEG;
       Filter *m_pFilter;
       bool m_NoteIsOn;
       int m_Note;

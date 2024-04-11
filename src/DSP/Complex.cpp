@@ -31,6 +31,16 @@ Complex::Complex( const Complex &d ) :
 }
 
 
+Complex Complex::operator=( const Complex &d )
+{
+   m_Valid = d.m_Valid;
+   m_A = d.m_A;
+   m_B = d.m_B;
+   
+   return( *this );
+}
+
+
 bool Complex::isValid() const
 {
    return( m_Valid );
