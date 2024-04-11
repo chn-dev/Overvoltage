@@ -110,7 +110,7 @@ void UISectionOutput::resized()
    m_psGain->setBounds( 4, 64 - 4 + 32, 180, 25 );
    m_plGain->setBounds( 6, 80 - 4 + 32, 32, 16 );
 
-   m_pcbOutputBus->setBounds( 4, 32 - 8, 180, 25 );
+   m_pcbOutputBus->setBounds( 4, 32 - 8, 180, 20 );
 }
 
 

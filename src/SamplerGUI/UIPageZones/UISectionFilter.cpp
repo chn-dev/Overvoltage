@@ -28,6 +28,13 @@ UISectionFilter::UISectionFilter( UIPage *pUIPage ) :
    m_plResonance = new juce::Label( juce::String(), "Resonance:" );
    addAndMakeVisible( m_plResonance );
 
+   m_pcbType = new juce::ComboBox( "Type" );
+   for( SamplerEngine::Filter::Type type : SamplerEngine::Filter::allTypes() )
+   {
+      m_pcbType->addItem( SamplerEngine::Filter::toString( type ), type );
+   }
+   m_pcbType->addListener( this );
+   addAndMakeVisible( m_pcbType );
 }
 
 
@@ -37,6 +44,7 @@ UISectionFilter::~UISectionFilter()
    delete m_plCutoff;
    delete m_psResonance;
    delete m_plResonance;
+   delete m_pcbType;
 }
 
 
@@ -58,6 +66,8 @@ void UISectionFilter::resized()
 
    m_psResonance->setBounds( 48, 64, 150, 20 );
    m_plResonance->setBounds( 4, 64, 48, 10 );
+
+   m_pcbType->setBounds( 4, 96, 180, 20 );
 }
 
 
@@ -65,6 +75,7 @@ void UISectionFilter::filterUpdated( SamplerEngine::Filter *pFilter )
 {
    m_psCutoff->setValue( pFilter->getCutoff(), dontSendNotification );
    m_psResonance->setValue( pFilter->getResonance(), dontSendNotification );
+   m_pcbType->setSelectedId( pFilter->getType() );
 }
 
 
@@ -80,6 +91,19 @@ void UISectionFilter::samplesUpdated()
    m_psCutoff->setVisible( pSample != nullptr );
    m_plResonance->setVisible( pSample != nullptr );
    m_psResonance->setVisible( pSample != nullptr );
+   m_pcbType->setVisible( pSample != nullptr );
+}
+
+
+void UISectionFilter::comboBoxChanged( ComboBox *pComboBox )
+{
+   if( pComboBox == m_pcbType )
+   {
+      for( SamplerEngine::Sample *pSample : samples() )
+      {
+         pSample->getFilter()->setType( (SamplerEngine::Filter::Type)m_pcbType->getSelectedId() );
+      }
+   }
 }
 
 

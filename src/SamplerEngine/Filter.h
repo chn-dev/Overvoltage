@@ -11,7 +11,7 @@ namespace SamplerEngine
    public:
       enum Type
       {
-         TYPE_NONE,
+         TYPE_NONE = 1,
          TYPE_LOWPASS,
          TYPE_HIGHPASS
       };
@@ -28,12 +28,12 @@ namespace SamplerEngine
       double getResonance() const;
       Type getType() const;
 
-      void process( float *samples, const uint32_t n, double sampleRate );
-      static void process( float *pSamples, const uint32_t n, double sampleRate, Type type, double cutoff, double resonance, double *pX, double *pY );
+      void process( float *pLSamples, float *pRSamples, const uint32_t n, double sampleRate );
+      static void process( float *pLSamples, float *pRSamples, const uint32_t n, double sampleRate, Type type, double cutoff, double resonance, double *pXL, double *pXR, double *pYL, double *pYR );
 
       static std::string toString( Type type );
       static Type fromString( const std::string &str );
-      static std::vector<Type> allTypes();
+      static std::set<Type> allTypes();
 
       static Filter *fromXml( const juce::XmlElement *pe );
       juce::XmlElement *toXml() const;
@@ -44,8 +44,8 @@ namespace SamplerEngine
       Type m_Type;
       double m_Cutoff;
       double m_Resonance;
-      double m_X[2];
-      double m_Y[2];
+      double m_X[2][2];
+      double m_Y[2][2];
    };
 }
 #endif

@@ -12,26 +12,30 @@ Filter::Filter( const Filter &d )
    m_Resonance = d.m_Resonance;
    m_Type = d.m_Type;
 
-   m_X[0] = 0.0;
-   m_X[1] = 0.0;
-   m_Y[0] = 0.0;
-   m_Y[1] = 0.0;
+   for( int c = 0; c < 2; c++ )
+   {
+      for( int n = 0; n < 2; n++ )
+      {
+         m_X[c][n] = 0.0;
+         m_Y[c][n] = 0.0;
+      }
+   }
 }
 
 
 Filter::Filter() :
-   m_Cutoff( 1000.0 ),
+   m_Cutoff( 1.0 ),
    m_Resonance( 0.0 ),
    m_Type( TYPE_NONE )
 {
-   setCutoff( 1000.0f );
-   setResonance( 0.1f );
-   setType( TYPE_LOWPASS );
-
-   m_X[0] = 0.0;
-   m_X[1] = 0.0;
-   m_Y[0] = 0.0;
-   m_Y[1] = 0.0;
+   for( int c = 0; c < 2; c++ )
+   {
+      for( int n = 0; n < 2; n++ )
+      {
+         m_X[c][n] = 0.0;
+         m_Y[c][n] = 0.0;
+      }
+   }
 }
 
 
@@ -66,12 +70,24 @@ double Filter::getResonance() const
 
 void Filter::setCutoff( double v )
 {
+   if( v > 1.0 )
+      v = 1.0;
+   else
+   if( v < 0.0 )
+      v = 0.0;
+
    m_Cutoff = v;
 }
 
 
 void Filter::setResonance( double v )
 {
+   if( v > 1.0 )
+      v = 1.0;
+   else
+   if( v < 0.0 )
+      v = 0.0;
+
    m_Resonance = v;
 }
 
@@ -90,15 +106,15 @@ Filter *Filter::fromXml( const juce::XmlElement *pe )
 
       if( tagName == "cutoff" )
       {
-         pFilter->m_Cutoff = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+         pFilter->setCutoff( std::stof( pChild->getChildElement( 0 )->getText().toStdString() ) );
       } else
       if( tagName == "resonance" )
       {
-         pFilter->m_Resonance = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+         pFilter->setResonance( std::stof( pChild->getChildElement( 0 )->getText().toStdString() ) );
       } else
       if( tagName == "type" )
       {
-         pFilter->m_Type = fromString( pChild->getChildElement( 0 )->getText().toStdString() );
+         pFilter->setType( fromString( pChild->getChildElement( 0 )->getText().toStdString() ) );
       }
    }
 
@@ -126,15 +142,19 @@ juce::XmlElement *Filter::toXml() const
 }
 
 
-void Filter::process( float *pSamples, const uint32_t n, double sampleRate, Type type, double cutoff, double resonance, double *pX, double *pY )
+void Filter::process( float *pLSamples, float *pRSamples, const uint32_t n, double sampleRate, Type type, double cutoff, double resonance, double *pXL, double *pXR, double *pYL, double *pYR )
 {
+   std::vector<float *> samples( { pLSamples, pRSamples } );
+   std::vector<double *> X( { pXL, pXR } );
+   std::vector<double *> Y( { pYL, pYR } );
+
    double a1 = 1.0;
    double a2 = 0.0;
    double a3 = 0.0;
    double b1 = 0.0;
    double b2 = 0.0;
 
-   double f = cutoff * 22050.0;
+   double f = 1.0 + ( cutoff * ( 16000.0 - 1.0 ) );
    double r = ( ( sqrt( 2.0 ) - 0.1 ) * ( 1.0 - resonance ) ) + 0.1;
 
    if( type == TYPE_LOWPASS )
@@ -174,22 +194,29 @@ void Filter::process( float *pSamples, const uint32_t n, double sampleRate, Type
       b2 = ( 1.0 - ( r * c ) + ( c * c ) ) * a1;
    }
 
-   for( uint32_t i = 0; i < n; i++ )
+   for( int nChan = 0; nChan < 2; nChan++ )
    {
-      float result = ( pSamples[i] * a1 ) + ( pX[0] * a2 ) + ( pX[1] * a3 ) -
-         ( pY[0] * b1 ) - ( pY[1] * b2 );
-      pY[1] = pY[0];
-      pY[0] = result;
-      pX[1] = pX[0];
-      pX[0] = pSamples[i];
-      pSamples[i] = result;
+      for( uint32_t i = 0; i < n; i++ )
+      {
+         float result =
+            + ( samples[nChan][i] * a1 )
+            +       ( X[nChan][0] * a2 )
+            +       ( X[nChan][1] * a3 )
+            -       ( Y[nChan][0] * b1 )
+            -       ( Y[nChan][1] * b2 );
+         Y[nChan][1] = Y[nChan][0];
+         Y[nChan][0] = result;
+         X[nChan][1] = X[nChan][0];
+         X[nChan][0] = samples[nChan][i];
+         samples[nChan][i] = result;
+      }
    }
 }
 
 
-void Filter::process( float *samples, const uint32_t n, double sampleRate )
+void Filter::process( float *pLSamples, float *pRSamples, const uint32_t n, double sampleRate )
 {
-   process( samples, n, sampleRate, m_Type, m_Cutoff, m_Resonance, m_X, m_Y );
+   process( pLSamples, pRSamples, n, sampleRate, m_Type, m_Cutoff, m_Resonance, m_X[0], m_X[1], m_Y[0], m_Y[1] );
 }
 
 
@@ -225,7 +252,7 @@ Filter::Type Filter::fromString( const std::string &str )
 }
 
 
-std::vector<Filter::Type> Filter::allTypes()
+std::set<Filter::Type> Filter::allTypes()
 {
-   return( std::vector<Filter::Type>( { TYPE_HIGHPASS, TYPE_LOWPASS, TYPE_NONE } ) );
+   return( std::set<Filter::Type>( { TYPE_HIGHPASS, TYPE_LOWPASS, TYPE_NONE } ) );
 }

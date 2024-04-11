@@ -216,6 +216,12 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       }
    }
 
+   // Filter is optional
+   if( !pFilter )
+   {
+      pFilter = new Filter();
+   }
+
    if( pWave && !name.empty() &&
        baseNote >= 0 && minNote >= 0 &&
        maxNote >= 0 && minVelocity >= 0 &&

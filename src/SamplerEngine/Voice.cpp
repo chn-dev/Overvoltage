@@ -6,8 +6,7 @@ using namespace SamplerEngine;
 Voice::Voice( const Sample *pSample, int note, int velocity ) :
    m_pSample( pSample ),
    m_pAEG( nullptr ),
-   m_pLFilter( nullptr ),
-   m_pRFilter( nullptr ),
+   m_pFilter( nullptr ),
    m_NoteIsOn( true ),
    m_Note( note ),
    m_Velocity( velocity ),
@@ -23,16 +22,14 @@ Voice::Voice( const Sample *pSample, int note, int velocity ) :
    m_pAEG->noteOn();
 
    Filter *pFilter = pSample->getFilter();
-   m_pLFilter = new Filter( *pSample->getFilter() );
-   m_pRFilter = new Filter( *pSample->getFilter() );
+   m_pFilter = new Filter( *pSample->getFilter() );
 }
 
 
 Voice::~Voice()
 {
    delete m_pAEG;
-   delete m_pLFilter;
-   delete m_pRFilter;
+   delete m_pFilter;
 }
 
 
@@ -260,12 +257,10 @@ bool Voice::process( float *pL, float *pR, int nSamples, double sampleRate )
       }
    }
 
-   m_pLFilter->setCutoff( m_pSample->getFilter()->getCutoff() );
-   m_pLFilter->setResonance( m_pSample->getFilter()->getResonance() );
-   m_pRFilter->setCutoff( m_pSample->getFilter()->getCutoff() );
-   m_pRFilter->setResonance( m_pSample->getFilter()->getResonance() );
-   m_pLFilter->process( pLeft, nSamples, sampleRate );
-   m_pRFilter->process( pRight, nSamples, sampleRate );
+   m_pFilter->setCutoff( m_pSample->getFilter()->getCutoff() );
+   m_pFilter->setResonance( m_pSample->getFilter()->getResonance() );
+   m_pFilter->setType( m_pSample->getFilter()->getType() );
+   m_pFilter->process( pLeft, pRight, nSamples, sampleRate );
 
    for( int n = 0; n < nSamples; n++ )
    {

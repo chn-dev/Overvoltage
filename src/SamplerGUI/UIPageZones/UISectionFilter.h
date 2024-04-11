@@ -11,7 +11,8 @@ class PluginEditor;
 namespace SamplerGUI
 {
    class UISectionFilter : public UISection,
-                           public juce::Slider::Listener
+                           public juce::Slider::Listener,
+                           public juce::ComboBox::Listener
    {
    public:
       UISectionFilter( UIPage *pUIPage );
@@ -23,6 +24,7 @@ namespace SamplerGUI
       virtual void samplesUpdated();
 
       virtual void sliderValueChanged( Slider *pSlider );
+      virtual void comboBoxChanged( ComboBox *pComboBox );
 
    protected:
       void filterUpdated( SamplerEngine::Filter *pFilter );
@@ -33,6 +35,8 @@ namespace SamplerGUI
 
       juce::Slider *m_psResonance;
       juce::Label *m_plResonance;
+
+      juce::ComboBox *m_pcbType;
    };
 }
 #endif
