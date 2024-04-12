@@ -47,7 +47,6 @@ namespace SamplerEngine
 
    private:
       std::vector<Part *> m_Parts;
-
    };
 }
 

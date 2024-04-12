@@ -57,7 +57,7 @@ namespace SamplerEngine
       void setGain( float gain );
       Sample::PlayMode getPlayMode() const;
       ENV *getAEG() const;
-      ENV *getFEG() const;
+      ENV *getEG2() const;
       Filter *getFilter() const;
       int getOutputBus() const;
       void setOutputBus( int n );
@@ -74,7 +74,7 @@ namespace SamplerEngine
       std::string m_Name;
       int m_OutputBus;
       ENV *m_pAEG;
-      ENV *m_pFEG;
+      ENV *m_pEG2;
       WaveFile *m_pWave;
       PlayMode m_PlayMode;
       Filter *m_pFilter;

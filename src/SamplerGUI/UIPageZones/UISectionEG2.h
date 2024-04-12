@@ -1,5 +1,5 @@
-#ifndef __UISECTIONFEG_H__
-#define __UISECTIONFEG_H__
+#ifndef __UISECTIONEG2_H__
+#define __UISECTIONEG2_H__
 
 #include "JuceHeader.h"
 
@@ -10,11 +10,11 @@ class PluginEditor;
 //==============================================================================
 namespace SamplerGUI
 {
-   class UISectionFEG : public UISectionEG
+   class UISectionEG2 : public UISectionEG
    {
    public:
-      UISectionFEG( UIPage *pUIPage );
-      ~UISectionFEG();
+      UISectionEG2( UIPage *pUIPage );
+      ~UISectionEG2();
 
    protected:
       virtual SamplerEngine::ENV *getENV( const SamplerEngine::Sample *pSample ) const;

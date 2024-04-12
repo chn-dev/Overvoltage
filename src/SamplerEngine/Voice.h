@@ -29,7 +29,7 @@ namespace SamplerEngine
 
       const Sample *m_pSample;
       ENV *m_pAEG;
-      ENV *m_pFEG;
+      ENV *m_pEG2;
       Filter *m_pFilter;
       bool m_NoteIsOn;
       int m_Note;

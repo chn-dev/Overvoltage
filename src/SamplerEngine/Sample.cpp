@@ -8,7 +8,7 @@ Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
    m_Name( name ),
    m_OutputBus( 0 ),
    m_pAEG( nullptr ),
-   m_pFEG( nullptr ),
+   m_pEG2( nullptr ),
    m_pWave( pWave ),
    m_PlayMode( Sample::PlayModeStandard ),
    m_pFilter( nullptr ),
@@ -23,7 +23,7 @@ Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
    m_MaxVelocity( 127 )
 {
    m_pAEG = new ENV();
-   m_pFEG = new ENV();
+   m_pEG2 = new ENV();
    m_pFilter = new Filter();
 }
 
@@ -32,7 +32,7 @@ Sample::Sample() :
    m_Name( "" ),
    m_OutputBus( 0 ),
    m_pAEG( nullptr ),
-   m_pFEG( nullptr ),
+   m_pEG2( nullptr ),
    m_pWave( nullptr ),
    m_PlayMode( Sample::PlayModeStandard ),
    m_pFilter( nullptr ),
@@ -53,7 +53,7 @@ Sample::~Sample()
 {
    delete m_pWave;
    delete m_pAEG;
-   delete m_pFEG;
+   delete m_pEG2;
    delete m_pFilter;
 }
 
@@ -111,9 +111,9 @@ juce::XmlElement *Sample::toXml() const
    peAEG->setAttribute( "type", "amplitude" );
    peSample->addChildElement( peAEG );
 
-   juce::XmlElement *peFEG = m_pFEG->toXml();
-   peFEG->setAttribute( "type", "filter" );
-   peSample->addChildElement( peFEG );
+   juce::XmlElement *peEG2 = m_pEG2->toXml();
+   peEG2->setAttribute( "type", "eg2" );
+   peSample->addChildElement( peEG2 );
 
    juce::XmlElement *peFilter = m_pFilter->toXml();
    peSample->addChildElement( peFilter );
@@ -145,7 +145,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
    int maxVelocity = -1;
    int outputBus = 0;
    ENV *pAEG = nullptr;
-   ENV *pFEG = nullptr;
+   ENV *pEG2 = nullptr;
    Filter *pFilter = nullptr;
    WaveFile *pWave = nullptr;
 
@@ -213,9 +213,9 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
             {
                pAEG = pENV;
             } else
-            if( envType == "filter" )
+            if( envType == "eg2" )
             {
-            	pFEG = pENV;
+            	pEG2 = pENV;
             } else
             {
                delete pENV;
@@ -235,9 +235,9 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       pFilter = new Filter();
    }
 
-   if( !pFEG )
+   if( !pEG2 )
    {
-      pFEG = new ENV();
+      pEG2 = new ENV();
    }
 
    if( pWave && !name.empty() &&
@@ -250,7 +250,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
 
       pSample->m_Name = name;
       pSample->m_pAEG = pAEG;
-      pSample->m_pFEG = pFEG;
+      pSample->m_pEG2 = pEG2;
       pSample->m_pFilter = pFilter;
       pSample->m_pWave = pWave;
       pSample->m_PlayMode = playMode;
@@ -273,9 +273,9 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
          delete pAEG;
       }
 
-      if( pFEG )
+      if( pEG2 )
       {
-         delete pFEG;
+         delete pEG2;
       }
 
       if( pFilter )
@@ -299,9 +299,9 @@ ENV *Sample::getAEG() const
 }
 
 
-ENV *Sample::getFEG() const
+ENV *Sample::getEG2() const
 {
-   return( m_pFEG );
+   return( m_pEG2 );
 }
 
 

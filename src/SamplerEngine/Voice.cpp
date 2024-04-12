@@ -6,7 +6,7 @@ using namespace SamplerEngine;
 Voice::Voice( const Sample *pSample, int note, int velocity ) :
    m_pSample( pSample ),
    m_pAEG( nullptr ),
-   m_pFEG( nullptr ),
+   m_pEG2( nullptr ),
    m_pFilter( nullptr ),
    m_NoteIsOn( true ),
    m_Note( note ),
@@ -22,8 +22,8 @@ Voice::Voice( const Sample *pSample, int note, int velocity ) :
    m_pAEG = new ENV( *pSample->getAEG() );
    m_pAEG->noteOn();
 
-   m_pFEG = new ENV( *pSample->getFEG() );
-   m_pFEG->noteOn();
+   m_pEG2 = new ENV( *pSample->getEG2() );
+   m_pEG2->noteOn();
 
    m_pFilter = new Filter( *pSample->getFilter() );
 }
@@ -32,7 +32,7 @@ Voice::Voice( const Sample *pSample, int note, int velocity ) :
 Voice::~Voice()
 {
    delete m_pAEG;
-   delete m_pFEG;
+   delete m_pEG2;
    delete m_pFilter;
 }
 
@@ -44,7 +44,7 @@ void Voice::noteOff()
 
    m_NoteIsOn = false;
    m_pAEG->noteOff();
-   m_pFEG->noteOff();
+   m_pEG2->noteOff();
 }
 
 
@@ -109,9 +109,9 @@ void Voice::handleModulations( double sampleRate)
    {
       double secs = (double)MODSTEP_SAMPLES / sampleRate;
       m_pAEG->step( secs );
-      m_pFEG->step( secs );
+      m_pEG2->step( secs );
 
-      m_pFilter->setCutoffMod( m_pFEG->getValue() );
+      m_pFilter->setCutoffMod( m_pEG2->getValue() );
    }
 }
 

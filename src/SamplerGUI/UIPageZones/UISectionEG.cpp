@@ -71,17 +71,17 @@ void UISectionEG::resized()
 {
    UISection::resized();
 
-   m_psAttack->setBounds( 16, 16, 20, 100 );
-   m_plAttack->setBounds( 17, 108, 18, 16 );
+   m_psAttack->setBounds( 8, 16, 14, 100 );
+   m_plAttack->setBounds( 5, 108, 18, 16 );
 
-   m_psDecay->setBounds( 64, 16, 20, 100 );
-   m_plDecay->setBounds( 65, 108, 18, 16 );
+   m_psDecay->setBounds( 28, 16, 14, 100 );
+   m_plDecay->setBounds( 25, 108, 18, 16 );
 
-   m_psSustain->setBounds( 112, 16, 20, 100 );
-   m_plSustain->setBounds( 113, 108, 18, 16 );
+   m_psSustain->setBounds( 48, 16, 14, 100 );
+   m_plSustain->setBounds( 45, 108, 18, 16 );
 
-   m_psRelease->setBounds( 160, 16, 20, 100 );
-   m_plRelease->setBounds( 161, 108, 18, 16 );
+   m_psRelease->setBounds( 69, 16, 14, 100 );
+   m_plRelease->setBounds( 66, 108, 18, 16 );
 }
 
 
