@@ -10,6 +10,7 @@
 #include "UISectionEG2.h"
 #include "UISectionFilter.h"
 #include "UISectionOutput.h"
+#include "UISectionModMatrix.h"
 #include "UISectionSamplerKeyboard.h"
 
 class PluginEditor;
@@ -33,6 +34,7 @@ namespace SamplerGUI
       SamplerGUI::UISectionEG2 *m_pUISectionEG2;
       SamplerGUI::UISectionFilter *m_pUISectionFilter;
       SamplerGUI::UISectionOutput *m_pUISectionOutput;
+      SamplerGUI::UISectionModMatrix *m_pUISectionModMatrix;
    };
 }
 

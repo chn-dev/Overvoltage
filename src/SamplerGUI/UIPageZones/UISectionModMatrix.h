@@ -16,6 +16,11 @@ namespace SamplerGUI
       UISectionModMatrix( UIPage *pUIPage );
       ~UISectionModMatrix();
 
+      virtual void paint( juce::Graphics &g );
+      virtual void resized();
+
+      virtual void samplesUpdated();
+
    protected:
    };
 }
