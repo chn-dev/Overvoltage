@@ -9,6 +9,7 @@
 #include "WaveFile.h"
 #include "ENV.h"
 #include "Filter.h"
+#include "ModMatrix.h"
 
 //==============================================================================
 namespace SamplerEngine
@@ -59,6 +60,7 @@ namespace SamplerEngine
       ENV *getAEG() const;
       ENV *getEG2() const;
       Filter *getFilter() const;
+      ModMatrix *getModMatrix() const;
       int getOutputBus() const;
       void setOutputBus( int n );
 
@@ -78,6 +80,7 @@ namespace SamplerEngine
       WaveFile *m_pWave;
       PlayMode m_PlayMode;
       Filter *m_pFilter;
+      ModMatrix *m_pModMatrix;
       float m_DetuneCents;
       float m_Pan;
       float m_Gain;

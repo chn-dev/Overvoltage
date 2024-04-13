@@ -12,6 +12,7 @@ Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
    m_pWave( pWave ),
    m_PlayMode( Sample::PlayModeStandard ),
    m_pFilter( nullptr ),
+   m_pModMatrix( nullptr ),
    m_DetuneCents( 0.0 ),
    m_Pan( 0.0 ),
    m_Gain( 1.0 ),
@@ -25,6 +26,7 @@ Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
    m_pAEG = new ENV();
    m_pEG2 = new ENV();
    m_pFilter = new Filter();
+   m_pModMatrix = new ModMatrix();
 }
 
 
@@ -36,6 +38,7 @@ Sample::Sample() :
    m_pWave( nullptr ),
    m_PlayMode( Sample::PlayModeStandard ),
    m_pFilter( nullptr ),
+   m_pModMatrix( nullptr ),
    m_DetuneCents( 0.0 ),
    m_Pan( 0.0 ),
    m_Gain( 1.0 ),
@@ -55,6 +58,7 @@ Sample::~Sample()
    delete m_pAEG;
    delete m_pEG2;
    delete m_pFilter;
+   delete m_pModMatrix;
 }
 
 
@@ -118,6 +122,9 @@ juce::XmlElement *Sample::toXml() const
    juce::XmlElement *peFilter = m_pFilter->toXml();
    peSample->addChildElement( peFilter );
 
+   juce::XmlElement *peModMatrix = m_pModMatrix->toXml();
+   peModMatrix->addChildElement( peModMatrix );
+
    juce::XmlElement *peWave = m_pWave->toXml();
    peSample->addChildElement( peWave );
 
@@ -147,6 +154,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
    ENV *pAEG = nullptr;
    ENV *pEG2 = nullptr;
    Filter *pFilter = nullptr;
+   ModMatrix *pModMatrix = nullptr;
    WaveFile *pWave = nullptr;
 
    for( int i = 0; pe->getChildElement( i ); i++ )
@@ -202,6 +210,10 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       {
          pFilter = Filter::fromXml( pChild );
       } else
+      if( tagName == "modmatrix" )
+      {
+         pModMatrix = ModMatrix::fromXml( pChild );
+      } else
       if( tagName == "envelope" )
       {
          std::string envType = pChild->getStringAttribute( "type" ).toStdString();
@@ -240,11 +252,17 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       pEG2 = new ENV();
    }
 
+   if( !pModMatrix )
+   {
+      pModMatrix = new ModMatrix();
+   }
+
    if( pWave && !name.empty() &&
        baseNote >= 0 && minNote >= 0 &&
        maxNote >= 0 && minVelocity >= 0 &&
        outputBus >= 0 &&
-       maxVelocity >= 0 && pAEG )
+       maxVelocity >= 0 &&
+       pAEG && pEG2 && pFilter && pModMatrix )
    {
       Sample *pSample = new Sample();
 
@@ -252,6 +270,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       pSample->m_pAEG = pAEG;
       pSample->m_pEG2 = pEG2;
       pSample->m_pFilter = pFilter;
+      pSample->m_pModMatrix = pModMatrix;
       pSample->m_pWave = pWave;
       pSample->m_PlayMode = playMode;
       pSample->m_DetuneCents = detune;
@@ -283,6 +302,11 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
          delete pFilter;
       }
 
+      if( pModMatrix )
+      {
+         delete pModMatrix;
+      }
+
       if( pWave )
       {
          delete pWave;
@@ -308,6 +332,12 @@ ENV *Sample::getEG2() const
 Filter *Sample::getFilter() const
 {
    return( m_pFilter );
+}
+
+
+ModMatrix *Sample::getModMatrix() const
+{
+   return( m_pModMatrix );
 }
 
 
