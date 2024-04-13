@@ -123,7 +123,7 @@ juce::XmlElement *Sample::toXml() const
    peSample->addChildElement( peFilter );
 
    juce::XmlElement *peModMatrix = m_pModMatrix->toXml();
-   peModMatrix->addChildElement( peModMatrix );
+   peSample->addChildElement( peModMatrix );
 
    juce::XmlElement *peWave = m_pWave->toXml();
    peSample->addChildElement( peWave );

@@ -129,8 +129,6 @@ juce::XmlElement *ModMatrix::toXml() const
 {
    juce::XmlElement *pe = new juce::XmlElement( "modmatrix" );
 
-   size_t s = m_ModSlots.size();
-
    for( int i = 0; i < m_ModSlots.size(); i++ )
    {
       juce::XmlElement *peModSlot = m_ModSlots[i].toXml();
@@ -143,7 +141,7 @@ juce::XmlElement *ModMatrix::toXml() const
 
 std::set<ModMatrix::ModSrc> ModMatrix::allModSrc()
 {
-   return( std::set<ModSrc>( {
+   return( std::set<ModSrc> ( {
       ModSrc_AEG,
       ModSrc_EG2
    } ) );
