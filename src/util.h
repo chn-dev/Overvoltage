@@ -17,6 +17,7 @@
 #else
 #include <format>
 #define stdformat std::format
+#define stdvformat(fmt, ...) std::vformat( std::string_view( fmt ), std::make_format_args( ##__VA_ARGS__ ) )
 #endif
 
 namespace util

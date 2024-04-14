@@ -23,6 +23,25 @@ namespace SamplerEngine
          ModDest_FilterResonance
       };
 
+      class ModDestInfo
+      {
+      public:
+         ModDestInfo( ModDest md );
+         ModDestInfo();
+         ~ModDestInfo();
+
+         double getMin() const;
+         double getMax() const;
+         double getStep() const;
+         ModDest getType() const;
+         std::string getUnit() const;
+         std::string getFormat() const;
+         double getDefaultValue() const;
+
+      private:
+         ModDest m_Type;
+      };
+
       class ModSlot
       {
       public:

@@ -7,6 +7,113 @@
 using namespace SamplerEngine;
 
 
+ModMatrix::ModDestInfo::ModDestInfo( ModDest md ) :
+   m_Type( md )
+{
+}
+
+
+ModMatrix::ModDestInfo::ModDestInfo() :
+   m_Type( ModDest_None )
+{
+}
+
+
+ModMatrix::ModDestInfo::~ModDestInfo()
+{
+}
+
+
+double ModMatrix::ModDestInfo::getMin() const
+{
+   switch( m_Type )
+   {
+      case ModDest_FilterCutoff:
+         return( -8.0 );
+      case ModDest_FilterResonance:
+         return( -100.0 );
+      default:
+         return( 0.0 );
+   }
+}
+
+
+double ModMatrix::ModDestInfo::getMax() const
+{
+   switch( m_Type )
+   {
+      case ModDest_FilterCutoff:
+         return( 8.0 );
+      case ModDest_FilterResonance:
+         return( 100.0 );
+      default:
+         return( 1.0 );
+   }
+}
+
+
+double ModMatrix::ModDestInfo::getStep() const
+{
+   switch( m_Type )
+   {
+      case ModDest_FilterCutoff:
+         return( 1.0 / 12.0 );
+      case ModDest_FilterResonance:
+         return( 0.1 );
+      default:
+         return( 0.1 );
+   }
+}
+
+
+std::string ModMatrix::ModDestInfo::getFormat() const
+{
+   switch( m_Type )
+   {
+      case ModDest_FilterCutoff:
+         return( "{:.2f}" );
+      case ModDest_FilterResonance:
+         return( "{:.2f}" );
+      default:
+         return( "" );
+   }
+}
+
+
+double ModMatrix::ModDestInfo::getDefaultValue() const
+{
+   switch( m_Type )
+   {
+      case ModDest_FilterCutoff:
+         return( 0.0 );
+      case ModDest_FilterResonance:
+         return( 0.0 );
+      default:
+         return( 0.0 );
+   }
+}
+
+
+ModMatrix::ModDest ModMatrix::ModDestInfo::getType() const
+{
+   return( m_Type );
+}
+
+
+std::string ModMatrix::ModDestInfo::getUnit() const
+{
+   switch( m_Type )
+   {
+      case ModDest_FilterCutoff:
+         return( "oct" );
+      case ModDest_FilterResonance:
+         return( "%" );
+      default:
+         return( "" );
+   }
+}
+
+
 ModMatrix::ModSlot::ModSlot( ModMatrix::ModSrc src, ModMatrix::ModDest dest, double amt, bool enabled ) :
    m_Enabled( enabled ),
    m_Src( src ),

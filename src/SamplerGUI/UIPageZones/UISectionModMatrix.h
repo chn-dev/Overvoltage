@@ -19,15 +19,27 @@ namespace SamplerGUI
 
       {
       public:
+         class UISlider : public juce::Slider
+         {
+         public:
+            UISlider( const String &componentName, UIModSlot *pModSlot );
+
+         private:
+            virtual String getTextFromValue( double value );
+
+         private:
+            UIModSlot *m_pModSlot;
+         };
+
          UIModSlot();
          UIModSlot( UISectionModMatrix *pSectionModMatrix, SamplerEngine::ModMatrix::ModSlot *pModSlot, int index, int xp, int yp );
          ~UIModSlot();
 
+         SamplerEngine::ModMatrix::ModSlot *getModSlot() const;
          virtual void sliderValueChanged( Slider *pSlider );
          virtual void comboBoxChanged( ComboBox *pComboBox );
          virtual void buttonClicked( Button *pButton );
          virtual void buttonStateChanged( Button *pButton );
-
 
       private:
          SliderLookAndFeel m_SliderLAF;
