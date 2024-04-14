@@ -16,6 +16,16 @@ namespace SamplerGUI
    class UISection : public juce::Component
    {
    public:
+      class SliderLookAndFeel : public juce::LookAndFeel_V4
+      {
+      public:
+         virtual void drawLinearSlider(
+            Graphics &g,
+            int x, int y, int width, int height,
+            float sliderPos, float minSliderPos, float maxSliderPos,
+            const Slider::SliderStyle sliderStyle, Slider &slider );
+      };
+
       UISection( UIPage *pUIPage, std::string label = std::string() );
       ~UISection();
 
@@ -27,15 +37,6 @@ namespace SamplerGUI
       virtual void samplesUpdated() = 0;
 
    protected:
-      class SliderLookAndFeel : public juce::LookAndFeel_V4
-      {
-      public:
-         virtual void drawLinearSlider(
-            Graphics &g,
-            int x, int y, int width, int height,
-            float sliderPos, float minSliderPos, float maxSliderPos,
-            const Slider::SliderStyle sliderStyle, Slider &slider );
-      };
       SliderLookAndFeel m_SliderLAF;
 
       class CycleComponent : public juce::Label

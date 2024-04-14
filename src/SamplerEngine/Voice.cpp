@@ -112,6 +112,17 @@ void Voice::handleModulations( double sampleRate)
       m_pEG2->step( secs );
 
       m_pFilter->setCutoffMod( m_pEG2->getValue() );
+
+      for( size_t nSlot = 0; nSlot < m_pSample->getModMatrix()->numSlots(); nSlot++ )
+      {
+         ModMatrix::ModSlot *pSlot = m_pSample->getModMatrix()->getSlot( nSlot );
+         ModMatrix::ModSrc modSrc = pSlot->getSrc();
+         ModMatrix::ModDest modDest = pSlot->getDest();
+         if( modSrc != ModMatrix::ModSrc_None && modDest != ModMatrix::ModDest_None )
+         {
+            printf("\n");
+         }
+      }
    }
 }
 

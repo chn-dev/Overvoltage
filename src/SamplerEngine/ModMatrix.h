@@ -8,6 +8,7 @@ namespace SamplerEngine
 {
    class ModMatrix
    {
+   public:
       enum ModSrc
       {
          ModSrc_None = 1,
@@ -22,11 +23,10 @@ namespace SamplerEngine
          ModDest_FilterResonance
       };
 
-   public:
       class ModSlot
       {
       public:
-         ModSlot( ModSrc src, ModDest dest, double amt );
+         ModSlot( ModSrc src, ModDest dest, double amt, bool enabled );
          ModSlot( const ModSlot &d );
          ModSlot();
          ~ModSlot();
@@ -34,7 +34,17 @@ namespace SamplerEngine
          static ModSlot *fromXml( const juce::XmlElement *pe );
          juce::XmlElement *toXml() const;
 
+         ModSrc getSrc() const;
+         void setSrc( ModSrc src );
+         ModDest getDest() const;
+         void setDest( ModDest dest );
+         double getAmount() const;
+         void setAmount( double amount );
+         bool isEnabled() const;
+         void setEnabled( bool e );
+
       private:
+         bool m_Enabled;
          ModSrc m_Src;
          ModDest m_Dest;
          double m_Amt;
@@ -42,6 +52,9 @@ namespace SamplerEngine
 
       ModMatrix();
       ~ModMatrix();
+
+      size_t numSlots() const;
+      ModSlot *getSlot( size_t n ) const;
 
       static ModMatrix *fromXml( const juce::XmlElement *pe );
       juce::XmlElement *toXml() const;
@@ -57,7 +70,7 @@ namespace SamplerEngine
    protected:
 
    private:
-      std::vector<ModSlot> m_ModSlots;
+      std::vector<ModSlot *> m_ModSlots;
    };
 }
 #endif

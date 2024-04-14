@@ -7,7 +7,8 @@
 using namespace SamplerEngine;
 
 
-ModMatrix::ModSlot::ModSlot( ModMatrix::ModSrc src, ModMatrix::ModDest dest, double amt ) :
+ModMatrix::ModSlot::ModSlot( ModMatrix::ModSrc src, ModMatrix::ModDest dest, double amt, bool enabled ) :
+   m_Enabled( enabled ),
    m_Src( src ),
    m_Dest( dest ),
    m_Amt( amt )
@@ -16,6 +17,7 @@ ModMatrix::ModSlot::ModSlot( ModMatrix::ModSrc src, ModMatrix::ModDest dest, dou
 
 
 ModMatrix::ModSlot::ModSlot( const ModSlot &d ) :
+   m_Enabled( d.m_Enabled ),
    m_Src( d.m_Src ),
    m_Dest( d.m_Dest ),
    m_Amt( d.m_Amt )
@@ -24,6 +26,7 @@ ModMatrix::ModSlot::ModSlot( const ModSlot &d ) :
 
 
 ModMatrix::ModSlot::ModSlot() :
+   m_Enabled( false ),
    m_Src( ModMatrix::ModSrc_None ),
    m_Dest( ModMatrix::ModDest_None ),
    m_Amt( 0.0 )
@@ -33,6 +36,54 @@ ModMatrix::ModSlot::ModSlot() :
 
 ModMatrix::ModSlot::~ModSlot()
 {
+}
+
+
+void ModMatrix::ModSlot::setDest( ModDest dest )
+{
+   m_Dest = dest;
+}
+
+
+ModMatrix::ModSrc ModMatrix::ModSlot::getSrc() const
+{
+   return( m_Src );
+}
+
+
+void ModMatrix::ModSlot::setSrc( ModSrc src )
+{
+   m_Src = src;
+}
+
+
+ModMatrix::ModDest ModMatrix::ModSlot::getDest() const
+{
+   return( m_Dest );
+}
+
+
+double ModMatrix::ModSlot::getAmount() const
+{
+   return( m_Amt );
+}
+
+
+void ModMatrix::ModSlot::setAmount( double amount )
+{
+   m_Amt = amount;
+}
+
+
+bool ModMatrix::ModSlot::isEnabled() const
+{
+   return( m_Enabled );
+}
+
+
+void ModMatrix::ModSlot::setEnabled( bool e )
+{
+   m_Enabled = e;
 }
 
 
@@ -59,6 +110,10 @@ ModMatrix::ModSlot *ModMatrix::ModSlot::fromXml( const juce::XmlElement *pe )
       if( tagName == "amt" )
       {
          pModSlot->m_Amt = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "enabled" )
+      {
+         pModSlot->m_Enabled = ( util::toLower( util::trim( pChild->getChildElement( 0 )->getText().toStdString() ) ) == "true" );
       }
    }
 
@@ -82,18 +137,26 @@ juce::XmlElement *ModMatrix::ModSlot::toXml() const
    peAmt->addTextElement( stdformat( "{}", m_Amt ) );
    pe->addChildElement( peAmt );
 
+   juce::XmlElement *peEnabled = new juce::XmlElement( "enabled" );
+   peEnabled->addTextElement( m_Enabled ? "true" : "false" );
+   pe->addChildElement( peEnabled );
+
    return( pe );
 }
 
 
 ModMatrix::ModMatrix()
 {
-   m_ModSlots.resize( 6 );
 }
 
 
 ModMatrix::~ModMatrix()
 {
+   for( int i = 0; i < m_ModSlots.size(); i++ )
+   {
+      delete m_ModSlots[i];
+   }
+   m_ModSlots.clear();
 }
 
 
@@ -105,7 +168,7 @@ ModMatrix *ModMatrix::fromXml( const juce::XmlElement *pe )
    ModMatrix *pModMatrix = new ModMatrix();
    pModMatrix->m_ModSlots.clear();
 
-   for( int i = 0; pe->getChildElement( i ); i++ )
+   for( int i = 0; pe->getChildElement( i ) && i < 5; i++ )
    {
       juce::XmlElement *pChild = pe->getChildElement( i );
       std::string tagName = pChild->getTagName().toStdString();
@@ -115,8 +178,7 @@ ModMatrix *ModMatrix::fromXml( const juce::XmlElement *pe )
          ModSlot *pModSlot = ModSlot::fromXml( pChild );
          if( pModSlot )
          {
-            pModMatrix->m_ModSlots.push_back( *pModSlot );
-            delete pModSlot;
+            pModMatrix->m_ModSlots.push_back( pModSlot );
          }
       }
    }
@@ -129,9 +191,9 @@ juce::XmlElement *ModMatrix::toXml() const
 {
    juce::XmlElement *pe = new juce::XmlElement( "modmatrix" );
 
-   for( int i = 0; i < m_ModSlots.size(); i++ )
+   for( int i = 0; i < m_ModSlots.size() && i < 5; i++ )
    {
-      juce::XmlElement *peModSlot = m_ModSlots[i].toXml();
+      juce::XmlElement *peModSlot = m_ModSlots[i]->toXml();
       pe->addChildElement( peModSlot );
    }
 
@@ -143,7 +205,8 @@ std::set<ModMatrix::ModSrc> ModMatrix::allModSrc()
 {
    return( std::set<ModSrc> ( {
       ModSrc_AEG,
-      ModSrc_EG2
+      ModSrc_EG2,
+      ModSrc_None
    } ) );
 }
 
@@ -152,7 +215,8 @@ std::set<ModMatrix::ModDest> ModMatrix::allModDest()
 {
    return( std::set<ModDest>( {
       ModDest_FilterCutoff,
-      ModDest_FilterResonance
+      ModDest_FilterResonance,
+      ModDest_None
    } ) );
 }
 
@@ -210,4 +274,18 @@ ModMatrix::ModSrc ModMatrix::modSrcFromString( const std::string &s )
       return( ModSrc_EG2 );
    else
       return( ModSrc_None );
+}
+
+
+size_t ModMatrix::numSlots() const
+{
+   return( m_ModSlots.size() );
+}
+
+
+ModMatrix::ModSlot *ModMatrix::getSlot( size_t n ) const
+{
+   if( n < 0 || n >= numSlots() )
+      return( nullptr );
+   return( m_ModSlots[n] );
 }
