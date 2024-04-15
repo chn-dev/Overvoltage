@@ -287,18 +287,24 @@ ModMatrix *ModMatrix::fromXml( const juce::XmlElement *pe )
    ModMatrix *pModMatrix = new ModMatrix();
    pModMatrix->m_ModSlots.clear();
 
-   for( int i = 0; pe->getChildElement( i ) && i < 5; i++ )
+   for( int i = 0; /*pe->getChildElement( i ) && */i < 5; i++ )
    {
       juce::XmlElement *pChild = pe->getChildElement( i );
-      std::string tagName = pChild->getTagName().toStdString();
-
-      if( tagName == "modslot" )
+      if( pChild )
       {
-         ModSlot *pModSlot = ModSlot::fromXml( pChild );
-         if( pModSlot )
+         std::string tagName = pChild->getTagName().toStdString();
+
+         if( tagName == "modslot" )
          {
-            pModMatrix->m_ModSlots.push_back( pModSlot );
+            ModSlot *pModSlot = ModSlot::fromXml( pChild );
+            if( pModSlot )
+            {
+               pModMatrix->m_ModSlots.push_back( pModSlot );
+            }
          }
+      } else
+      {
+         pModMatrix->m_ModSlots.push_back( new ModSlot() );
       }
    }
 
