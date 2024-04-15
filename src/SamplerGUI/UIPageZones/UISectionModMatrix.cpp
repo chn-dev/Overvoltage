@@ -4,8 +4,8 @@
 
 using namespace SamplerGUI;
 
-UISectionModMatrix::UIModSlot::UISlider::UISlider( const String &componentName, UIModSlot *pModSlot ) :
-   juce::Slider( componentName ),
+UISectionModMatrix::UIModSlot::UISlider::UISlider( const String &name, UIModSlot *pModSlot ) :
+   juce::Slider( name ),
    m_pModSlot( pModSlot )
 {
 }
@@ -20,11 +20,11 @@ juce::String UISectionModMatrix::UIModSlot::UISlider::getTextFromValue( double v
 
 UISectionModMatrix::UIModSlot::UIModSlot() :
    m_pSectionModMatrix( nullptr ),
-   m_pModSlot( nullptr ),
    m_pcbSrc( nullptr ),
    m_pcbDest( nullptr ),
    m_pbEnabled( nullptr ),
    m_psAmount( nullptr ),
+   m_pModSlot( nullptr ),
    m_Index( -1 ),
    m_Xp( -1 ),
    m_Yp( -1 )
@@ -43,7 +43,7 @@ UISectionModMatrix::UIModSlot::UIModSlot( UISectionModMatrix *pSectionModMatrix,
    m_pbEnabled->setToggleable( true );
    m_pbEnabled->setClickingTogglesState( true );
    m_pbEnabled->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
-   m_pbEnabled->setToggleState( pModSlot->isEnabled(), false );
+   m_pbEnabled->setToggleState( pModSlot->isEnabled(), dontSendNotification );
    m_pbEnabled->addListener( this );
    m_pbEnabled->setBounds( xp, yp, 18, 18 );
    pSectionModMatrix->addAndMakeVisible( m_pbEnabled );
@@ -130,7 +130,7 @@ void UISectionModMatrix::UIModSlot::buttonClicked( Button *pButton )
 }
 
 
-void UISectionModMatrix::UIModSlot::buttonStateChanged( Button *pButton )
+void UISectionModMatrix::UIModSlot::buttonStateChanged( Button */*pButton*/ )
 {
 }
 
@@ -178,7 +178,7 @@ UISectionModMatrix::UISectionModMatrix( UIPage *pUIPage ) :
 
 UISectionModMatrix::~UISectionModMatrix()
 {
-   for( int i = 0; i < m_UIModSlots.size(); i++ )
+   for( size_t i = 0; i < m_UIModSlots.size(); i++ )
    {
       delete m_UIModSlots[i];
    }
@@ -203,7 +203,7 @@ void UISectionModMatrix::samplesUpdated()
 {
    const SamplerEngine::Sample *pSample = sample();
 
-   for( int i = 0; i < m_UIModSlots.size(); i++ )
+   for( size_t i = 0; i < m_UIModSlots.size(); i++ )
    {
       delete m_UIModSlots[i];
    }

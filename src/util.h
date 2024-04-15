@@ -14,6 +14,7 @@
 #ifdef __GNUC__
 #include <fmt/core.h>
 #define stdformat fmt::format
+#define stdvformat(f, ...) fmt::format( f, __VA_ARGS__ )
 #else
 #include <format>
 #define stdformat std::format

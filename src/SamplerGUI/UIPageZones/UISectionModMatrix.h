@@ -22,7 +22,7 @@ namespace SamplerGUI
          class UISlider : public juce::Slider
          {
          public:
-            UISlider( const String &componentName, UIModSlot *pModSlot );
+            UISlider( const String &name, UIModSlot *pModSlot );
 
          private:
             virtual String getTextFromValue( double value );

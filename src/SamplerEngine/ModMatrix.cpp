@@ -32,6 +32,8 @@ double ModMatrix::ModDestInfo::getMin() const
          return( -8.0 );
       case ModDest_FilterResonance:
          return( -100.0 );
+      case ModDest_None:
+         return( 0.0 );
       default:
          return( 0.0 );
    }
@@ -46,6 +48,8 @@ double ModMatrix::ModDestInfo::getMax() const
          return( 8.0 );
       case ModDest_FilterResonance:
          return( 100.0 );
+      case ModDest_None:
+         return( 1.0 );
       default:
          return( 1.0 );
    }
@@ -59,6 +63,8 @@ double ModMatrix::ModDestInfo::getStep() const
       case ModDest_FilterCutoff:
          return( 1.0 / 12.0 );
       case ModDest_FilterResonance:
+         return( 0.1 );
+      case ModDest_None:
          return( 0.1 );
       default:
          return( 0.1 );
@@ -74,6 +80,8 @@ std::string ModMatrix::ModDestInfo::getFormat() const
          return( "{:.2f}" );
       case ModDest_FilterResonance:
          return( "{:.2f}" );
+      case ModDest_None:
+         return( "" );
       default:
          return( "" );
    }
@@ -87,6 +95,8 @@ double ModMatrix::ModDestInfo::getDefaultValue() const
       case ModDest_FilterCutoff:
          return( 0.0 );
       case ModDest_FilterResonance:
+         return( 0.0 );
+      case ModDest_None:
          return( 0.0 );
       default:
          return( 0.0 );
@@ -108,6 +118,8 @@ std::string ModMatrix::ModDestInfo::getUnit() const
          return( "oct" );
       case ModDest_FilterResonance:
          return( "%" );
+      case ModDest_None:
+         return( "" );
       default:
          return( "" );
    }
@@ -259,7 +271,7 @@ ModMatrix::ModMatrix()
 
 ModMatrix::~ModMatrix()
 {
-   for( int i = 0; i < m_ModSlots.size(); i++ )
+   for( size_t i = 0; i < m_ModSlots.size(); i++ )
    {
       delete m_ModSlots[i];
    }
@@ -298,7 +310,7 @@ juce::XmlElement *ModMatrix::toXml() const
 {
    juce::XmlElement *pe = new juce::XmlElement( "modmatrix" );
 
-   for( int i = 0; i < m_ModSlots.size() && i < 5; i++ )
+   for( size_t i = 0; i < m_ModSlots.size() && i < 5; i++ )
    {
       juce::XmlElement *peModSlot = m_ModSlots[i]->toXml();
       pe->addChildElement( peModSlot );
@@ -392,7 +404,7 @@ size_t ModMatrix::numSlots() const
 
 ModMatrix::ModSlot *ModMatrix::getSlot( size_t n ) const
 {
-   if( n < 0 || n >= numSlots() )
+   if( n >= numSlots() )
       return( nullptr );
    return( m_ModSlots[n] );
 }
