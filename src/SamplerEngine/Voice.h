@@ -24,6 +24,7 @@ namespace SamplerEngine
       void handleModulations( double sampleRate );
 
    private:
+      double getPanning() const;
       static float getLeftAmp( float pan );
       static float getRightAmp( float pan );
 

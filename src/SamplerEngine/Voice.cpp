@@ -107,13 +107,8 @@ bool Voice::handleLoop()
 
 void Voice::handleModulations( double sampleRate)
 {
-   m_nSample++;
    if( m_nSample % MODSTEP_SAMPLES == 0 )
    {
-      double secs = (double)MODSTEP_SAMPLES / sampleRate;
-      m_pAEG->step( secs );
-      m_pEG2->step( secs );
-
       std::map<ModMatrix::ModDest, double> modValues;
 
       for( size_t nSlot = 0; nSlot < m_pSample->getModMatrix()->numSlots(); nSlot++ )
@@ -135,6 +130,12 @@ void Voice::handleModulations( double sampleRate)
             else
             if( modSrc == ModMatrix::ModSrc_Velocity )
               modVal = (double)m_Velocity / 127.0f;
+            else
+            if( modSrc == ModMatrix::ModSrc_AbsNote )
+               modVal = (double)m_Note / 127.0f;
+            else
+            if( modSrc == ModMatrix::ModSrc_RelNote )
+               modVal = 2.0 * (double)( m_Note - m_pSample->getMinNote() ) / (double)( m_pSample->getMaxNote() - m_pSample->getMinNote() );
 
             modVal = modVal * modAmount;
 
@@ -162,7 +163,18 @@ void Voice::handleModulations( double sampleRate)
          if( modDest == ModMatrix::ModDest_Pan )
             m_PanMod = modVal;
       }
+
+      double secs = (double)MODSTEP_SAMPLES / sampleRate;
+      m_pAEG->step( secs );
+      m_pEG2->step( secs );
    }
+   m_nSample++;
+}
+
+
+double Voice::getPanning() const
+{
+   return( util::clamp( -1.0, 1.0, m_pSample->getPan() + ( ( 2.0 * m_PanMod ) / 100.0 ) ) );
 }
 
 
@@ -185,8 +197,6 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
       f = -f;
    }
 
-   double panning = util::clamp( -1.0, 1.0, m_pSample->getPan() + ( ( 2.0 * m_PanMod ) / 100.0 ) );
-
    double relSpeed = f / sampleRate;
    uint8_t *pData = m_pSample->getWave()->data8();
    float velocity = (float)m_Velocity / 127.0f;
@@ -204,6 +214,8 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
             if( !handleLoop() )
                return( false );
 
+            handleModulations( sampleRate );
+
             if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
                return( false );
 
@@ -212,6 +224,7 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
             int16_t lv = pData[( 4 * o ) + 0] | ( pData[( 4 * o ) + 1] << 8 );
             int16_t rv = pData[( 4 * o ) + 2] | ( pData[( 4 * o ) + 3] << 8 );
 
+            double panning = getPanning();
             float lAmp = getLeftAmp( panning ) * m_pSample->getGain();
             float rAmp = getRightAmp( panning ) * m_pSample->getGain();
             if( m_pSample->getPlayMode() != Sample::PlayModeShot )
@@ -225,8 +238,6 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
 
             m_pFilter->process( &pLeft[i], &pRight[i], 1, sampleRate );
 
-            handleModulations( sampleRate );
-
             m_Ofs += relSpeed;
          }
       } else
@@ -237,6 +248,8 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
             if( !handleLoop() )
                return( false );
 
+            handleModulations( sampleRate );
+
             if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
                return( false );
 
@@ -244,6 +257,7 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
 
             int16_t v = pData[( 2 * o ) + 0] | ( pData[( 2 * o ) + 1] << 8 );
 
+            double panning = getPanning();
             float lAmp = getLeftAmp( panning ) * m_pSample->getGain();
             float rAmp = getRightAmp( panning ) * m_pSample->getGain();
             if( m_pSample->getPlayMode() != Sample::PlayModeShot )
@@ -256,8 +270,6 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
             pRight[i] += velocity * ( (float)v / 32768 ) * rAmp;
 
             m_pFilter->process( &pLeft[i], &pRight[i], 1, sampleRate );
-
-            handleModulations( sampleRate );
 
             m_Ofs += relSpeed;
          }
@@ -272,6 +284,8 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
             if( !handleLoop() )
                return( false );
 
+            handleModulations( sampleRate );
+
             if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
                return( false );
 
@@ -280,6 +294,7 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
             int8_t lv = (int8_t)pData[( o * 2 ) + 0];
             int8_t rv = (int8_t)pData[( o * 2 ) + 1];
 
+            double panning = getPanning();
             float lAmp = getLeftAmp( panning ) * m_pSample->getGain();
             float rAmp = getRightAmp( panning ) * m_pSample->getGain();
             if( m_pSample->getPlayMode() != Sample::PlayModeShot )
@@ -293,8 +308,6 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
 
             m_pFilter->process( &pLeft[i], &pRight[i], 1, sampleRate );
 
-            handleModulations( sampleRate );
-
             m_Ofs += relSpeed;
          }
       } else
@@ -305,6 +318,8 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
             if( !handleLoop() )
                return( false );
 
+            handleModulations( sampleRate );
+
             if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
                return( false );
 
@@ -312,6 +327,7 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
 
             int8_t v = (int8_t)pData[o];
 
+            double panning = getPanning();
             float lAmp = getLeftAmp( panning ) * m_pSample->getGain();
             float rAmp = getRightAmp( panning ) * m_pSample->getGain();
             if( m_pSample->getPlayMode() != Sample::PlayModeShot )
@@ -324,8 +340,6 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
             pRight[i] += velocity * ( (float)v / 128 ) * rAmp;
 
             m_pFilter->process( &pLeft[i], &pRight[i], 1, sampleRate );
-
-            handleModulations( sampleRate );
 
             m_Ofs += relSpeed;
          }

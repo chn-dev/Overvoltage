@@ -306,6 +306,8 @@ std::set<ModMatrix::ModSrc> ModMatrix::allModSrc()
       ModSrc_AEG,
       ModSrc_EG2,
       ModSrc_Velocity,
+      ModSrc_AbsNote,
+      ModSrc_RelNote,
       ModSrc_None
    } ) );
 }
@@ -333,6 +335,10 @@ std::string ModMatrix::toString( ModSrc v )
          return( "EG2" );
       case( ModSrc_Velocity ):
          return( "Velocity" );
+      case( ModSrc_AbsNote ):
+         return( "AbsNote" );
+      case( ModSrc_RelNote ):
+         return( "RelNote" );
       case( ModSrc_None ):
          return( "None" );
       default:
@@ -389,6 +395,12 @@ ModMatrix::ModSrc ModMatrix::modSrcFromString( const std::string &s )
    else
    if( util::trim( util::toLower( s ) ) == "velocity" )
       return( ModSrc_Velocity );
+   else
+   if( util::trim( util::toLower( s ) ) == "absnote" )
+      return( ModSrc_AbsNote );
+   else
+   if( util::trim( util::toLower( s ) ) == "relnote" )
+      return( ModSrc_RelNote );
    else
       return( ModSrc_None );
 }

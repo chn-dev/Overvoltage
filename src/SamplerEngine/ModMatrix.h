@@ -14,7 +14,9 @@ namespace SamplerEngine
          ModSrc_None = 1,
          ModSrc_AEG,
          ModSrc_EG2,
-         ModSrc_Velocity
+         ModSrc_Velocity,
+         ModSrc_AbsNote,
+         ModSrc_RelNote
       };
 
       enum ModDest
