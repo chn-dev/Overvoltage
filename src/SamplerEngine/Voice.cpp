@@ -129,6 +129,9 @@ void Voice::handleModulations( double sampleRate)
             else
             if( modSrc == ModMatrix::ModSrc_EG2 )
                modVal = m_pEG2->getValue();
+            else
+            if( modSrc == ModMatrix::ModSrc_Velocity )
+              modVal = (double)m_Velocity / 127.0f;
 
             modVal = modVal * modAmount;
 

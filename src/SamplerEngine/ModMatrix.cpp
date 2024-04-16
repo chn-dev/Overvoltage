@@ -303,6 +303,7 @@ std::set<ModMatrix::ModSrc> ModMatrix::allModSrc()
    return( std::set<ModSrc> ( {
       ModSrc_AEG,
       ModSrc_EG2,
+      ModSrc_Velocity,
       ModSrc_None
    } ) );
 }
@@ -326,6 +327,8 @@ std::string ModMatrix::toString( ModSrc v )
          return( "AEG" );
       case( ModSrc_EG2 ):
          return( "EG2" );
+      case( ModSrc_Velocity ):
+         return( "Velocity" );
       case( ModSrc_None ):
          return( "None" );
       default:
@@ -369,6 +372,9 @@ ModMatrix::ModSrc ModMatrix::modSrcFromString( const std::string &s )
    else
    if( util::trim( util::toLower( s ) ) == "eg2" )
       return( ModSrc_EG2 );
+   else
+   if( util::trim( util::toLower( s ) ) == "velocity" )
+      return( ModSrc_Velocity );
    else
       return( ModSrc_None );
 }

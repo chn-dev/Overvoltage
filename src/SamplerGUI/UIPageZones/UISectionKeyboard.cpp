@@ -323,9 +323,10 @@ void UISectionKeyboard::mouseDrag( const MouseEvent &event )
 
          if( note >= 0 )
          {
-            m_Notes[m_pPage->editor()->currentPart()][note] = 127;
+            int velocity = 127;
+            m_Notes[m_pPage->editor()->currentPart()][note] = velocity;
             m_CurrentNote = note;
-            noteOn( (int)m_pPage->editor()->currentPart() + 1, m_CurrentNote, 1.0 );
+            noteOn( (int)m_pPage->editor()->currentPart() + 1, m_CurrentNote, (double)velocity / 127.0 );
          }
 
          repaint();
@@ -367,9 +368,10 @@ void UISectionKeyboard::mouseDown( const MouseEvent &event )
    {
       if( m_Notes[m_pPage->editor()->currentPart()][note] < 0 )
       {
-         m_Notes[m_pPage->editor()->currentPart()][note] = 127;
+         int velocity = 127;
+         m_Notes[m_pPage->editor()->currentPart()][note] = velocity;
          m_CurrentNote = note;
-         noteOn( (int)m_pPage->editor()->currentPart() + 1, note, 1.0 );
+         noteOn( (int)m_pPage->editor()->currentPart() + 1, note, (double)velocity / 127.0 );
          repaint();
       }
    }
