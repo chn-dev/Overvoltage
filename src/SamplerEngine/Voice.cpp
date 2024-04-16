@@ -1,4 +1,5 @@
 #include <math.h>
+#include <util.h>
 #include "Voice.h"
 
 using namespace SamplerEngine;
@@ -11,6 +12,7 @@ Voice::Voice( const Sample *pSample, int note, int velocity ) :
    m_NoteIsOn( true ),
    m_Note( note ),
    m_PitchMod( 0.0 ),
+   m_PanMod( 0.0 ),
    m_Velocity( velocity ),
    m_Ofs( 0.0 ),
    m_nSample( 0 )
@@ -156,6 +158,9 @@ void Voice::handleModulations( double sampleRate)
          else
          if( modDest == ModMatrix::ModDest_Pitch )
             m_PitchMod = modVal;
+         else
+         if( modDest == ModMatrix::ModDest_Pan )
+            m_PanMod = modVal;
       }
    }
 }
@@ -179,6 +184,8 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
    {
       f = -f;
    }
+
+   double panning = util::clamp( -1.0, 1.0, m_pSample->getPan() + ( ( 2.0 * m_PanMod ) / 100.0 ) );
 
    double relSpeed = f / sampleRate;
    uint8_t *pData = m_pSample->getWave()->data8();
@@ -205,8 +212,8 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
             int16_t lv = pData[( 4 * o ) + 0] | ( pData[( 4 * o ) + 1] << 8 );
             int16_t rv = pData[( 4 * o ) + 2] | ( pData[( 4 * o ) + 3] << 8 );
 
-            float lAmp = getLeftAmp( m_pSample->getPan() ) * m_pSample->getGain();
-            float rAmp = getRightAmp( m_pSample->getPan() ) * m_pSample->getGain();
+            float lAmp = getLeftAmp( panning ) * m_pSample->getGain();
+            float rAmp = getRightAmp( panning ) * m_pSample->getGain();
             if( m_pSample->getPlayMode() != Sample::PlayModeShot )
             {
                lAmp *= (float)m_pAEG->getValue();
@@ -237,8 +244,8 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
 
             int16_t v = pData[( 2 * o ) + 0] | ( pData[( 2 * o ) + 1] << 8 );
 
-            float lAmp = getLeftAmp( m_pSample->getPan() ) * m_pSample->getGain();
-            float rAmp = getRightAmp( m_pSample->getPan() ) * m_pSample->getGain();
+            float lAmp = getLeftAmp( panning ) * m_pSample->getGain();
+            float rAmp = getRightAmp( panning ) * m_pSample->getGain();
             if( m_pSample->getPlayMode() != Sample::PlayModeShot )
             {
                lAmp *= (float)m_pAEG->getValue();
@@ -273,8 +280,8 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
             int8_t lv = (int8_t)pData[( o * 2 ) + 0];
             int8_t rv = (int8_t)pData[( o * 2 ) + 1];
 
-            float lAmp = getLeftAmp( m_pSample->getPan() ) * m_pSample->getGain();
-            float rAmp = getRightAmp( m_pSample->getPan() ) * m_pSample->getGain();
+            float lAmp = getLeftAmp( panning ) * m_pSample->getGain();
+            float rAmp = getRightAmp( panning ) * m_pSample->getGain();
             if( m_pSample->getPlayMode() != Sample::PlayModeShot )
             {
                lAmp *= (float)m_pAEG->getValue();
@@ -305,8 +312,8 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
 
             int8_t v = (int8_t)pData[o];
 
-            float lAmp = getLeftAmp( m_pSample->getPan() ) * m_pSample->getGain();
-            float rAmp = getRightAmp( m_pSample->getPan() ) * m_pSample->getGain();
+            float lAmp = getLeftAmp( panning ) * m_pSample->getGain();
+            float rAmp = getRightAmp( panning ) * m_pSample->getGain();
             if( m_pSample->getPlayMode() != Sample::PlayModeShot )
             {
                lAmp *= (float)m_pAEG->getValue();

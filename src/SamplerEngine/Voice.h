@@ -34,6 +34,7 @@ namespace SamplerEngine
       bool m_NoteIsOn;
       int m_Note;
       double m_PitchMod;
+      double m_PanMod;
       int m_Velocity;
       double m_Ofs;
       unsigned long m_nSample;

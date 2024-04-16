@@ -22,7 +22,8 @@ namespace SamplerEngine
          ModDest_None = 1,
          ModDest_FilterCutoff,
          ModDest_FilterResonance,
-         ModDest_Pitch
+         ModDest_Pitch,
+         ModDest_Pan
       };
 
       class ModDestInfo
