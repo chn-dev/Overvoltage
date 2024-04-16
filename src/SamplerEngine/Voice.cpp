@@ -111,6 +111,8 @@ void Voice::handleModulations( double sampleRate)
       m_pAEG->step( secs );
       m_pEG2->step( secs );
 
+      std::map<ModMatrix::ModDest, double> modValues;
+
       for( size_t nSlot = 0; nSlot < m_pSample->getModMatrix()->numSlots(); nSlot++ )
       {
          ModMatrix::ModSlot *pSlot = m_pSample->getModMatrix()->getSlot( nSlot );
@@ -130,12 +132,23 @@ void Voice::handleModulations( double sampleRate)
 
             modVal = modVal * modAmount;
 
-            if( modDest == ModMatrix::ModDest_FilterCutoff )
-               m_pFilter->setCutoffMod( modVal );
+            if( modValues.find( modDest ) != modValues.end() )
+               modValues[modDest] += modVal;
             else
-            if( modDest == ModMatrix::ModDest_FilterResonance )
-               m_pFilter->setResonanceMod( modVal );
+               modValues[modDest] = modVal;
          }
+      }
+
+      for( auto mod : modValues )
+      {
+         ModMatrix::ModDest modDest = mod.first;
+         double modVal = mod.second;
+
+         if( modDest == ModMatrix::ModDest_FilterCutoff )
+            m_pFilter->setCutoffMod( modVal );
+         else
+         if( modDest == ModMatrix::ModDest_FilterResonance )
+            m_pFilter->setResonanceMod( modVal );
       }
    }
 }
