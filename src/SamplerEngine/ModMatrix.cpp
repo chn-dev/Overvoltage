@@ -8,7 +8,25 @@ using namespace SamplerEngine;
 
 
 ModMatrix::ModDestInfo::ModDestInfo( ModDest md ) :
-   m_Type( md )
+   m_Type( md ),
+   m_Min( infoMap()[md].getMin() ),
+   m_Max( infoMap()[md].getMax() ),
+   m_Step( infoMap()[md].getStep() ),
+   m_Default( infoMap()[md].getDefaultValue() ),
+   m_Unit( infoMap()[md].getUnit() ),
+   m_Format( infoMap()[md].getFormat() )
+{
+}
+
+
+ModMatrix::ModDestInfo::ModDestInfo(
+   ModDest md,
+   double minVal, double maxVal, double step, double defaultVal,
+   std::string unit, std::string format ) :
+   m_Type( md ),
+   m_Min( minVal ), m_Max( maxVal ), m_Step( step),
+   m_Default( defaultVal ),
+   m_Unit( unit ), m_Format( format )
 {
 }
 
@@ -24,83 +42,47 @@ ModMatrix::ModDestInfo::~ModDestInfo()
 }
 
 
+std::map<ModMatrix::ModDest, ModMatrix::ModDestInfo> &ModMatrix::ModDestInfo::infoMap()
+{
+   static std::map<ModDest, ModDestInfo> theMap =
+   {
+      { ModDest_None,            ModDestInfo( ModDest_None,               0.0,   1.0,        0.1, 0.0, "",    ""       ) },
+      { ModDest_FilterCutoff,    ModDestInfo( ModDest_FilterCutoff,      -8.0,   8.0, 1.0 / 12.0, 0.0, "oct", "{:.2f}" ) },
+      { ModDest_FilterResonance, ModDestInfo( ModDest_FilterResonance, -100.0, 100.0,        0.1, 0.0, "%",   "{:.2f}" ) }
+   };
+
+   return( theMap );
+}
+
+
+
 double ModMatrix::ModDestInfo::getMin() const
 {
-   switch( m_Type )
-   {
-      case ModDest_FilterCutoff:
-         return( -8.0 );
-      case ModDest_FilterResonance:
-         return( -100.0 );
-      case ModDest_None:
-         return( 0.0 );
-      default:
-         return( 0.0 );
-   }
+   return( m_Min );
 }
 
 
 double ModMatrix::ModDestInfo::getMax() const
 {
-   switch( m_Type )
-   {
-      case ModDest_FilterCutoff:
-         return( 8.0 );
-      case ModDest_FilterResonance:
-         return( 100.0 );
-      case ModDest_None:
-         return( 1.0 );
-      default:
-         return( 1.0 );
-   }
+   return( m_Max );
 }
 
 
 double ModMatrix::ModDestInfo::getStep() const
 {
-   switch( m_Type )
-   {
-      case ModDest_FilterCutoff:
-         return( 1.0 / 12.0 );
-      case ModDest_FilterResonance:
-         return( 0.1 );
-      case ModDest_None:
-         return( 0.1 );
-      default:
-         return( 0.1 );
-   }
+   return( m_Step );
 }
 
 
 std::string ModMatrix::ModDestInfo::getFormat() const
 {
-   switch( m_Type )
-   {
-      case ModDest_FilterCutoff:
-         return( "{:.2f}" );
-      case ModDest_FilterResonance:
-         return( "{:.2f}" );
-      case ModDest_None:
-         return( "" );
-      default:
-         return( "" );
-   }
+   return( m_Format );
 }
 
 
 double ModMatrix::ModDestInfo::getDefaultValue() const
 {
-   switch( m_Type )
-   {
-      case ModDest_FilterCutoff:
-         return( 0.0 );
-      case ModDest_FilterResonance:
-         return( 0.0 );
-      case ModDest_None:
-         return( 0.0 );
-      default:
-         return( 0.0 );
-   }
+   return( m_Default );
 }
 
 
@@ -112,17 +94,7 @@ ModMatrix::ModDest ModMatrix::ModDestInfo::getType() const
 
 std::string ModMatrix::ModDestInfo::getUnit() const
 {
-   switch( m_Type )
-   {
-      case ModDest_FilterCutoff:
-         return( "oct" );
-      case ModDest_FilterResonance:
-         return( "%" );
-      case ModDest_None:
-         return( "" );
-      default:
-         return( "" );
-   }
+   return( m_Unit );
 }
 
 

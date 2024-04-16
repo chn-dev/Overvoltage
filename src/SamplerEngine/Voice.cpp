@@ -111,8 +111,6 @@ void Voice::handleModulations( double sampleRate)
       m_pAEG->step( secs );
       m_pEG2->step( secs );
 
-      m_pFilter->setCutoffMod( m_pEG2->getValue() );
-
       for( size_t nSlot = 0; nSlot < m_pSample->getModMatrix()->numSlots(); nSlot++ )
       {
          ModMatrix::ModSlot *pSlot = m_pSample->getModMatrix()->getSlot( nSlot );
@@ -120,7 +118,23 @@ void Voice::handleModulations( double sampleRate)
          ModMatrix::ModDest modDest = pSlot->getDest();
          if( modSrc != ModMatrix::ModSrc_None && modDest != ModMatrix::ModDest_None )
          {
-            printf("\n");
+            ModMatrix::ModDestInfo modDestInfo = modDest;
+            double modVal = 0.0;
+            double modAmount = pSlot->getAmount();
+
+            if( modSrc == ModMatrix::ModSrc_AEG )
+               modVal = m_pAEG->getValue();
+            else
+            if( modSrc == ModMatrix::ModSrc_EG2 )
+               modVal = m_pEG2->getValue();
+
+            modVal = modVal * modAmount;
+
+            if( modDest == ModMatrix::ModDest_FilterCutoff )
+               m_pFilter->setCutoffMod( modVal );
+            else
+            if( modDest == ModMatrix::ModDest_FilterResonance )
+               m_pFilter->setResonanceMod( modVal );
          }
       }
    }

@@ -27,6 +27,10 @@ namespace SamplerEngine
       {
       public:
          ModDestInfo( ModDest md );
+         ModDestInfo(
+            ModDest md,
+            double minVal, double maxVal, double step, double defaultVal,
+            std::string unit, std::string format );
          ModDestInfo();
          ~ModDestInfo();
 
@@ -38,8 +42,17 @@ namespace SamplerEngine
          std::string getFormat() const;
          double getDefaultValue() const;
 
+      protected:
+         static std::map<ModDest, ModDestInfo> &infoMap();
+
       private:
          ModDest m_Type;
+         double m_Min;
+         double m_Max;
+         double m_Step;
+         double m_Default;
+         std::string m_Unit;
+         std::string m_Format;
       };
 
       class ModSlot

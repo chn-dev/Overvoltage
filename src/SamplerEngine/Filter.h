@@ -27,6 +27,9 @@ namespace SamplerEngine
       void setCutoffMod( double v );
       double getCutoffMod() const;
 
+      void setResonanceMod( double v );
+      double getResonanceMod() const;
+
       double getCutoff() const;
       double getResonance() const;
       Type getType() const;
@@ -48,6 +51,7 @@ namespace SamplerEngine
       double m_CutoffMod;
       double m_Cutoff;
       double m_Resonance;
+      double m_ResonanceMod;
       double m_X[2][2];
       double m_Y[2][2];
    };
