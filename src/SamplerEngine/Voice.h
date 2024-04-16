@@ -33,6 +33,7 @@ namespace SamplerEngine
       Filter *m_pFilter;
       bool m_NoteIsOn;
       int m_Note;
+      double m_PitchMod;
       int m_Velocity;
       double m_Ofs;
       unsigned long m_nSample;

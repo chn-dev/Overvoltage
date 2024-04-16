@@ -46,9 +46,10 @@ std::map<ModMatrix::ModDest, ModMatrix::ModDestInfo> &ModMatrix::ModDestInfo::in
 {
    static std::map<ModDest, ModDestInfo> theMap =
    {
-      { ModDest_None,            ModDestInfo( ModDest_None,               0.0,   1.0,        0.1, 0.0, "",    ""       ) },
-      { ModDest_FilterCutoff,    ModDestInfo( ModDest_FilterCutoff,      -8.0,   8.0, 1.0 / 12.0, 0.0, "oct", "{:.2f}" ) },
-      { ModDest_FilterResonance, ModDestInfo( ModDest_FilterResonance, -100.0, 100.0,        0.1, 0.0, "%",   "{:.2f}" ) }
+      { ModDest_None,            ModDestInfo( ModDest_None,               0.0,   1.0,         0.1, 0.0, "",    ""       ) },
+      { ModDest_FilterCutoff,    ModDestInfo( ModDest_FilterCutoff,      -8.0,   8.0,  1.0 / 12.0, 0.0, "oct", "{:.2f}" ) },
+      { ModDest_FilterResonance, ModDestInfo( ModDest_FilterResonance, -100.0, 100.0,         0.1, 0.0, "%",   "{:.2f}" ) },
+      { ModDest_Pitch,           ModDestInfo( ModDest_Pitch,             -8.0,   8.0, 1.0 / 120.0, 0.0, "oct", "{:.2f}" ) }
    };
 
    return( theMap );
@@ -314,6 +315,7 @@ std::set<ModMatrix::ModDest> ModMatrix::allModDest()
    return( std::set<ModDest>( {
       ModDest_FilterCutoff,
       ModDest_FilterResonance,
+      ModDest_Pitch,
       ModDest_None
    } ) );
 }
@@ -345,6 +347,8 @@ std::string ModMatrix::toString( ModDest v )
          return( "FilterCutoff" );
       case( ModDest_FilterResonance ):
          return( "FilterResonance" );
+      case( ModDest_Pitch ):
+         return( "Pitch" );
       case( ModDest_None ):
          return( "None" );
       default:
@@ -360,6 +364,8 @@ ModMatrix::ModDest ModMatrix::modDestFromString( const std::string &s )
    else
    if( util::trim( util::toLower( s ) ) == "filterresonance" )
       return( ModDest_FilterResonance );
+   if( util::trim( util::toLower( s ) ) == "pitch" )
+      return( ModDest_Pitch );
    else
       return( ModDest_None );
 }

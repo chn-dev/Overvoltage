@@ -10,6 +10,7 @@ Voice::Voice( const Sample *pSample, int note, int velocity ) :
    m_pFilter( nullptr ),
    m_NoteIsOn( true ),
    m_Note( note ),
+   m_PitchMod( 0.0 ),
    m_Velocity( velocity ),
    m_Ofs( 0.0 ),
    m_nSample( 0 )
@@ -152,6 +153,9 @@ void Voice::handleModulations( double sampleRate)
          else
          if( modDest == ModMatrix::ModDest_FilterResonance )
             m_pFilter->setResonanceMod( modVal );
+         else
+         if( modDest == ModMatrix::ModDest_Pitch )
+            m_PitchMod = modVal;
       }
    }
 }
@@ -167,7 +171,10 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
    float *pLeft = left.data();;
    float *pRight = right.data();;
 
-   double f = (double)m_pSample->getWave()->sampleRate() * pow( 2.0, (double)( (double)m_Note + ( (double)m_pSample->getDetune() / 100.0 ) - (double)m_pSample->getBaseNote() ) / 12.0 );
+   double noteOfs = m_PitchMod * 12.0;
+   double f = (double)m_pSample->getWave()->sampleRate() *
+      pow( 2.0,
+         (double)( (double)m_Note + noteOfs + ( (double)m_pSample->getDetune() / 100.0 ) - (double)m_pSample->getBaseNote() ) / 12.0 );
    if( m_pSample->getReverse() )
    {
       f = -f;
