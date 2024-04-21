@@ -188,7 +188,7 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
    float *pLeft = left.data();;
    float *pRight = right.data();;
 
-   double noteOfs = m_PitchMod * 12.0;
+   double noteOfs = m_PitchMod;
    double f = (double)m_pSample->getWave()->sampleRate() *
       pow( 2.0,
          (double)( (double)m_Note + noteOfs + ( (double)m_pSample->getDetune() / 100.0 ) - (double)m_pSample->getBaseNote() ) / 12.0 );
