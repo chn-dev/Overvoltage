@@ -43,9 +43,12 @@ namespace SamplerGUI
       {
       public:
          CycleComponent( std::vector<std::string> items );
+         CycleComponent();
          ~CycleComponent();
          void setCurrentItem( int item );
          int getCurrentItem() const;
+
+         void setItems( double minVal, double maxVal, double step, std::string format, std::string unit );
 
          virtual void mouseDown( const MouseEvent &event );
          virtual void mouseDrag( const MouseEvent &event );

@@ -49,7 +49,7 @@ std::map<ModMatrix::ModDest, ModMatrix::ModDestInfo> &ModMatrix::ModDestInfo::in
       { ModDest_None,            ModDestInfo( ModDest_None,               0.0,   1.0,         0.1, 0.0, "",    ""       ) },
       { ModDest_FilterCutoff,    ModDestInfo( ModDest_FilterCutoff,      -8.0,   8.0,  1.0 / 12.0, 0.0, "oct", "{:.2f}" ) },
       { ModDest_FilterResonance, ModDestInfo( ModDest_FilterResonance, -100.0, 100.0,         0.1, 0.0, "%",   "{:.2f}" ) },
-      { ModDest_Pitch,           ModDestInfo( ModDest_Pitch,             -8.0,   8.0, 1.0 / 120.0, 0.0, "oct", "{:.2f}" ) },
+      { ModDest_Pitch,           ModDestInfo( ModDest_Pitch,             -8.0,   8.0, 1.0 / 120.0, 0.0, "oct", "{:.4f}" ) },
       { ModDest_Pan,             ModDestInfo{ ModDest_Pan,             -100.0, 100.0,         0.1, 0.0, "%",   "{:.2f}" } }
    };
 
@@ -100,10 +100,12 @@ std::string ModMatrix::ModDestInfo::getUnit() const
 }
 
 
-ModMatrix::ModSlot::ModSlot( ModMatrix::ModSrc src, ModMatrix::ModDest dest, double amt, bool enabled ) :
+ModMatrix::ModSlot::ModSlot( ModMatrix::ModSrc src, ModMatrix::ModSrc mod, ModMatrix::ModDest dest, ModMatrix::MathFunc func, double amt, bool enabled ) :
    m_Enabled( enabled ),
    m_Src( src ),
+   m_Mod( mod ),
    m_Dest( dest ),
+   m_Func( func ),
    m_Amt( amt )
 {
 }
@@ -112,7 +114,9 @@ ModMatrix::ModSlot::ModSlot( ModMatrix::ModSrc src, ModMatrix::ModDest dest, dou
 ModMatrix::ModSlot::ModSlot( const ModSlot &d ) :
    m_Enabled( d.m_Enabled ),
    m_Src( d.m_Src ),
+   m_Mod( d.m_Mod ),
    m_Dest( d.m_Dest ),
+   m_Func( d.m_Func ),
    m_Amt( d.m_Amt )
 {
 }
@@ -121,7 +125,9 @@ ModMatrix::ModSlot::ModSlot( const ModSlot &d ) :
 ModMatrix::ModSlot::ModSlot() :
    m_Enabled( false ),
    m_Src( ModMatrix::ModSrc_None ),
+   m_Mod( ModMatrix::ModSrc_None ),
    m_Dest( ModMatrix::ModDest_None ),
+   m_Func( ModMatrix::MathFunc_X ),
    m_Amt( 0.0 )
 {
 }
@@ -147,6 +153,30 @@ ModMatrix::ModSrc ModMatrix::ModSlot::getSrc() const
 void ModMatrix::ModSlot::setSrc( ModSrc src )
 {
    m_Src = src;
+}
+
+
+ModMatrix::MathFunc ModMatrix::ModSlot::getMathFunc() const
+{
+   return( m_Func );
+}
+
+
+void ModMatrix::ModSlot::setMathFunc( MathFunc f )
+{
+   m_Func = f;
+}
+
+
+ModMatrix::ModSrc ModMatrix::ModSlot::getMod() const
+{
+   return( m_Mod );
+}
+
+
+void ModMatrix::ModSlot::setMod( ModSrc mod )
+{
+   m_Mod = mod;
 }
 
 
@@ -196,9 +226,17 @@ ModMatrix::ModSlot *ModMatrix::ModSlot::fromXml( const juce::XmlElement *pe )
       {
          pModSlot->m_Src = ModMatrix::modSrcFromString( pChild->getChildElement( 0 )->getText().toStdString() );
       } else
+      if( tagName == "mod" )
+      {
+         pModSlot->m_Mod = ModMatrix::modSrcFromString( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
       if( tagName == "dest" )
       {
          pModSlot->m_Dest = ModMatrix::modDestFromString( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "mathfunc" )
+      {
+         pModSlot->m_Func = ModMatrix::mathFuncFromString(( pChild->getChildElement( 0 )->getText().toStdString() ) );
       } else
       if( tagName == "amt" )
       {
@@ -222,9 +260,17 @@ juce::XmlElement *ModMatrix::ModSlot::toXml() const
    peSrc->addTextElement( ModMatrix::toString( m_Src ) );
    pe->addChildElement( peSrc );
 
+   juce::XmlElement *peMod = new juce::XmlElement( "mod" );
+   peMod->addTextElement( ModMatrix::toString( m_Mod ) );
+   pe->addChildElement( peMod );
+
    juce::XmlElement *peDest = new juce::XmlElement( "dest" );
    peDest->addTextElement( ModMatrix::toString( m_Dest ) );
    pe->addChildElement( peDest );
+
+   juce::XmlElement *peFunc = new juce::XmlElement( "mathfunc" );
+   peFunc->addTextElement( ModMatrix::toString( m_Func ) );
+   pe->addChildElement( peFunc );
 
    juce::XmlElement *peAmt = new juce::XmlElement( "amt" );
    peAmt->addTextElement( stdformat( "{}", m_Amt ) );
@@ -325,6 +371,18 @@ std::set<ModMatrix::ModDest> ModMatrix::allModDest()
 }
 
 
+std::set<ModMatrix::MathFunc> ModMatrix::allMathFunc()
+{
+   return( std::set<MathFunc>( {
+      MathFunc_X,
+      MathFunc_OneMinusX,
+      MathFunc_BiPolar2UniPolar,
+      MathFunc_UniPolar2BiPolar
+
+   } ) );
+}
+
+
 std::string ModMatrix::toString( ModSrc v )
 {
    switch( v )
@@ -382,6 +440,42 @@ ModMatrix::ModDest ModMatrix::modDestFromString( const std::string &s )
       return( ModDest_Pan );
    else
       return( ModDest_None );
+}
+
+
+std::string ModMatrix::toString( MathFunc v )
+{
+   switch( v )
+   {
+      case MathFunc_X:
+         return( "x" );
+      case MathFunc_OneMinusX:
+         return( "1-x" );
+      case MathFunc_BiPolar2UniPolar:
+         return( "+-->+" );
+      case MathFunc_UniPolar2BiPolar:
+         return( "+->+-" );
+      default:
+         return( "x" );
+   }
+}
+
+
+ModMatrix::MathFunc ModMatrix::mathFuncFromString( const std::string &s )
+{
+   if( util::trim( util::toLower( s ) ) == "x" )
+      return( MathFunc_X );
+   else
+   if( util::trim( util::toLower( s ) ) == "1-x" )
+      return( MathFunc_OneMinusX );
+   else
+   if( util::trim( util::toLower( s ) ) == "+-->+" )
+      return( MathFunc_BiPolar2UniPolar );
+   else
+   if( util::trim( util::toLower( s ) ) == "+->+-" )
+      return( MathFunc_UniPolar2BiPolar );
+   else
+      return( MathFunc_X );
 }
 
 

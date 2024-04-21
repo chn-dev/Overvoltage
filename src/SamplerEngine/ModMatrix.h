@@ -28,6 +28,14 @@ namespace SamplerEngine
          ModDest_Pan
       };
 
+      enum MathFunc
+      {
+         MathFunc_X = 1,
+         MathFunc_OneMinusX,
+         MathFunc_BiPolar2UniPolar,
+         MathFunc_UniPolar2BiPolar
+      };
+
       class ModDestInfo
       {
       public:
@@ -63,7 +71,7 @@ namespace SamplerEngine
       class ModSlot
       {
       public:
-         ModSlot( ModSrc src, ModDest dest, double amt, bool enabled );
+         ModSlot( ModSrc src, ModSrc mod, ModDest dest, MathFunc func, double amt, bool enabled );
          ModSlot( const ModSlot &d );
          ModSlot();
          ~ModSlot();
@@ -73,8 +81,12 @@ namespace SamplerEngine
 
          ModSrc getSrc() const;
          void setSrc( ModSrc src );
+         ModSrc getMod() const;
+         void setMod( ModSrc mod );
          ModDest getDest() const;
          void setDest( ModDest dest );
+         MathFunc getMathFunc() const;
+         void setMathFunc( MathFunc f );
          double getAmount() const;
          void setAmount( double amount );
          bool isEnabled() const;
@@ -83,7 +95,9 @@ namespace SamplerEngine
       private:
          bool m_Enabled;
          ModSrc m_Src;
+         ModSrc m_Mod;
          ModDest m_Dest;
+         MathFunc m_Func;
          double m_Amt;
       };
 
@@ -100,9 +114,12 @@ namespace SamplerEngine
       static ModSrc modSrcFromString( const std::string &s );
       static std::string toString( ModDest v );
       static ModDest modDestFromString( const std::string &s );
+      static std::string toString( MathFunc v );
+      static MathFunc mathFuncFromString( const std::string &s );
 
       static std::set<ModSrc> allModSrc();
       static std::set<ModDest> allModDest();
+      static std::set<MathFunc> allMathFunc();
 
    protected:
 

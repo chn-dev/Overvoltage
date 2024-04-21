@@ -1,3 +1,5 @@
+#include <util.h>
+
 #include "UISection.h"
 #include "UIPage.h"
 #include "PluginEditor.h"
@@ -41,6 +43,14 @@ UIPage *UISection::uiPage() const
 }
 
 
+UISection::CycleComponent::CycleComponent() :
+   m_PixelsPerItem( 16 ),
+   m_OrigMouseCursor( juce::MouseCursor::NormalCursor )
+{
+   setCurrentItem( -1 );
+}
+
+
 UISection::CycleComponent::CycleComponent( std::vector<std::string> items ) :
    m_Items( items ),
    m_PixelsPerItem( 16 ),
@@ -55,10 +65,33 @@ UISection::CycleComponent::~CycleComponent()
 }
 
 
+void UISection::CycleComponent::setItems( double minVal, double maxVal, double step, std::string format, std::string unit )
+{
+   m_Items.clear();
+
+   for( int i = 0; ; i++ )
+   {
+      double value = minVal + ( step * i );
+      if( value > maxVal )
+         break;
+      m_Items.push_back( stdvformat( format, value ) + unit );
+   }
+
+   setCurrentItem( 0 );
+}
+
+
 void UISection::CycleComponent::setCurrentItem( int item )
 {
-   setText( m_Items.at( (size_t)item ), juce::dontSendNotification );
-   m_CurrentItem = item;
+   if( item < 0 || item >= m_Items.size() )
+   {
+      setText( "", juce::dontSendNotification );
+      m_CurrentItem = -1;
+   } else
+   {
+      setText( m_Items.at( (size_t)item ), juce::dontSendNotification );
+      m_CurrentItem = item;
+   }
 }
 
 
@@ -70,6 +103,9 @@ int UISection::CycleComponent::getCurrentItem() const
 
 void UISection::CycleComponent::mouseDrag( const MouseEvent &event )
 {
+   if( !isEnabled() )
+      return;
+
    juce::Point<float> newMousePosition = juce::Desktop::getInstance().getMainMouseSource().getScreenPosition();
    if( newMousePosition == m_MouseStartPoint )
       return;
@@ -99,6 +135,9 @@ void UISection::CycleComponent::mouseDrag( const MouseEvent &event )
 
 void UISection::CycleComponent::mouseDown( const MouseEvent &/*event*/ )
 {
+   if( !isEnabled() )
+      return;
+
    m_MouseStartPoint = juce::Desktop::getInstance().getMainMouseSource().getScreenPosition();
    m_OrigMouseCursor = getMouseCursor();
    setMouseCursor( juce::MouseCursor::NoCursor );
@@ -110,6 +149,9 @@ void UISection::CycleComponent::mouseDown( const MouseEvent &/*event*/ )
 
 void UISection::CycleComponent::mouseUp( const MouseEvent &/*event*/ )
 {
+   if( !isEnabled() )
+      return;
+
    setColour( ColourIds::outlineColourId, m_OrigColour );
    setMouseCursor( m_OrigMouseCursor );
 }

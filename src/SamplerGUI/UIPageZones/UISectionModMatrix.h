@@ -13,41 +13,28 @@ namespace SamplerGUI
    class UISectionModMatrix : public UISection
    {
    public:
-      class UIModSlot : public juce::Slider::Listener,
+      class UIModSlot : public juce::Label::Listener,
                         public juce::ComboBox::Listener,
                         public juce::Button::Listener
 
       {
       public:
-         class UISlider : public juce::Slider
-         {
-         public:
-            UISlider( const String &name, UIModSlot *pModSlot );
-
-         private:
-            virtual String getTextFromValue( double value );
-
-         private:
-            UIModSlot *m_pModSlot;
-         };
-
          UIModSlot();
          UIModSlot( UISectionModMatrix *pSectionModMatrix, SamplerEngine::ModMatrix::ModSlot *pModSlot, int index, int xp, int yp );
          ~UIModSlot();
 
          SamplerEngine::ModMatrix::ModSlot *getModSlot() const;
-         virtual void sliderValueChanged( Slider *pSlider );
          virtual void comboBoxChanged( ComboBox *pComboBox );
          virtual void buttonClicked( Button *pButton );
          virtual void buttonStateChanged( Button *pButton );
+         virtual void labelTextChanged( Label *pLabel );
 
       private:
-         SliderLookAndFeel m_SliderLAF;
          UISectionModMatrix *m_pSectionModMatrix;
          juce::ComboBox *m_pcbSrc;
          juce::ComboBox *m_pcbDest;
          juce::TextButton *m_pbEnabled;
-         juce::Slider *m_psAmount;
+         CycleComponent *m_pccAmount;
          SamplerEngine::ModMatrix::ModSlot *m_pModSlot;
          int m_Index;
          int m_Xp;

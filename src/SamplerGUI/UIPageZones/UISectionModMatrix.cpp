@@ -4,26 +4,12 @@
 
 using namespace SamplerGUI;
 
-UISectionModMatrix::UIModSlot::UISlider::UISlider( const String &name, UIModSlot *pModSlot ) :
-   juce::Slider( name ),
-   m_pModSlot( pModSlot )
-{
-}
-
-
-juce::String UISectionModMatrix::UIModSlot::UISlider::getTextFromValue( double value )
-{
-   SamplerEngine::ModMatrix::ModDestInfo modDestInfo = m_pModSlot->getModSlot()->getDest();
-   return( stdvformat( modDestInfo.getFormat(), value ) + getTextValueSuffix().toStdString() );
-}
-
-
 UISectionModMatrix::UIModSlot::UIModSlot() :
    m_pSectionModMatrix( nullptr ),
    m_pcbSrc( nullptr ),
    m_pcbDest( nullptr ),
    m_pbEnabled( nullptr ),
-   m_psAmount( nullptr ),
+   m_pccAmount( nullptr ),
    m_pModSlot( nullptr ),
    m_Index( -1 ),
    m_Xp( -1 ),
@@ -59,21 +45,22 @@ UISectionModMatrix::UIModSlot::UIModSlot( UISectionModMatrix *pSectionModMatrix,
    m_pcbSrc->setEnabled( m_pModSlot->isEnabled() );
    pSectionModMatrix->addAndMakeVisible( m_pcbSrc );
 
-   m_psAmount = new UIModSlot::UISlider( "Amount", this );
-   SamplerEngine::ModMatrix::ModDestInfo modDestInfo = m_pModSlot->getDest();
-   m_psAmount->setRange( modDestInfo.getMin(), modDestInfo.getMax(), modDestInfo.getStep() );
-   m_psAmount->setTextValueSuffix( modDestInfo.getUnit() );
-   m_psAmount->setSliderStyle( juce::Slider::LinearHorizontal );
-   m_psAmount->setTextBoxStyle( juce::Slider::TextBoxLeft, true, 48, 9 );
-   m_psAmount->setSliderSnapsToMousePosition( false );
-   m_psAmount->setLookAndFeel( &m_SliderLAF );
-   m_psAmount->setValue( m_pModSlot->getAmount() );
-   m_psAmount->addListener( this );
-   m_psAmount->setColour( juce::Slider::ColourIds::textBoxOutlineColourId, juce::Colour::fromRGBA( 0, 0, 0, 0 ) );
-   m_psAmount->setBounds( xp + 28 + 120 + 4, yp + 4, 96, 12 );
-   m_psAmount->setEnabled( m_pModSlot->isEnabled() && pModSlot->getDest() != SamplerEngine::ModMatrix::ModDest_None );
-   pSectionModMatrix->addAndMakeVisible( m_psAmount );
-
+   m_pccAmount = new CycleComponent();
+   m_pccAmount->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
+   m_pccAmount->addListener( this );
+   m_pccAmount->setJustificationType( juce::Justification::centred );
+   m_pccAmount->setBounds( xp + 28 + 120 + 4, yp, 94, 18 );
+   SamplerEngine::ModMatrix::ModDestInfo modDestInfo = pModSlot->getDest();
+   m_pccAmount->setItems(
+      modDestInfo.getMin(),
+      modDestInfo.getMax(),
+      modDestInfo.getStep(),
+      modDestInfo.getFormat(),
+      modDestInfo.getUnit() );
+   int nAmount = (int)( ( ( pModSlot->getAmount() - modDestInfo.getMin() ) / modDestInfo.getStep() ) + 0.5 );
+   m_pccAmount->setCurrentItem( nAmount );
+   m_pccAmount->setEnabled( m_pModSlot->isEnabled() );
+   pSectionModMatrix->addAndMakeVisible( m_pccAmount );
 
    m_pcbDest = new juce::ComboBox( "Destination" );
    for( SamplerEngine::ModMatrix::ModDest modDest : SamplerEngine::ModMatrix::allModDest() )
@@ -95,9 +82,9 @@ UISectionModMatrix::UIModSlot::~UIModSlot()
       delete m_pbEnabled;
    }
 
-   if( m_psAmount )
+   if( m_pccAmount )
    {
-      delete m_psAmount;
+      delete m_pccAmount;
    }
 
    if( m_pcbSrc )
@@ -125,7 +112,7 @@ void UISectionModMatrix::UIModSlot::buttonClicked( Button *pButton )
       m_pModSlot->setEnabled( m_pbEnabled->getToggleState() );
       m_pcbSrc->setEnabled( m_pModSlot->isEnabled() );
       m_pcbDest->setEnabled( m_pModSlot->isEnabled() );
-      m_psAmount->setEnabled( m_pModSlot->isEnabled() );
+      m_pccAmount->setEnabled( m_pModSlot->isEnabled() );
    }
 }
 
@@ -134,12 +121,12 @@ void UISectionModMatrix::UIModSlot::buttonStateChanged( Button */*pButton*/ )
 {
 }
 
-
-void UISectionModMatrix::UIModSlot::sliderValueChanged( Slider *pSlider )
+void UISectionModMatrix::UIModSlot::labelTextChanged( Label *pLabel )
 {
-   if( m_psAmount == pSlider )
+   if( m_pccAmount == pLabel )
    {
-      m_pModSlot->setAmount( m_psAmount->getValue() );
+      SamplerEngine::ModMatrix::ModDestInfo modDestInfo = m_pModSlot->getDest();
+      m_pModSlot->setAmount( ( m_pccAmount->getCurrentItem() * modDestInfo.getStep() ) + modDestInfo.getMin() );
    }
 }
 
@@ -162,9 +149,14 @@ void UISectionModMatrix::UIModSlot::comboBoxChanged( ComboBox *pComboBox )
          SamplerEngine::ModMatrix::ModDestInfo modDestInfo = selectedModDest;
          m_pModSlot->setDest( selectedModDest );
          m_pModSlot->setAmount( modDestInfo.getDefaultValue() );
-         m_psAmount->setRange( modDestInfo.getMin(), modDestInfo.getMax(), modDestInfo.getStep() );
-         m_psAmount->setTextValueSuffix( modDestInfo.getUnit() );
-         m_psAmount->setValue( m_pModSlot->getAmount() );
+         m_pccAmount->setItems(
+            modDestInfo.getMin(),
+            modDestInfo.getMax(),
+            modDestInfo.getStep(),
+            modDestInfo.getFormat(),
+            modDestInfo.getUnit() );
+         int nAmount = (int)( ( ( m_pModSlot->getAmount() - modDestInfo.getMin() ) / modDestInfo.getStep() ) + 0.5 );
+         m_pccAmount->setCurrentItem( nAmount );
       }
    }
 }
