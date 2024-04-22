@@ -22,6 +22,7 @@ namespace SamplerEngine
    protected:
       bool handleLoop();
       void handleModulations( double sampleRate );
+      double getModValue( ModMatrix::ModSrc modSrc, double defaultValue ) const;
 
    private:
       double getPanning() const;

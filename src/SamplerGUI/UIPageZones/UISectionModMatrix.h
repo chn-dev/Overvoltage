@@ -32,9 +32,11 @@ namespace SamplerGUI
       private:
          UISectionModMatrix *m_pSectionModMatrix;
          juce::ComboBox *m_pcbSrc;
+         juce::ComboBox *m_pcbMod;
          juce::ComboBox *m_pcbDest;
          juce::TextButton *m_pbEnabled;
          CycleComponent *m_pccAmount;
+         juce::ComboBox *m_pcbMathFunc;
          SamplerEngine::ModMatrix::ModSlot *m_pModSlot;
          int m_Index;
          int m_Xp;

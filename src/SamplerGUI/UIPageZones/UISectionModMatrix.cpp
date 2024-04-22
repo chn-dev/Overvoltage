@@ -7,9 +7,11 @@ using namespace SamplerGUI;
 UISectionModMatrix::UIModSlot::UIModSlot() :
    m_pSectionModMatrix( nullptr ),
    m_pcbSrc( nullptr ),
+   m_pcbMod( nullptr ),
    m_pcbDest( nullptr ),
    m_pbEnabled( nullptr ),
    m_pccAmount( nullptr ),
+   m_pcbMathFunc( nullptr ),
    m_pModSlot( nullptr ),
    m_Index( -1 ),
    m_Xp( -1 ),
@@ -25,14 +27,16 @@ UISectionModMatrix::UIModSlot::UIModSlot( UISectionModMatrix *pSectionModMatrix,
    m_Xp( xp ),
    m_Yp( yp )
 {
+   std::vector<juce::Component *> c;
+
    m_pbEnabled = new juce::TextButton( stdformat( "{}", index ) );
    m_pbEnabled->setToggleable( true );
    m_pbEnabled->setClickingTogglesState( true );
    m_pbEnabled->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
    m_pbEnabled->setToggleState( pModSlot->isEnabled(), dontSendNotification );
    m_pbEnabled->addListener( this );
+   c.push_back( m_pbEnabled );
    m_pbEnabled->setBounds( xp, yp, 18, 18 );
-   pSectionModMatrix->addAndMakeVisible( m_pbEnabled );
 
    m_pcbSrc = new juce::ComboBox( "Source" );
    for( SamplerEngine::ModMatrix::ModSrc modSrc : SamplerEngine::ModMatrix::allModSrc() )
@@ -41,15 +45,23 @@ UISectionModMatrix::UIModSlot::UIModSlot( UISectionModMatrix *pSectionModMatrix,
    }
    m_pcbSrc->setSelectedId( pModSlot->getSrc() );
    m_pcbSrc->addListener( this );
-   m_pcbSrc->setBounds( xp + 28, yp, 120, 18 );
-   m_pcbSrc->setEnabled( m_pModSlot->isEnabled() );
-   pSectionModMatrix->addAndMakeVisible( m_pcbSrc );
+   c.push_back( m_pcbSrc );
+   m_pcbSrc->setBounds( xp, yp, 120, 18 );
+
+   m_pcbMod = new juce::ComboBox( "Modificator" );
+   for( SamplerEngine::ModMatrix::ModSrc modSrc : SamplerEngine::ModMatrix::allModSrc() )
+   {
+      m_pcbMod->addItem( SamplerEngine::ModMatrix::toString( modSrc ), modSrc );
+   }
+   m_pcbMod->setSelectedId( pModSlot->getMod() );
+   m_pcbMod->addListener( this );
+   c.push_back( m_pcbMod );
+   m_pcbMod->setBounds( xp, yp, 120, 18 );
 
    m_pccAmount = new CycleComponent();
    m_pccAmount->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
    m_pccAmount->addListener( this );
    m_pccAmount->setJustificationType( juce::Justification::centred );
-   m_pccAmount->setBounds( xp + 28 + 120 + 4, yp, 94, 18 );
    SamplerEngine::ModMatrix::ModDestInfo modDestInfo = pModSlot->getDest();
    m_pccAmount->setItems(
       modDestInfo.getMin(),
@@ -59,8 +71,8 @@ UISectionModMatrix::UIModSlot::UIModSlot( UISectionModMatrix *pSectionModMatrix,
       modDestInfo.getUnit() );
    int nAmount = (int)( ( ( pModSlot->getAmount() - modDestInfo.getMin() ) / modDestInfo.getStep() ) + 0.5 );
    m_pccAmount->setCurrentItem( nAmount );
-   m_pccAmount->setEnabled( m_pModSlot->isEnabled() );
-   pSectionModMatrix->addAndMakeVisible( m_pccAmount );
+   c.push_back( m_pccAmount );
+   m_pccAmount->setBounds( xp, yp, 94, 18 );
 
    m_pcbDest = new juce::ComboBox( "Destination" );
    for( SamplerEngine::ModMatrix::ModDest modDest : SamplerEngine::ModMatrix::allModDest() )
@@ -69,9 +81,32 @@ UISectionModMatrix::UIModSlot::UIModSlot( UISectionModMatrix *pSectionModMatrix,
    }
    m_pcbDest->setSelectedId( pModSlot->getDest() );
    m_pcbDest->addListener( this );
-   m_pcbDest->setBounds( xp + 250, yp, 120, 18 );
-   m_pcbDest->setEnabled( m_pModSlot->isEnabled() );
-   pSectionModMatrix->addAndMakeVisible( m_pcbDest );
+   c.push_back( m_pcbDest );
+   m_pcbDest->setBounds( xp, yp, 120, 18);
+
+   m_pcbMathFunc = new juce::ComboBox( "MathFunc" );
+   for( SamplerEngine::ModMatrix::MathFunc mathFunc : SamplerEngine::ModMatrix::allMathFunc() )
+   {
+      m_pcbMathFunc->addItem( SamplerEngine::ModMatrix::toString( mathFunc ), mathFunc );
+   }
+   m_pcbMathFunc->setSelectedId( pModSlot->getMathFunc() );
+   m_pcbMathFunc->addListener( this );
+   c.push_back( m_pcbMathFunc );
+   m_pcbMathFunc->setBounds( xp, yp, 72, 18 );
+
+   for( int i = 0; i < c.size(); i++ )
+   {
+      juce::Component *pC = c[i];
+      if( i == 0 )
+      {
+         pC->setBounds( xp, yp, pC->getWidth(), pC->getHeight() );
+      } else
+      {
+         pC->setBounds( c[i - 1]->getX() + c[i - 1]->getWidth() + 4, yp, pC->getWidth(), pC->getHeight() );
+         pC->setEnabled( m_pModSlot->isEnabled() );
+      }
+      pSectionModMatrix->addAndMakeVisible( pC );
+   }
 }
 
 
@@ -92,9 +127,19 @@ UISectionModMatrix::UIModSlot::~UIModSlot()
       delete m_pcbSrc;
    }
 
+   if( m_pcbMod )
+   {
+      delete m_pcbMod;
+   }
+
    if( m_pcbDest )
    {
       delete m_pcbDest;
+   }
+
+   if( m_pcbMathFunc )
+   {
+      delete m_pcbMathFunc;
    }
 }
 
@@ -111,8 +156,10 @@ void UISectionModMatrix::UIModSlot::buttonClicked( Button *pButton )
    {
       m_pModSlot->setEnabled( m_pbEnabled->getToggleState() );
       m_pcbSrc->setEnabled( m_pModSlot->isEnabled() );
+      m_pcbMod->setEnabled( m_pModSlot->isEnabled() );
       m_pcbDest->setEnabled( m_pModSlot->isEnabled() );
       m_pccAmount->setEnabled( m_pModSlot->isEnabled() );
+      m_pcbMathFunc->setEnabled( m_pModSlot->isEnabled() );
    }
 }
 
@@ -139,6 +186,22 @@ void UISectionModMatrix::UIModSlot::comboBoxChanged( ComboBox *pComboBox )
       if( selectedModSrc != m_pModSlot->getSrc() )
       {
          m_pModSlot->setSrc( selectedModSrc );
+      }
+   } else
+   if( pComboBox == m_pcbMod )
+   {
+      SamplerEngine::ModMatrix::ModSrc mod = (SamplerEngine::ModMatrix::ModSrc)m_pcbMod->getSelectedId();
+      if( mod != m_pModSlot->getMod() )
+      {
+         m_pModSlot->setMod( mod );
+      }
+   } else
+   if( pComboBox == m_pcbMathFunc )
+   {
+      SamplerEngine::ModMatrix::MathFunc mathFunc = (SamplerEngine::ModMatrix::MathFunc)m_pcbMathFunc->getSelectedId();
+      if( mathFunc != m_pModSlot->getMathFunc() )
+      {
+         m_pModSlot->setMathFunc( mathFunc );
       }
    } else
    if( pComboBox == m_pcbDest )

@@ -105,6 +105,27 @@ bool Voice::handleLoop()
 }
 
 
+double Voice::getModValue( ModMatrix::ModSrc modSrc, double defaultValue ) const
+{
+   if( modSrc == ModMatrix::ModSrc_AEG )
+      return( m_pAEG->getValue() );
+   else
+   if( modSrc == ModMatrix::ModSrc_EG2 )
+      return( m_pEG2->getValue() );
+   else
+   if( modSrc == ModMatrix::ModSrc_Velocity )
+      return( (double)m_Velocity / 127.0f );
+   else
+   if( modSrc == ModMatrix::ModSrc_AbsNote )
+      return( (double)m_Note / 127.0f );
+   else
+   if( modSrc == ModMatrix::ModSrc_RelNote )
+      return( 2.0 * (double)( m_Note - m_pSample->getMinNote() ) / (double)( m_pSample->getMaxNote() - m_pSample->getMinNote() ) );
+   else
+      return( defaultValue );
+}
+
+
 void Voice::handleModulations( double sampleRate)
 {
    if( m_nSample % MODSTEP_SAMPLES == 0 )
@@ -115,29 +136,25 @@ void Voice::handleModulations( double sampleRate)
       {
          ModMatrix::ModSlot *pSlot = m_pSample->getModMatrix()->getSlot( nSlot );
          ModMatrix::ModSrc modSrc = pSlot->getSrc();
+         ModMatrix::ModSrc modSrc2 = pSlot->getMod();
          ModMatrix::ModDest modDest = pSlot->getDest();
          if( modSrc != ModMatrix::ModSrc_None && modDest != ModMatrix::ModDest_None )
          {
             ModMatrix::ModDestInfo modDestInfo = modDest;
-            double modVal = 0.0;
+            double modVal = getModValue( modSrc, 0.0 );
             double modAmount = pSlot->getAmount();
+            double modVal2 = getModValue( modSrc2, 1.0 );
+            modVal = modVal * modVal2 * modAmount;
 
-            if( modSrc == ModMatrix::ModSrc_AEG )
-               modVal = m_pAEG->getValue();
+            ModMatrix::MathFunc mathFunc = pSlot->getMathFunc();
+            if( mathFunc == ModMatrix::MathFunc_OneMinusX )
+               modVal = 1.0 - modVal;
             else
-            if( modSrc == ModMatrix::ModSrc_EG2 )
-               modVal = m_pEG2->getValue();
+            if( mathFunc == ModMatrix::MathFunc_BiPolar2UniPolar )
+               modVal = ( modVal + 1.0 ) / 2.0;
             else
-            if( modSrc == ModMatrix::ModSrc_Velocity )
-              modVal = (double)m_Velocity / 127.0f;
-            else
-            if( modSrc == ModMatrix::ModSrc_AbsNote )
-               modVal = (double)m_Note / 127.0f;
-            else
-            if( modSrc == ModMatrix::ModSrc_RelNote )
-               modVal = 2.0 * (double)( m_Note - m_pSample->getMinNote() ) / (double)( m_pSample->getMaxNote() - m_pSample->getMinNote() );
-
-            modVal = modVal * modAmount;
+            if( mathFunc == ModMatrix::MathFunc_UniPolar2BiPolar )
+               modVal = ( modVal * 2.0 ) - 1.0;
 
             if( modValues.find( modDest ) != modValues.end() )
                modValues[modDest] += modVal;
