@@ -46,11 +46,11 @@ std::map<ModMatrix::ModDest, ModMatrix::ModDestInfo> &ModMatrix::ModDestInfo::in
 {
    static std::map<ModDest, ModDestInfo> theMap =
    {
-      { ModDest_None,            ModDestInfo( ModDest_None,                      0.0,          1.0,         0.1, 0.0,    "",       "" ) },
-      { ModDest_FilterCutoff,    ModDestInfo( ModDest_FilterCutoff,             -8.0,          8.0,  1.0 / 12.0, 0.0, "oct", "{:.2f}" ) },
-      { ModDest_FilterResonance, ModDestInfo( ModDest_FilterResonance,        -100.0,        100.0,         0.1, 0.0,   "%", "{:.2f}" ) },
-      { ModDest_Pitch,           ModDestInfo( ModDest_Pitch,             -8.0 * 12.0,   8.0 * 12.0, 1.0 / 100.0, 0.0,  "st", "{:.2f}" ) },
-      { ModDest_Pan,             ModDestInfo{ ModDest_Pan,                    -100.0,        100.0,         0.1, 0.0,   "%", "{:.2f}" } }
+      { ModDest_None,            ModDestInfo( ModDest_None,                      0.0,          1.0,        0.1, 0.0,    "",       "" ) },
+      { ModDest_FilterCutoff,    ModDestInfo( ModDest_FilterCutoff,             -8.0,          8.0, 1.0 / 12.0, 0.0, "oct", "{:.2f}" ) },
+      { ModDest_FilterResonance, ModDestInfo( ModDest_FilterResonance,        -100.0,        100.0,        0.1, 0.0,   "%", "{:.1f}" ) },
+      { ModDest_Pitch,           ModDestInfo( ModDest_Pitch,             -8.0 * 12.0,   8.0 * 12.0, 1.0 / 10.0, 0.0,  "st", "{:.1f}" ) },
+      { ModDest_Pan,             ModDestInfo{ ModDest_Pan,                    -100.0,        100.0,        0.1, 0.0,   "%", "{:.1f}" } }
    };
 
    return( theMap );

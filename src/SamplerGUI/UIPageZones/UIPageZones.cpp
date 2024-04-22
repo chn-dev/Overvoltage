@@ -10,9 +10,16 @@ UIPageZones::UIPageZones( PluginEditor *pEditor ) :
    setBounds( 0, 32, 1024, 640 - 32 );
    int yofs = 0;
 
+   int kbWidth = 64 + 128;
+   int xStart = kbWidth;
+   int yStart = 196;
+   int editorSectionWidth = 1024 - kbWidth;
+   int editorSectionHeight = 640 - 32 - yStart;
+   int margin = 2;
+
    m_pUISectionKeyboard = new SamplerGUI::UISectionSamplerKeyboard( this );
    pEditor->addKeyListener( m_pUISectionKeyboard );
-   m_pUISectionKeyboard->setBounds( 0, yofs, 64 + 128, 640 - yofs );
+   m_pUISectionKeyboard->setBounds( 0, yofs, kbWidth, 640 - yofs );
    m_pUISectionKeyboard->addListener( &( editor()->processor() ) );
    m_pUISectionKeyboard->addSamplerKeyboardListener( &( editor()->processor() ) );
    m_pUISectionKeyboard->setWidth( 64 );
@@ -20,36 +27,68 @@ UIPageZones::UIPageZones( PluginEditor *pEditor ) :
    addAndMakeVisible( m_pUISectionKeyboard );
 
    m_pUISectionWaveView = new SamplerGUI::UISectionWaveView( this );
-   m_pUISectionWaveView->setBounds( 64 + 128 + 4, yofs, 1024 - ( 64 + 128 + 4 ), 196 );
+   m_pUISectionWaveView->setBounds( kbWidth + 4, yofs, 1024 - ( 64 + 128 + 4 ), yStart );
    addAndMakeVisible( m_pUISectionWaveView );
 
+
+   // First row
    m_pUISectionSample = new SamplerGUI::UISectionSample( this );
-   m_pUISectionSample->setBounds( 64 + 128 + 4, 196 + 4 + yofs, 192, 128 );
+   m_pUISectionSample->setBounds(
+      xStart + margin,
+      yStart + margin,
+      ( editorSectionWidth / 4 ) - ( margin * 2 ),
+      ( editorSectionHeight / 3 ) - ( margin * 2 ) );
    addAndMakeVisible( m_pUISectionSample );
 
+   m_pUISectionFilter = new SamplerGUI::UISectionFilter( this );
+   m_pUISectionFilter->setBounds(
+      xStart + ( editorSectionWidth / 4 ) + margin,
+      yStart + margin,
+      ( editorSectionWidth / 4 ) - ( margin * 2 ),
+      ( editorSectionHeight / 3 ) - ( margin * 2 ) );
+   addAndMakeVisible( m_pUISectionFilter );
+
+   m_pUISectionOutput = new SamplerGUI::UISectionOutput( this );
+   m_pUISectionOutput->setBounds(
+      xStart + ( ( 3 * editorSectionWidth ) / 4 ) + margin,
+      yStart + margin,
+      ( editorSectionWidth / 4 ) - ( margin * 2 ),
+      ( editorSectionHeight / 3 ) - ( margin * 2 ) );
+   addAndMakeVisible( m_pUISectionOutput );
+
+   // Second row
    m_pUISectionNameRanges = new SamplerGUI::UISectionNameRanges( this );
-   m_pUISectionNameRanges->setBounds( 64 + 128 + 4, 196 + 4 + 128 + 4 + yofs, 192, 128 );
+   m_pUISectionNameRanges->setBounds(
+      xStart + margin,
+      yStart + ( editorSectionHeight / 3 ) + margin,
+      ( editorSectionWidth / 4 ) - ( margin * 2 ),
+      ( editorSectionHeight / 3 ) - ( margin * 2 ) );
    addAndMakeVisible( m_pUISectionNameRanges );
 
+   // Third row
    m_pUISectionAEG = new SamplerGUI::UISectionAEG( this );
-   m_pUISectionAEG->setBounds( 64 + 128 + 4, 196 + 4 + 128 + 4 + 128 + 4 + yofs, 192/2 - 2, 128 );
+   m_pUISectionAEG->setBounds(
+      xStart + margin,
+      yStart + ( ( 2 * editorSectionHeight ) / 3 ) + margin,
+      ( editorSectionWidth / 8 ) - ( margin * 2 ),
+      ( editorSectionHeight / 3 ) - ( margin * 2 ) );
    addAndMakeVisible( m_pUISectionAEG );
 
    m_pUISectionEG2 = new SamplerGUI::UISectionEG2( this );
-   m_pUISectionEG2->setBounds( 64 + 128 + 4 + 192 + 4 - 192/2 - 4 + 2, 196 + 4 + 128 + 4 + 128 + 4 + yofs, 192/2 - 2, 128 );
+   m_pUISectionEG2->setBounds(
+      xStart + ( ( editorSectionWidth / 8 ) * 1 ) + margin,
+      yStart + ( ( 2 * editorSectionHeight ) / 3 ) + margin,
+      ( editorSectionWidth / 8 ) - ( margin * 2 ),
+      ( editorSectionHeight / 3 ) - ( margin * 2 ) );
    addAndMakeVisible( m_pUISectionEG2 );
 
-   m_pUISectionFilter = new SamplerGUI::UISectionFilter( this );
-   m_pUISectionFilter->setBounds( 64 + 128 + 4 + 192 + 4, 196 + 4 + yofs, 192, 128 );
-   addAndMakeVisible( m_pUISectionFilter );
-
    m_pUISectionModMatrix = new SamplerGUI::UISectionModMatrix( this );
-   m_pUISectionModMatrix->setBounds( 64 + 128 + 4 + 192 + 4, 196 + 4 + 128 + 4 + 128 + 4 + yofs, 192 * 2, 128 );
+   m_pUISectionModMatrix->setBounds(
+      xStart + ( ( editorSectionWidth / 4 ) * 1 ) + margin,
+      yStart + ( ( 2 * editorSectionHeight ) / 3 ) + margin,
+      ( ( editorSectionWidth * 3 ) / 4 ) - ( margin * 2 ),
+      ( editorSectionHeight / 3 ) - ( margin * 2 ) );
    addAndMakeVisible( m_pUISectionModMatrix );
-
-   m_pUISectionOutput = new SamplerGUI::UISectionOutput( this );
-   m_pUISectionOutput->setBounds( 1024 - 64 - 128 - 4, 196 + 4 + yofs, 192, 128 );
-   addAndMakeVisible( m_pUISectionOutput );
 
    updateUISections();
 }
