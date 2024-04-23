@@ -16,6 +16,7 @@ Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
    m_DetuneCents( 0.0 ),
    m_Pan( 0.0 ),
    m_Gain( 1.0 ),
+   m_Keytrack( 100.0 ),
    m_Reverse( false ),
    m_BaseNote( minNote ),
    m_MinNote( minNote ),
@@ -42,6 +43,7 @@ Sample::Sample() :
    m_DetuneCents( 0.0 ),
    m_Pan( 0.0 ),
    m_Gain( 1.0 ),
+   m_Keytrack( 100.0 ),
    m_Reverse( false ),
    m_BaseNote( -1 ),
    m_MinNote( -1 ),
@@ -82,6 +84,10 @@ juce::XmlElement *Sample::toXml() const
    juce::XmlElement *peGain = new juce::XmlElement( "gain" );
    peGain->addTextElement( stdformat( "{}", m_Gain ) );
    peSample->addChildElement( peGain );
+
+   juce::XmlElement *peKeytrack = new juce::XmlElement( "keytrack" );
+   peKeytrack->addTextElement( stdformat( "{}", m_Keytrack ) );
+   peSample->addChildElement( peKeytrack );
 
    juce::XmlElement *peReverse = new juce::XmlElement( "reverse" );
    peReverse->addTextElement( m_Reverse ? "true" : "false" );
@@ -144,6 +150,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
    float detune = 0.0;
    float pan = 0.0;
    float gain = 1.0;
+   float keytrack = 100.0;
    bool reverse = false;
    int baseNote = -1;
    int minNote = -1;
@@ -177,6 +184,10 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       if( tagName == "gain" )
       {
          gain = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "keytrack" )
+      {
+         keytrack = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
       } else
       if( tagName == "reverse" )
       {
@@ -276,6 +287,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       pSample->m_DetuneCents = detune;
       pSample->m_Pan = pan;
       pSample->m_Gain = gain;
+      pSample->m_Keytrack = keytrack;
       pSample->m_Reverse = reverse;
       pSample->m_BaseNote = baseNote;
       pSample->m_MinNote = minNote;
@@ -561,6 +573,18 @@ float Sample::getGain() const
 void Sample::setGain( float gain )
 {
    m_Gain = gain;
+}
+
+
+float Sample::getKeytrack() const
+{
+   return( m_Keytrack );
+}
+
+
+void Sample::setKeytrack( float kt )
+{
+   m_Keytrack = kt;
 }
 
 

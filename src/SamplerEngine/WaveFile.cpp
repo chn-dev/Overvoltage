@@ -432,5 +432,4 @@ void WaveFile::dft() const
       //db.push_back( log10( d[i].getR() / (double)(d.size()/2) ) );
       db.push_back( 10.0 * log10( sqrt( d[i].getA() * d[i].getA() + d[i].getB() * d[i].getB() ) ) );
    }
-   printf("\n");
 }

@@ -8,10 +8,12 @@
 //==============================================================================
 namespace SamplerEngine
 {
+   class Part;
+
    class Voice
    {
    public:
-      Voice( const Sample *pSample, int note, int velocity );
+      Voice( const Part *pPart, const Sample *pSample, int note, int velocity );
       ~Voice();
 
       bool process( float *pLeft, float *pRight, size_t nSamples, double sampleRate );
@@ -29,6 +31,7 @@ namespace SamplerEngine
       static float getLeftAmp( float pan );
       static float getRightAmp( float pan );
 
+      const Part *m_pPart;
       const Sample *m_pSample;
       ENV *m_pAEG;
       ENV *m_pEG2;

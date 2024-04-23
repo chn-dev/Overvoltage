@@ -29,6 +29,16 @@ UISectionNameRanges::UISectionNameRanges( UIPage *pUIPage ) :
    m_plV2 = new juce::Label( juce::String(), "V" );
    addAndMakeVisible( m_plV2 );
 
+   m_plKeytrack = new juce::Label( juce::String(), "Keytrack:" );
+   addAndMakeVisible( m_plKeytrack );
+
+   m_pcKeytrack = new CycleComponent();
+   m_pcKeytrack->setItems( -400.0, 400.0, 1.0, "{:.0f}", "%" );
+   m_pcKeytrack->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
+   m_pcKeytrack->addListener( this );
+   m_pcKeytrack->setJustificationType( juce::Justification::centred );
+   addAndMakeVisible( m_pcKeytrack );
+
    m_pcMinNote = new CycleComponent( noteNames );
    m_pcMinNote->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
    m_pcMinNote->addListener( this );
@@ -87,6 +97,8 @@ UISectionNameRanges::~UISectionNameRanges()
    delete m_plK2;
    delete m_plV1;
    delete m_plV2;
+   delete m_pcKeytrack;
+   delete m_plKeytrack;
    delete m_plBaseNote;
    delete m_pcBaseNote;
    delete m_plName;
@@ -142,6 +154,10 @@ void UISectionNameRanges::labelTextChanged( Label *pLabel )
    if( pLabel == m_pcBaseNote )
    {
       sample()->setBaseNote( m_pcBaseNote->getCurrentItem() );
+   } else
+   if( pLabel == m_pcKeytrack )
+   {
+      sample()->setKeytrack( m_pcKeytrack->getCurrentItem() - 400.0 );
    }
    uiPage()->editor()->repaint();
 
@@ -177,6 +193,8 @@ void UISectionNameRanges::resized()
    m_pcMaxNote->setBounds( 128, 48 + d, 38, 14 );
    m_pcMinVelocity->setBounds( 32, 68 + d, 38, 14 );
    m_pcMaxVelocity->setBounds( 128, 68 + d, 38, 14 );
+   m_plKeytrack->setBounds( 0, 88 + d, 56, 14 );
+   m_pcKeytrack->setBounds( 60, 88 + d, 76, 14 );
 }
 
 
@@ -197,6 +215,8 @@ void UISectionNameRanges::samplesUpdated()
    m_plBaseNote->setVisible( ok );
    m_pcBaseNote->setVisible( ok );
    m_plName->setVisible( ok );
+   m_plKeytrack->setVisible( ok );
+   m_pcKeytrack->setVisible( ok );
 
    if( ok )
    {
@@ -206,5 +226,6 @@ void UISectionNameRanges::samplesUpdated()
       m_pcMinVelocity->setCurrentItem( sample()->getMinVelocity() );
       m_pcMaxVelocity->setCurrentItem( sample()->getMaxVelocity() );
       m_plName->setText( sample()->getName(), juce::dontSendNotification );
+      m_pcKeytrack->setCurrentItem( (int)( sample()->getKeytrack() + 400.5 ) );
    }
 }

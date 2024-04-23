@@ -41,6 +41,9 @@ namespace SamplerGUI
       juce::Label *m_plV1;
       juce::Label *m_plV2;
 
+      juce::Label *m_plKeytrack;
+      CycleComponent *m_pcKeytrack;
+
       juce::Label *m_plName;
 
       CycleComponent *m_pcBaseNote;

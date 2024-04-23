@@ -1,10 +1,12 @@
 #include <math.h>
 #include <util.h>
 #include "Voice.h"
+#include "Part.h"
 
 using namespace SamplerEngine;
 
-Voice::Voice( const Sample *pSample, int note, int velocity ) :
+Voice::Voice( const Part *pPart, const Sample *pSample, int note, int velocity ) :
+   m_pPart( pPart ),
    m_pSample( pSample ),
    m_pAEG( nullptr ),
    m_pEG2( nullptr ),
@@ -205,10 +207,13 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
    float *pLeft = left.data();;
    float *pRight = right.data();;
 
+   double keytrack = (double)m_pSample->getKeytrack() / 100.0;
    double noteOfs = m_PitchMod;
    double f = (double)m_pSample->getWave()->sampleRate() *
       pow( 2.0,
-         (double)( (double)m_Note + noteOfs + ( (double)m_pSample->getDetune() / 100.0 ) - (double)m_pSample->getBaseNote() ) / 12.0 );
+         (double)(
+            ( keytrack * ( (double)m_Note - (double)m_pSample->getBaseNote() ) )
+            + noteOfs + ( (double)m_pSample->getDetune() / 100.0 ) ) / 12.0 );
    if( m_pSample->getReverse() )
    {
       f = -f;

@@ -207,7 +207,7 @@ void Part::noteOn( int note, int vel )
    std::list<Sample *> s = getSamplesByMidiNoteAndVelocity( note, vel );
    for( Sample *pSample : s )
    {
-      Voice *pVoice = new Voice( pSample, note, vel );
+      Voice *pVoice = new Voice( this, pSample, note, vel );
       m_Voices.insert( std::pair{ note, pVoice } );
    }
 }

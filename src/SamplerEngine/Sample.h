@@ -56,6 +56,8 @@ namespace SamplerEngine
       void setPan( float pan );
       float getGain() const;
       void setGain( float gain );
+      float getKeytrack() const;
+      void setKeytrack( float kt );
       Sample::PlayMode getPlayMode() const;
       ENV *getAEG() const;
       ENV *getEG2() const;
@@ -84,6 +86,7 @@ namespace SamplerEngine
       float m_DetuneCents;
       float m_Pan;
       float m_Gain;
+      float m_Keytrack;
       bool m_Reverse;
       int m_BaseNote;
       int m_MinNote;
