@@ -14,22 +14,32 @@ UISectionNameRanges::UISectionNameRanges( UIPage *pUIPage ) :
       noteNames.push_back( UISectionKeyboard::noteNameWithOctave( i ).toStdString() );
    }
 
+   int d = 20;
+
    m_plLow = new juce::Label( juce::String(), "low" );
+   m_plLow->setBounds( 32, 32 + d, 32, 14 );
    addAndMakeVisible( m_plLow );
    m_plHigh = new juce::Label( juce::String(), "hi" );
+   m_plHigh->setBounds( 128, 32 + d, 32, 14 );
    addAndMakeVisible( m_plHigh );
    m_plBaseNote = new juce::Label( juce::String(), "root" );
+   m_plBaseNote->setBounds( 80, 32 + d, 32, 14 );
    addAndMakeVisible( m_plBaseNote );
    m_plK1 = new juce::Label( juce::String(), "K" );
+   m_plK1->setBounds( 0, 48 + d, 18, 14 );
    addAndMakeVisible( m_plK1 );
    m_plK2 = new juce::Label( juce::String(), "K" );
+   m_plK2->setBounds( getBounds().getWidth() - 18, 48 + d, 18, 14 );
    addAndMakeVisible( m_plK2 );
    m_plV1 = new juce::Label( juce::String(), "V" );
+   m_plV1->setBounds( 0, 68 + d, 18, 14 );
    addAndMakeVisible( m_plV1 );
    m_plV2 = new juce::Label( juce::String(), "V" );
+   m_plV2->setBounds( getBounds().getWidth() - 18, 68 + d, 18, 14 );
    addAndMakeVisible( m_plV2 );
 
    m_plKeytrack = new juce::Label( juce::String(), "Keytrack:" );
+   m_plKeytrack->setBounds( 0, 88 + d, 56, 14 );
    addAndMakeVisible( m_plKeytrack );
 
    m_pcKeytrack = new CycleComponent();
@@ -37,24 +47,40 @@ UISectionNameRanges::UISectionNameRanges( UIPage *pUIPage ) :
    m_pcKeytrack->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
    m_pcKeytrack->addListener( this );
    m_pcKeytrack->setJustificationType( juce::Justification::centred );
+   m_pcKeytrack->setBounds( 52, 88 + d, 52, 14 );
    addAndMakeVisible( m_pcKeytrack );
+
+   m_plPitchbendRange = new juce::Label( juce::String(), "PB range:" );
+   m_plPitchbendRange->setBounds( 52 + 52, 88 + d, 56, 14 );
+   addAndMakeVisible( m_plPitchbendRange );
+
+   m_pcPitchbendRange = new CycleComponent();
+   m_pcPitchbendRange->setItems( -12.0, 12.0, 0.1, "{:.1f}", "st" );
+   m_pcPitchbendRange->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
+   m_pcPitchbendRange->addListener( this );
+   m_pcPitchbendRange->setJustificationType( juce::Justification::centred );
+   m_pcPitchbendRange->setBounds( 52 + 52 + 52, 88 + d, 44, 14 );
+   addAndMakeVisible( m_pcPitchbendRange );
 
    m_pcMinNote = new CycleComponent( noteNames );
    m_pcMinNote->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
    m_pcMinNote->addListener( this );
    m_pcMinNote->setJustificationType( juce::Justification::centred );
+   m_pcMinNote->setBounds( 32, 48 + d, 38, 14 );
    addAndMakeVisible( m_pcMinNote );
 
    m_pcBaseNote = new CycleComponent( noteNames );
    m_pcBaseNote->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
    m_pcBaseNote->addListener( this );
    m_pcBaseNote->setJustificationType( juce::Justification::centred );
+   m_pcBaseNote->setBounds( 80, 48 + d, 38, 14 );
    addAndMakeVisible( m_pcBaseNote );
 
    m_pcMaxNote = new CycleComponent( noteNames );
    m_pcMaxNote->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
    m_pcMaxNote->addListener( this );
    m_pcMaxNote->setJustificationType( juce::Justification::centred );
+   m_pcMaxNote->setBounds( 128, 48 + d, 38, 14 );
    addAndMakeVisible( m_pcMaxNote );
 
    std::vector<std::string> velNames;
@@ -66,12 +92,14 @@ UISectionNameRanges::UISectionNameRanges( UIPage *pUIPage ) :
    m_pcMinVelocity->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
    m_pcMinVelocity->addListener( this );
    m_pcMinVelocity->setJustificationType( juce::Justification::centred );
+   m_pcMinVelocity->setBounds( 32, 68 + d, 38, 14 );
    addAndMakeVisible( m_pcMinVelocity );
 
    m_pcMaxVelocity = new CycleComponent( velNames );
    m_pcMaxVelocity->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
    m_pcMaxVelocity->addListener( this );
    m_pcMaxVelocity->setJustificationType( juce::Justification::centred );
+   m_pcMaxVelocity->setBounds( 128, 68 + d, 38, 14 );
    addAndMakeVisible( m_pcMaxVelocity );
 
    m_plName = new juce::Label( juce::String(), "" );
@@ -81,6 +109,7 @@ UISectionNameRanges::UISectionNameRanges( UIPage *pUIPage ) :
    m_plName->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
    m_plName->setColour( juce::Label::ColourIds::outlineWhenEditingColourId, juce::Colour::fromRGBA( 255, 255, 255, 128 ) );
    m_plName->addListener( this );
+   m_plName->setBounds( 8, 28, 188, 18 );
    addAndMakeVisible( m_plName );
 }
 
@@ -99,6 +128,8 @@ UISectionNameRanges::~UISectionNameRanges()
    delete m_plV2;
    delete m_pcKeytrack;
    delete m_plKeytrack;
+   delete m_pcPitchbendRange;
+   delete m_plPitchbendRange;
    delete m_plBaseNote;
    delete m_pcBaseNote;
    delete m_plName;
@@ -158,6 +189,10 @@ void UISectionNameRanges::labelTextChanged( Label *pLabel )
    if( pLabel == m_pcKeytrack )
    {
       sample()->setKeytrack( m_pcKeytrack->getCurrentItem() - 400.0 );
+   } else
+   if( pLabel == m_pcPitchbendRange )
+   {
+      sample()->setPitchbendRange( ( (double)m_pcPitchbendRange->getCurrentItem() * 0.1 ) - 12.0 );
    }
    uiPage()->editor()->repaint();
 
@@ -177,24 +212,6 @@ void UISectionNameRanges::paint( juce::Graphics &g )
 void UISectionNameRanges::resized()
 {
    UISection::resized();
-   int d = 20;
-
-   m_plName->setBounds( 8, 28, getBounds().getWidth() - 16, 18 );
-
-   m_plK1->setBounds( 0, 48 + d, 18, 14 );
-   m_plV1->setBounds( 0, 68 + d, 18, 14 );
-   m_plLow->setBounds( 32, 32 + d, 32, 14 );
-   m_plBaseNote->setBounds( 80, 32 + d, 32, 14 );
-   m_plHigh->setBounds( 128, 32 + d, 32, 14 );
-   m_plK2->setBounds( getBounds().getWidth() - 18, 48 + d, 18, 14 );
-   m_plV2->setBounds( getBounds().getWidth() - 18, 68 + d, 18, 14 );
-   m_pcMinNote->setBounds( 32, 48 + d, 38, 14 );
-   m_pcBaseNote->setBounds( 80, 48 + d, 38, 14 );
-   m_pcMaxNote->setBounds( 128, 48 + d, 38, 14 );
-   m_pcMinVelocity->setBounds( 32, 68 + d, 38, 14 );
-   m_pcMaxVelocity->setBounds( 128, 68 + d, 38, 14 );
-   m_plKeytrack->setBounds( 0, 88 + d, 56, 14 );
-   m_pcKeytrack->setBounds( 60, 88 + d, 76, 14 );
 }
 
 
@@ -217,6 +234,8 @@ void UISectionNameRanges::samplesUpdated()
    m_plName->setVisible( ok );
    m_plKeytrack->setVisible( ok );
    m_pcKeytrack->setVisible( ok );
+   m_plPitchbendRange->setVisible( ok );
+   m_pcPitchbendRange->setVisible( ok );
 
    if( ok )
    {
@@ -227,5 +246,6 @@ void UISectionNameRanges::samplesUpdated()
       m_pcMaxVelocity->setCurrentItem( sample()->getMaxVelocity() );
       m_plName->setText( sample()->getName(), juce::dontSendNotification );
       m_pcKeytrack->setCurrentItem( (int)( sample()->getKeytrack() + 400.5 ) );
+      m_pcPitchbendRange->setCurrentItem( (int)( ( ( sample()->getPitchbendRange() + 12.0 ) / 0.1 ) + 0.5 ) );
    }
 }

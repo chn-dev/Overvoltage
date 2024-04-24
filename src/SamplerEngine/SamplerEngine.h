@@ -36,6 +36,7 @@ namespace SamplerEngine
 
       void noteOn( size_t nPart, int note, int vel );
       void noteOff( size_t nPart, int note, int vel );
+      void pitchbend( size_t nPart, double v );
 
       std::list<Sample *> &samples( size_t nPart );
       const std::list<Sample *> &constSamples( size_t nPart ) const;

@@ -153,6 +153,12 @@ void PluginProcessor::handleNoteOff( MidiKeyboardState */*pSource*/, int midiCha
 }
 
 
+void PluginProcessor::handlePitchbend( int midiChannel, double v )
+{
+   m_pEngine->pitchbend( (size_t)( midiChannel - 1 ), v );
+}
+
+
 bool PluginProcessor::outputBusReady( juce::AudioBuffer<float>& buffer, int n ) const
 {
    if( n >= getBusCount( false ) )
@@ -194,6 +200,7 @@ void PluginProcessor::processBlock( juce::AudioBuffer<float>& buffer,
       {
          int pitchValue = msg.getPitchWheelValue();
          double v = ( 2.0 * ( (double)pitchValue / (double)0x3fff ) ) - 1.0;
+         handlePitchbend( msg.getChannel(), v );
       } else
       if( msg.isController() )
       {

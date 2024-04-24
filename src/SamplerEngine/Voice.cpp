@@ -208,7 +208,8 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
    float *pRight = right.data();;
 
    double keytrack = (double)m_pSample->getKeytrack() / 100.0;
-   double noteOfs = m_PitchMod;
+   double pitchbend = m_pPart->getPitchbend();
+   double noteOfs = m_PitchMod + pitchbend;
    double f = (double)m_pSample->getWave()->sampleRate() *
       pow( 2.0,
          (double)(

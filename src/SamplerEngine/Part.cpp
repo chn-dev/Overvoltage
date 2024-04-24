@@ -6,7 +6,8 @@
 using namespace SamplerEngine;
 
 Part::Part( size_t partNum ) :
-   m_PartNum( partNum )
+   m_PartNum( partNum ),
+   m_Pitchbend( 0.0 )
 {
 }
 
@@ -224,4 +225,16 @@ void Part::noteOff( int note, int /*vel*/ )
          pVoice->noteOff();
       }
    }
+}
+
+
+void Part::setPitchbend( double v )
+{
+   m_Pitchbend = v;
+}
+
+
+double Part::getPitchbend() const
+{
+   return( m_Pitchbend );
 }

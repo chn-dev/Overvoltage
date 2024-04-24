@@ -63,6 +63,15 @@ void Engine::noteOff( size_t nPart, int note, int vel )
 }
 
 
+void Engine::pitchbend( size_t nPart, double v )
+{
+   if( nPart >= m_Parts.size() )
+      return;
+
+   m_Parts[nPart]->setPitchbend( v );
+}
+
+
 Engine *Engine::fromXml( const juce::XmlElement *peOvervoltage )
 {
    if( peOvervoltage->getTagName() == "overvoltage" )

@@ -17,6 +17,7 @@ Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
    m_Pan( 0.0 ),
    m_Gain( 1.0 ),
    m_Keytrack( 100.0 ),
+   m_PitchbendRange( 2.0 ),
    m_Reverse( false ),
    m_BaseNote( minNote ),
    m_MinNote( minNote ),
@@ -44,6 +45,7 @@ Sample::Sample() :
    m_Pan( 0.0 ),
    m_Gain( 1.0 ),
    m_Keytrack( 100.0 ),
+   m_PitchbendRange( 2.0 ),
    m_Reverse( false ),
    m_BaseNote( -1 ),
    m_MinNote( -1 ),
@@ -88,6 +90,10 @@ juce::XmlElement *Sample::toXml() const
    juce::XmlElement *peKeytrack = new juce::XmlElement( "keytrack" );
    peKeytrack->addTextElement( stdformat( "{}", m_Keytrack ) );
    peSample->addChildElement( peKeytrack );
+
+   juce::XmlElement *pePitchbendRange = new juce::XmlElement( "pitchbendrange" );
+   pePitchbendRange->addTextElement( stdformat( "{}", m_PitchbendRange ) );
+   peSample->addChildElement( pePitchbendRange );
 
    juce::XmlElement *peReverse = new juce::XmlElement( "reverse" );
    peReverse->addTextElement( m_Reverse ? "true" : "false" );
@@ -151,6 +157,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
    float pan = 0.0;
    float gain = 1.0;
    float keytrack = 100.0;
+   float pitchbendRange = 2.0;
    bool reverse = false;
    int baseNote = -1;
    int minNote = -1;
@@ -188,6 +195,10 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       if( tagName == "keytrack" )
       {
          keytrack = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "pitchbendrange" )
+      {
+         pitchbendRange = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
       } else
       if( tagName == "reverse" )
       {
@@ -288,6 +299,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       pSample->m_Pan = pan;
       pSample->m_Gain = gain;
       pSample->m_Keytrack = keytrack;
+      pSample->m_PitchbendRange = pitchbendRange;
       pSample->m_Reverse = reverse;
       pSample->m_BaseNote = baseNote;
       pSample->m_MinNote = minNote;
@@ -585,6 +597,18 @@ float Sample::getKeytrack() const
 void Sample::setKeytrack( float kt )
 {
    m_Keytrack = kt;
+}
+
+
+float Sample::getPitchbendRange() const
+{
+   return( m_PitchbendRange );
+}
+
+
+void Sample::setPitchbendRange( float pb )
+{
+   m_PitchbendRange = pb;
 }
 
 

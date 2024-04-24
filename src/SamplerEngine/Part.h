@@ -18,6 +18,8 @@ namespace SamplerEngine
 
       void noteOn( int note, int vel );
       void noteOff( int note, int vel );
+      void setPitchbend( double v );
+      double getPitchbend() const;
 
       std::list<Sample *> &samples();
       const std::list<Sample *> &constSamples() const;
@@ -38,6 +40,7 @@ namespace SamplerEngine
 
    private:
       size_t m_PartNum;
+      double m_Pitchbend;
       std::list<Sample *> m_Samples;
       std::multimap<int, Voice *> m_Voices;
    };

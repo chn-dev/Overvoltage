@@ -60,6 +60,8 @@ public:
    virtual void handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
    virtual void handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
 
+   void handlePitchbend( int midiChannel, double v );
+
    std::list<SamplerEngine::Sample *> &samples();
    const std::list<SamplerEngine::Sample *> &constSamples() const;
    SamplerEngine::Engine *samplerEngine() const;
