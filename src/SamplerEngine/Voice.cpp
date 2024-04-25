@@ -137,10 +137,11 @@ void Voice::handleModulations( double sampleRate)
       for( size_t nSlot = 0; nSlot < m_pSample->getModMatrix()->numSlots(); nSlot++ )
       {
          ModMatrix::ModSlot *pSlot = m_pSample->getModMatrix()->getSlot( nSlot );
+         bool isEnabled = pSlot->isEnabled();
          ModMatrix::ModSrc modSrc = pSlot->getSrc();
          ModMatrix::ModSrc modSrc2 = pSlot->getMod();
          ModMatrix::ModDest modDest = pSlot->getDest();
-         if( modSrc != ModMatrix::ModSrc_None && modDest != ModMatrix::ModDest_None )
+         if( isEnabled && modSrc != ModMatrix::ModSrc_None && modDest != ModMatrix::ModDest_None )
          {
             ModMatrix::ModDestInfo modDestInfo = modDest;
             double modVal = getModValue( modSrc, 0.0 );
@@ -208,7 +209,7 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
    float *pRight = right.data();;
 
    double keytrack = (double)m_pSample->getKeytrack() / 100.0;
-   double pitchbend = m_pPart->getPitchbend();
+   double pitchbend = m_pPart->getPitchbend() * m_pSample->getPitchbendRange();;
    double noteOfs = m_PitchMod + pitchbend;
    double f = (double)m_pSample->getWave()->sampleRate() *
       pow( 2.0,
