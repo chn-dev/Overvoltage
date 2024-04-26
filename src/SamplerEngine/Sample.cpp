@@ -27,6 +27,11 @@ Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
 {
    m_pAEG = new ENV();
    m_pEG2 = new ENV();
+
+   for( int i = 0; i < NUM_LFO; i++ )
+   {
+      m_LFOs.push_back( new LFO() );
+   }
    m_pFilter = new Filter();
    m_pModMatrix = new ModMatrix();
 }
@@ -63,6 +68,12 @@ Sample::~Sample()
    delete m_pEG2;
    delete m_pFilter;
    delete m_pModMatrix;
+
+   for( LFO *pLFO : m_LFOs )
+   {
+      delete pLFO;
+   }
+   m_LFOs.clear();
 }
 
 
@@ -131,6 +142,15 @@ juce::XmlElement *Sample::toXml() const
    peEG2->setAttribute( "type", "eg2" );
    peSample->addChildElement( peEG2 );
 
+   for( size_t i = 0; i < m_LFOs.size(); i++ )
+   {
+      if( m_LFOs[i] )
+      {
+         juce::XmlElement *peLFO = m_LFOs[i]->toXml();
+         peLFO->setAttribute( "num", stdformat( "{}", i ) );
+      }
+   }
+
    juce::XmlElement *peFilter = m_pFilter->toXml();
    peSample->addChildElement( peFilter );
 
@@ -167,6 +187,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
    int outputBus = 0;
    ENV *pAEG = nullptr;
    ENV *pEG2 = nullptr;
+   std::vector<LFO *> lfos;
    Filter *pFilter = nullptr;
    ModMatrix *pModMatrix = nullptr;
    WaveFile *pWave = nullptr;
@@ -236,6 +257,17 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       {
          pModMatrix = ModMatrix::fromXml( pChild );
       } else
+      if( tagName == "lfo" )
+      {
+         size_t num = (size_t)std::stoi( pChild->getStringAttribute( "num" ).toStdString() );
+         LFO *pLFO = LFO::fromXml( pChild );
+         if( pLFO )
+         {
+            if( num >= lfos.size() )
+               lfos.resize( num );
+            lfos[num] = pLFO;
+         }
+      } else
       if( tagName == "envelope" )
       {
          std::string envType = pChild->getStringAttribute( "type" ).toStdString();
@@ -279,6 +311,19 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       pModMatrix = new ModMatrix();
    }
 
+   if( lfos.size() < NUM_LFO )
+   {
+      lfos.resize( NUM_LFO );
+   }
+
+   for( size_t i = 0; i < lfos.size(); i++ )
+   {
+      if( !lfos[i] )
+      {
+         lfos[i] = new LFO();
+      }
+   }
+
    if( pWave && !name.empty() &&
        baseNote >= 0 && minNote >= 0 &&
        maxNote >= 0 && minVelocity >= 0 &&
@@ -291,6 +336,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       pSample->m_Name = name;
       pSample->m_pAEG = pAEG;
       pSample->m_pEG2 = pEG2;
+      pSample->m_LFOs = lfos;
       pSample->m_pFilter = pFilter;
       pSample->m_pModMatrix = pModMatrix;
       pSample->m_pWave = pWave;
@@ -336,6 +382,11 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
          delete pWave;
       }
 
+      for( LFO *pLFO : lfos )
+      {
+         delete pLFO;
+      }
+
       return( nullptr );
    }
 }
@@ -350,6 +401,21 @@ ENV *Sample::getAEG() const
 ENV *Sample::getEG2() const
 {
    return( m_pEG2 );
+}
+
+
+LFO *Sample::getLFO( size_t n ) const
+{
+   if( n >= m_LFOs.size() )
+      return( nullptr );
+
+   return( m_LFOs[n] );
+}
+
+
+size_t Sample::getNumLFOs() const
+{
+   return( m_LFOs.size() );
 }
 
 

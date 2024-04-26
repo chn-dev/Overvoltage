@@ -8,6 +8,7 @@
 #include "UISectionNameRanges.h"
 #include "UISectionAEG.h"
 #include "UISectionEG2.h"
+#include "UISectionLFO.h"
 #include "UISectionFilter.h"
 #include "UISectionOutput.h"
 #include "UISectionModMatrix.h"
@@ -32,6 +33,7 @@ namespace SamplerGUI
       SamplerGUI::UISectionNameRanges *m_pUISectionNameRanges;
       SamplerGUI::UISectionAEG *m_pUISectionAEG;
       SamplerGUI::UISectionEG2 *m_pUISectionEG2;
+      SamplerGUI::UISectionLFO *m_pUISectionLFO;
       SamplerGUI::UISectionFilter *m_pUISectionFilter;
       SamplerGUI::UISectionOutput *m_pUISectionOutput;
       SamplerGUI::UISectionModMatrix *m_pUISectionModMatrix;

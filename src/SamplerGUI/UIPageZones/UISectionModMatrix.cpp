@@ -94,7 +94,7 @@ UISectionModMatrix::UIModSlot::UIModSlot( UISectionModMatrix *pSectionModMatrix,
    c.push_back( m_pcbMathFunc );
    m_pcbMathFunc->setBounds( xp, yp, 72, 18 );
 
-   for( int i = 0; i < c.size(); i++ )
+   for( size_t i = 0; i < c.size(); i++ )
    {
       juce::Component *pC = c[i];
       if( i == 0 )

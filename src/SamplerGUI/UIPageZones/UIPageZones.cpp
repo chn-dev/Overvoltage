@@ -65,6 +65,14 @@ UIPageZones::UIPageZones( PluginEditor *pEditor ) :
       ( editorSectionHeight / 3 ) - ( margin * 2 ) );
    addAndMakeVisible( m_pUISectionNameRanges );
 
+   m_pUISectionLFO = new SamplerGUI::UISectionLFO( this, "LFO" );
+   m_pUISectionLFO->setBounds(
+      xStart + ( ( editorSectionWidth / 4 ) * 1 ) + margin,
+      yStart + ( editorSectionHeight / 3 ) + margin,
+      ( ( editorSectionWidth * 2 ) / 4 ) - ( margin * 2 ),
+      ( editorSectionHeight / 3 ) - ( margin * 2 ) );
+   addAndMakeVisible( m_pUISectionLFO );
+
    // Third row
    m_pUISectionAEG = new SamplerGUI::UISectionAEG( this );
    m_pUISectionAEG->setBounds(
@@ -100,6 +108,7 @@ UIPageZones::~UIPageZones()
    delete m_pUISectionWaveView;
    delete m_pUISectionSample;
    delete m_pUISectionNameRanges;
+   delete m_pUISectionLFO;
    delete m_pUISectionAEG;
    delete m_pUISectionEG2;
    delete m_pUISectionFilter;

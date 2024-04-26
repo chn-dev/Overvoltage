@@ -205,9 +205,9 @@ void PluginProcessor::processBlock( juce::AudioBuffer<float>& buffer,
       if( msg.isController() )
       {
          // ccNum == 1 -> modwheel
-         int ccNum = msg.getControllerNumber();
+         // int ccNum = msg.getControllerNumber();
          // ccVal = 0..127
-         int ccVal = msg.getControllerValue();
+         // int ccVal = msg.getControllerValue();
       }
    }
 

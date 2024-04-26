@@ -8,8 +8,11 @@
 
 #include "WaveFile.h"
 #include "ENV.h"
+#include "LFO.h"
 #include "Filter.h"
 #include "ModMatrix.h"
+
+#define NUM_LFO 3
 
 //==============================================================================
 namespace SamplerEngine
@@ -63,6 +66,8 @@ namespace SamplerEngine
       Sample::PlayMode getPlayMode() const;
       ENV *getAEG() const;
       ENV *getEG2() const;
+      LFO *getLFO( size_t n ) const;
+      size_t getNumLFOs() const;
       Filter *getFilter() const;
       ModMatrix *getModMatrix() const;
       int getOutputBus() const;
@@ -81,6 +86,8 @@ namespace SamplerEngine
       int m_OutputBus;
       ENV *m_pAEG;
       ENV *m_pEG2;
+      std::vector<LFO *> m_LFOs;
+      LFO *m_pLFO2;
       WaveFile *m_pWave;
       PlayMode m_PlayMode;
       Filter *m_pFilter;

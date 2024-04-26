@@ -83,7 +83,7 @@ void UISection::CycleComponent::setItems( double minVal, double maxVal, double s
 
 void UISection::CycleComponent::setCurrentItem( int item )
 {
-   if( item < 0 || item >= m_Items.size() )
+   if( item < 0 || item >= (int)m_Items.size() )
    {
       setText( "", juce::dontSendNotification );
       m_CurrentItem = -1;

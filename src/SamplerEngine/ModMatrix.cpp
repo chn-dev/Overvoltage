@@ -354,6 +354,9 @@ std::set<ModMatrix::ModSrc> ModMatrix::allModSrc()
       ModSrc_Velocity,
       ModSrc_AbsNote,
       ModSrc_RelNote,
+      ModSrc_LFO1,
+      ModSrc_LFO2,
+      ModSrc_LFO3,
       ModSrc_None
    } ) );
 }
@@ -391,6 +394,12 @@ std::string ModMatrix::toString( ModSrc v )
          return( "AEG" );
       case( ModSrc_EG2 ):
          return( "EG2" );
+      case( ModSrc_LFO1 ):
+         return( "LFO1" );
+      case( ModSrc_LFO2 ):
+         return( "LFO2" );
+      case( ModSrc_LFO3 ):
+         return( "LFO3" );
       case( ModSrc_Velocity ):
          return( "Velocity" );
       case( ModSrc_AbsNote ):
@@ -486,6 +495,15 @@ ModMatrix::ModSrc ModMatrix::modSrcFromString( const std::string &s )
    else
    if( util::trim( util::toLower( s ) ) == "eg2" )
       return( ModSrc_EG2 );
+   else
+   if( util::trim( util::toLower( s ) ) == "lfo1" )
+      return( ModSrc_LFO1 );
+   else
+   if( util::trim( util::toLower( s ) ) == "lfo2" )
+      return( ModSrc_LFO2 );
+   else
+   if( util::trim( util::toLower( s ) ) == "lfo3" )
+      return( ModSrc_LFO3 );
    else
    if( util::trim( util::toLower( s ) ) == "velocity" )
       return( ModSrc_Velocity );

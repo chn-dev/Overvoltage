@@ -30,6 +30,19 @@ Voice::Voice( const Part *pPart, const Sample *pSample, int note, int velocity )
    m_pEG2 = new ENV( *pSample->getEG2() );
    m_pEG2->noteOn();
 
+   for( size_t i = 0; i < pSample->getNumLFOs(); i++ )
+   {
+      if( pSample->getLFO( i ) )
+      {
+         LFO *pLFO = new LFO( *pSample->getLFO( i ) );
+         pLFO->noteOn();
+         m_LFOs.push_back( pLFO );
+      } else
+      {
+         m_LFOs.push_back( nullptr );
+      }
+   }
+
    m_pFilter = new Filter( *pSample->getFilter() );
 }
 
@@ -39,6 +52,15 @@ Voice::~Voice()
    delete m_pAEG;
    delete m_pEG2;
    delete m_pFilter;
+
+   for( size_t i = 0; i < m_LFOs.size(); i++ )
+   {
+      if( m_LFOs[i] )
+      {
+         delete m_LFOs[i];
+      }
+   }
+   m_LFOs.clear();
 }
 
 
@@ -50,6 +72,14 @@ void Voice::noteOff()
    m_NoteIsOn = false;
    m_pAEG->noteOff();
    m_pEG2->noteOff();
+
+   for( size_t i = 0; i < m_LFOs.size(); i++ )
+   {
+      if( m_LFOs[i] )
+      {
+         m_LFOs[i]->noteOff();
+      }
+   }
 }
 
 
@@ -114,6 +144,15 @@ double Voice::getModValue( ModMatrix::ModSrc modSrc, double defaultValue ) const
    else
    if( modSrc == ModMatrix::ModSrc_EG2 )
       return( m_pEG2->getValue() );
+   else
+   if( modSrc == ModMatrix::ModSrc_LFO1 )
+      return( m_LFOs[0]->getValue() );
+   else
+   if( modSrc == ModMatrix::ModSrc_LFO2 )
+      return( m_LFOs[1]->getValue() );
+   else
+   if( modSrc == ModMatrix::ModSrc_LFO3 )
+      return( m_LFOs[2]->getValue() );
    else
    if( modSrc == ModMatrix::ModSrc_Velocity )
       return( (double)m_Velocity / 127.0f );
@@ -185,8 +224,14 @@ void Voice::handleModulations( double sampleRate)
       }
 
       double secs = (double)MODSTEP_SAMPLES / sampleRate;
+
       m_pAEG->step( secs );
       m_pEG2->step( secs );
+
+      for( size_t i = 0; i < m_LFOs.size(); i++ )
+      {
+         m_LFOs[i]->step( secs );
+      }
    }
    m_nSample++;
 }

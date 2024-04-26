@@ -35,6 +35,7 @@ namespace SamplerEngine
       const Sample *m_pSample;
       ENV *m_pAEG;
       ENV *m_pEG2;
+      std::vector<LFO *> m_LFOs;
       Filter *m_pFilter;
       bool m_NoteIsOn;
       int m_Note;
