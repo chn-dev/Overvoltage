@@ -185,6 +185,13 @@ bool PluginProcessor::outputBusReady( juce::AudioBuffer<float>& buffer, int n ) 
 void PluginProcessor::processBlock( juce::AudioBuffer<float>& buffer,
                                               juce::MidiBuffer& midiMessages )
 {
+   auto tmpBPM = getPlayHead()->getPosition()->getBpm();
+   double bpm = 120.0;
+   if( tmpBPM.hasValue() )
+   {
+      bpm = (double)*tmpBPM;
+   }
+
    for (const juce::MidiMessageMetadata metadata : midiMessages)
    {
       const juce::MidiMessage msg = metadata.getMessage();
@@ -208,6 +215,11 @@ void PluginProcessor::processBlock( juce::AudioBuffer<float>& buffer,
          // int ccNum = msg.getControllerNumber();
          // ccVal = 0..127
          // int ccVal = msg.getControllerValue();
+      } else
+      if( msg.isTempoMetaEvent() )
+      {
+         double t = msg.getTempoSecondsPerQuarterNote();
+         printf("\n");
       }
    }
 
