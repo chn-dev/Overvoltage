@@ -199,7 +199,7 @@ void LFO::step( double s, double bpm )
       } else
       if( m_Period <= 1.0 )
       {
-         m_Value = -1.0 + ( 4.0 * ( m_Period - 0.25 ) );
+         m_Value = -1.0 + ( 4.0 * ( m_Period - 0.75 ) );
       }
    } else
    if( m_Waveform == Waveform_Pulse )

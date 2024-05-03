@@ -118,7 +118,7 @@ void UISectionLFO::buttonClicked( Button *pButton )
 
    if( pButton == m_pbSync )
    {
-      size_t nLFO = getCurrentLFO();
+      nLFO = getCurrentLFO();
       for( SamplerEngine::Sample *pSample : samples() )
       {
          SamplerEngine::LFO *pLFO = pSample->getLFO( nLFO );
