@@ -178,7 +178,7 @@ void LFO::step( double s, double bpm )
    double freq = m_Frequency;
    if( m_SyncEnabled )
    {
-      freq = 60.0 / ( bpm * m_SyncBeats );
+      freq = 240.0 / ( bpm * m_SyncBeats );
    }
 
    m_Period += ( s * freq );
