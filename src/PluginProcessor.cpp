@@ -219,6 +219,11 @@ void PluginProcessor::processBlock( juce::AudioBuffer<float>& buffer,
          // int ccNum = msg.getControllerNumber();
          // ccVal = 0..127
          // int ccVal = msg.getControllerValue();
+      } else
+      if( msg.isTempoMetaEvent() )
+      {
+         double t = msg.getTempoSecondsPerQuarterNote();
+         printf("\n");
       }
    }
 
