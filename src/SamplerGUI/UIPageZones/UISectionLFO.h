@@ -43,6 +43,8 @@ namespace SamplerGUI
 
       juce::Label *m_plFrequency;
       juce::Slider *m_psFrequency;
+
+      juce::TextButton *m_pbSync;
    };
 }
 #endif

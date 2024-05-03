@@ -36,17 +36,22 @@ UISectionLFO::UISectionLFO( UIPage *pUIPage, std::string label ) :
    addAndMakeVisible( m_plFrequency );
 
    m_psFrequency = new juce::Slider( "Freq" );
-   m_psFrequency->setRange( 0.01, 50.0, 0.01 );
    m_psFrequency->setSliderStyle( juce::Slider::LinearHorizontal );
    m_psFrequency->setSliderSnapsToMousePosition( false );
    m_psFrequency->setLookAndFeel( &m_SliderLAF );
    m_psFrequency->addListener( this );
    m_psFrequency->setTextBoxStyle( juce::Slider::TextBoxRight, true, 48, 16 );
-   m_psFrequency->setBounds( 84 + 120 + 34, 27, 172, 12 );
-   m_psFrequency->textFromValueFunction = []( double v ) { return( stdformat( "{:.2f}Hz", v ) ); };
+   m_psFrequency->setBounds( 84 + 120 + 34, 27, 122, 12 );
    m_psFrequency->setValue( 1.0 );
    addAndMakeVisible( m_psFrequency );
 
+   m_pbSync = new juce::TextButton( "sync" );
+   m_pbSync->setToggleable( true );
+   m_pbSync->setClickingTogglesState( true );
+   m_pbSync->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
+   m_pbSync->addListener( this );
+   m_pbSync->setBounds( 84 + 120 + 34 + 122 + 4, 24, 38, 16 );
+   addAndMakeVisible( m_pbSync );
 
    setCurrentLFO( 0 );
 }
@@ -64,6 +69,7 @@ UISectionLFO::~UISectionLFO()
    delete m_pcbWaveform;
    delete m_plFrequency;
    delete m_psFrequency;
+   delete m_pbSync;
 }
 
 
@@ -71,11 +77,22 @@ void UISectionLFO::sliderValueChanged( Slider *pSlider )
 {
    if( m_psFrequency == pSlider )
    {
-      double freq = m_psFrequency->getValue();
+      double value = m_psFrequency->getValue();
       size_t nLFO = getCurrentLFO();
+      bool syncEnabled = m_pbSync->getToggleState();
       for( SamplerEngine::Sample *pSample : samples() )
       {
-         pSample->getLFO( nLFO )->setFrequency( freq );
+         if( pSample->getLFO( nLFO )->getSyncEnabled() == syncEnabled )
+         {
+            if( syncEnabled )
+            {
+               pSample->getLFO( nLFO )->setSyncBeats( value );
+
+            } else
+            {
+               pSample->getLFO( nLFO )->setFrequency( value );
+            }
+         }
       }
    }
 }
@@ -96,6 +113,32 @@ void UISectionLFO::buttonClicked( Button *pButton )
    if( nLFO != (size_t)-1 )
    {
       setCurrentLFO( nLFO );
+   }
+
+
+   if( pButton == m_pbSync )
+   {
+      size_t nLFO = getCurrentLFO();
+      for( SamplerEngine::Sample *pSample : samples() )
+      {
+         SamplerEngine::LFO *pLFO = pSample->getLFO( nLFO );
+         pLFO->setSyncEnabled( m_pbSync->getToggleState() );
+      }
+
+      m_psFrequency->removeListener( this );
+      SamplerEngine::LFO *pLFO = sample()->getLFO( nLFO );
+      if( m_pbSync->getToggleState() )
+      {
+         m_psFrequency->setRange( 0.1, 10.0, 0.1 );
+         m_psFrequency->textFromValueFunction = []( double v ) { return( stdformat( "{:.1f}b", v ) ); };
+         m_psFrequency->setValue( pLFO->getSyncBeats(), dontSendNotification );
+      } else
+      {
+         m_psFrequency->setRange( 0.01, 10.0, 0.01 );
+         m_psFrequency->textFromValueFunction = []( double v ) { return( stdformat( "{:.2f}Hz", v ) ); };
+         m_psFrequency->setValue( pLFO->getFrequency(), dontSendNotification );
+      }
+      m_psFrequency->addListener( this );
    }
 }
 
@@ -130,11 +173,23 @@ void UISectionLFO::samplesUpdated()
    m_pcbWaveform->setVisible( pSample != nullptr );
    m_plFrequency->setVisible( pSample != nullptr );
    m_psFrequency->setVisible( pSample != nullptr );
+   m_pbSync->setVisible( pSample != nullptr );
 
    if( pSample )
    {
       m_pcbWaveform->setSelectedId( pSample->getLFO( getCurrentLFO() )->getWaveform(), dontSendNotification );
-      m_psFrequency->setValue( pSample->getLFO( getCurrentLFO() )->getFrequency(), dontSendNotification );
+      SamplerEngine::LFO *pLFO = pSample->getLFO( getCurrentLFO() );
+      if( pLFO->getSyncEnabled() )
+      {
+         m_psFrequency->setRange( 0.1, 10.0, 0.1 );
+         m_psFrequency->textFromValueFunction = []( double v ) { return( stdformat( "{:.1f}b", v ) ); };
+         m_psFrequency->setValue( pLFO->getSyncBeats(), dontSendNotification );
+      } else
+      {
+         m_psFrequency->setRange( 0.01, 10.0, 0.01 );
+         m_psFrequency->textFromValueFunction = []( double v ) { return( stdformat( "{:.2f}Hz", v ) ); };
+         m_psFrequency->setValue( pLFO->getFrequency(), dontSendNotification );
+      }
    }
 }
 

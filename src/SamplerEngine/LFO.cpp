@@ -9,7 +9,9 @@ LFO::LFO() :
    m_Value( 0.0 ),
    m_Period( 0.0 ),
    m_Waveform( LFO::Waveform_Triangle ),
-   m_Frequency( 1.0 )
+   m_Frequency( 1.0 ),
+   m_SyncEnabled( false ),
+   m_SyncBeats( 4.0 )
 {
 }
 
@@ -18,7 +20,9 @@ LFO::LFO( const LFO &d ) :
    m_Value( 0.0 ),
    m_Period( 0.0 ),
    m_Waveform( d.m_Waveform ),
-   m_Frequency( d.m_Frequency )
+   m_Frequency( d.m_Frequency ),
+   m_SyncEnabled( d.m_SyncEnabled ),
+   m_SyncBeats( d.m_SyncBeats )
 {
 }
 
@@ -32,6 +36,8 @@ void LFO::getSettings( const LFO &d )
 {
    m_Waveform = d.m_Waveform;
    m_Frequency = d.m_Frequency;
+   m_SyncEnabled = d.m_SyncEnabled;
+   m_SyncBeats = d.m_SyncBeats;
 }
 
 
@@ -62,6 +68,30 @@ double LFO::getFrequency() const
 void LFO::setFrequency( double f )
 {
    m_Frequency = f;
+}
+
+
+void LFO::setSyncEnabled( bool e )
+{
+   m_SyncEnabled = e;
+}
+
+
+bool LFO::getSyncEnabled() const
+{
+   return( m_SyncEnabled );
+}
+
+
+void LFO::setSyncBeats( double beats )
+{
+   m_SyncBeats = beats;
+}
+
+
+double LFO::getSyncBeats() const
+{
+   return( m_SyncBeats );
 }
 
 
@@ -138,7 +168,13 @@ LFO::Waveform LFO::waveformFromString( const std::string &wf )
 
 void LFO::step( double s, double bpm )
 {
-   m_Period += ( s * m_Frequency );
+   double freq = m_Frequency;
+   if( m_SyncEnabled )
+   {
+      freq = 60.0 / ( bpm * m_SyncBeats );
+   }
+
+   m_Period += ( s * freq );
    m_Period -= floor( m_Period );
 
    if( m_Waveform == Waveform_Sine )
@@ -193,6 +229,14 @@ LFO *LFO::fromXml( const juce::XmlElement *pe )
       if( tagName == "frequency" )
       {
          pLFO->m_Frequency = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "syncenabled" )
+      {
+         pLFO->m_SyncEnabled = util::toLower( util::trim( pChild->getChildElement( 0 )->getText().toStdString() ) ) == "true";
+      } else
+      if( tagName == "syncbeats" )
+      {
+         pLFO->m_SyncBeats = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
       }
    }
 
@@ -211,6 +255,14 @@ juce::XmlElement *LFO::toXml() const
    juce::XmlElement *peFrequency = new juce::XmlElement( "frequency" );
    peFrequency->addTextElement( stdformat( "{}", m_Frequency ) );
    pe->addChildElement( peFrequency );
+
+   juce::XmlElement *peSyncEnabled = new juce::XmlElement( "syncenabled" );
+   peSyncEnabled->addTextElement( m_SyncEnabled ? "true" : "false" );
+   pe->addChildElement( peSyncEnabled );
+
+   juce::XmlElement *peSyncBeats = new juce::XmlElement( "syncbeats" );
+   peSyncBeats->addTextElement( stdformat( "{:.2f}", m_SyncBeats ) );
+   pe->addChildElement( peSyncBeats );
 
    return( pe );
 }

@@ -34,6 +34,11 @@ namespace SamplerEngine
       double getFrequency() const;
       void setFrequency( double f );
 
+      void setSyncEnabled( bool e );
+      bool getSyncEnabled() const;
+      void setSyncBeats( double beats );
+      double getSyncBeats() const;
+
       void noteOn();
       void noteOff();
 
@@ -53,6 +58,8 @@ namespace SamplerEngine
       double m_Period;
       Waveform m_Waveform;
       double m_Frequency;
+      bool m_SyncEnabled;
+      double m_SyncBeats;
    };
 }
 #endif
