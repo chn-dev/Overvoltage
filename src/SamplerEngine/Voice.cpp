@@ -15,6 +15,7 @@ Voice::Voice( const Part *pPart, const Sample *pSample, int note, int velocity )
    m_Note( note ),
    m_PitchMod( 0.0 ),
    m_PanMod( 0.0 ),
+   m_AmpMod( 0.0 ),
    m_Velocity( velocity ),
    m_Ofs( 0.0 ),
    m_nSample( 0 )
@@ -221,6 +222,9 @@ void Voice::handleModulations( double sampleRate, double bpm )
          else
          if( modDest == ModMatrix::ModDest_Pan )
             m_PanMod = modVal;
+         else
+         if( modDest == ModMatrix::ModDest_Amp )
+            m_AmpMod = modVal;
       }
 
       double secs = (double)MODSTEP_SAMPLES / sampleRate;
@@ -437,10 +441,15 @@ float Voice::getLeftAmp( float pan )
    if( pan > 1.0f )
       pan = 1.0f;
 
-   if( pan < 0.0f )
-      return( 1.0f );
+   float amp = ( pan < 0.0 ? 1.0 : 1.0 - pan ) + ( m_AmpMod / 100.0 );
+
+   if( amp < 0 )
+      amp = 0;
    else
-      return( 1.0f - pan );
+   if( amp > 1.0 )
+      amp = 1.0;
+
+   return( amp );
 }
 
 
@@ -449,11 +458,16 @@ float Voice::getRightAmp( float pan )
    if( pan < -1.0f )
       pan = -1.0f;
    else
-      if( pan > 1.0f )
-         pan = 1.0f;
+   if( pan > 1.0f )
+      pan = 1.0f;
 
-   if( pan > 0.0f )
-      return( 1.0f );
+   float amp = ( pan > 0.0 ? 1.0 : 1.0 + pan ) + ( m_AmpMod / 100.0 );
+
+   if( amp < 0.0 )
+      amp = 0.0;
    else
-      return( 1.0f + pan );
+   if( amp > 1.0 )
+      amp = 1.0;
+
+   return( amp );
 }

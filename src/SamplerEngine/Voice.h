@@ -28,8 +28,8 @@ namespace SamplerEngine
 
    private:
       double getPanning() const;
-      static float getLeftAmp( float pan );
-      static float getRightAmp( float pan );
+      float getLeftAmp( float pan );
+      float getRightAmp( float pan );
 
       const Part *m_pPart;
       const Sample *m_pSample;
@@ -41,6 +41,7 @@ namespace SamplerEngine
       int m_Note;
       double m_PitchMod;
       double m_PanMod;
+      double m_AmpMod;
       int m_Velocity;
       double m_Ofs;
       unsigned long m_nSample;

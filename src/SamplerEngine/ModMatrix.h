@@ -28,7 +28,8 @@ namespace SamplerEngine
          ModDest_FilterCutoff,
          ModDest_FilterResonance,
          ModDest_Pitch,
-         ModDest_Pan
+         ModDest_Pan,
+         ModDest_Amp
       };
 
       enum MathFunc
