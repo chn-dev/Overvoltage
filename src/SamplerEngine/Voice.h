@@ -16,14 +16,14 @@ namespace SamplerEngine
       Voice( const Part *pPart, const Sample *pSample, int note, int velocity );
       ~Voice();
 
-      bool process( float *pLeft, float *pRight, size_t nSamples, double sampleRate );
+      bool process( float *pLeft, float *pRight, size_t nSamples, double sampleRate, double bpm );
       const Sample *sample() const;
       int midiNote() const;
       void noteOff();
 
    protected:
       bool handleLoop();
-      void handleModulations( double sampleRate );
+      void handleModulations( double sampleRate, double bpm );
       double getModValue( ModMatrix::ModSrc modSrc, double defaultValue ) const;
 
    private:

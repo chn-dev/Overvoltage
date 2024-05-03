@@ -167,7 +167,7 @@ double Voice::getModValue( ModMatrix::ModSrc modSrc, double defaultValue ) const
 }
 
 
-void Voice::handleModulations( double sampleRate)
+void Voice::handleModulations( double sampleRate, double bpm )
 {
    if( m_nSample % MODSTEP_SAMPLES == 0 )
    {
@@ -225,12 +225,12 @@ void Voice::handleModulations( double sampleRate)
 
       double secs = (double)MODSTEP_SAMPLES / sampleRate;
 
-      m_pAEG->step( secs );
-      m_pEG2->step( secs );
+      m_pAEG->step( secs, bpm );
+      m_pEG2->step( secs, bpm );
 
       for( size_t i = 0; i < m_LFOs.size(); i++ )
       {
-         m_LFOs[i]->step( secs );
+         m_LFOs[i]->step( secs, bpm );
       }
    }
    m_nSample++;
@@ -243,7 +243,7 @@ double Voice::getPanning() const
 }
 
 
-bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
+bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate, double bpm )
 {
    std::vector<float> left;
    std::vector<float> right;
@@ -270,9 +270,13 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
    uint8_t *pData = m_pSample->getWave()->data8();
    float velocity = (float)m_Velocity / 127.0f;
 
-   m_pFilter->setCutoff( m_pSample->getFilter()->getCutoff() );
-   m_pFilter->setResonance( m_pSample->getFilter()->getResonance() );
-   m_pFilter->setType( m_pSample->getFilter()->getType() );
+   m_pFilter->getSettings( *m_pSample->getFilter() );
+   m_pAEG->getSettings( *m_pSample->getAEG() );
+   m_pEG2->getSettings( *m_pSample->getEG2() );
+   for( size_t i = 0; i < m_LFOs.size(); i++ )
+   {
+      m_LFOs[i]->getSettings( *m_pSample->getLFO( i ) );
+   }
 
    if( m_pSample->getWave()->numBits() == 16 )
    {
@@ -283,7 +287,7 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
             if( !handleLoop() )
                return( false );
 
-            handleModulations( sampleRate );
+            handleModulations( sampleRate, bpm );
 
             if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
                return( false );
@@ -317,7 +321,7 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
             if( !handleLoop() )
                return( false );
 
-            handleModulations( sampleRate );
+            handleModulations( sampleRate, bpm );
 
             if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
                return( false );
@@ -353,7 +357,7 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
             if( !handleLoop() )
                return( false );
 
-            handleModulations( sampleRate );
+            handleModulations( sampleRate, bpm );
 
             if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
                return( false );
@@ -387,7 +391,7 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate )
             if( !handleLoop() )
                return( false );
 
-            handleModulations( sampleRate );
+            handleModulations( sampleRate, bpm );
 
             if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
                return( false );

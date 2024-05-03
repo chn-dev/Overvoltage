@@ -24,6 +24,8 @@ namespace SamplerEngine
       LFO( const LFO &d );
       ~LFO();
 
+      void getSettings( const LFO &d );
+
       double getValue() const;
 
       Waveform getWaveform() const;
@@ -39,7 +41,7 @@ namespace SamplerEngine
       static Waveform waveformFromString( const std::string &wf );
       static std::set<Waveform> allWaveforms();
 
-      void step( double s );
+      void step( double s, double bpm );
 
       static LFO *fromXml( const juce::XmlElement *pe );
       juce::XmlElement *toXml() const;

@@ -20,6 +20,8 @@ namespace SamplerEngine
       Filter( const Filter &d );
       ~Filter();
 
+      void getSettings( const Filter &d );
+
       void setCutoff( double v );
       void setResonance( double v );
       void setType( Type type );

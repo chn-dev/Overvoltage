@@ -28,6 +28,13 @@ LFO::~LFO()
 }
 
 
+void LFO::getSettings( const LFO &d )
+{
+   m_Waveform = d.m_Waveform;
+   m_Frequency = d.m_Frequency;
+}
+
+
 double LFO::getValue() const
 {
    return( m_Value );
@@ -129,7 +136,7 @@ LFO::Waveform LFO::waveformFromString( const std::string &wf )
 }
 
 
-void LFO::step( double s )
+void LFO::step( double s, double bpm )
 {
    m_Period += ( s * m_Frequency );
    m_Period -= floor( m_Period );

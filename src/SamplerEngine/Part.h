@@ -32,7 +32,7 @@ namespace SamplerEngine
       static Part *fromXml( const juce::XmlElement *pe );
       juce::XmlElement *toXml() const;
 
-      bool process( std::vector<OutputBus> &buses, double sampleRate );
+      bool process( std::vector<OutputBus> &buses, double sampleRate, double bpm );
 
    private:
       std::list<Sample *> getSamplesByMidiNoteAndVelocity( int note, int vel ) const;

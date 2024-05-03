@@ -18,6 +18,15 @@ ENV::ENV() :
 }
 
 
+void ENV::getSettings( const ENV &d )
+{
+   m_Attack = d.m_Attack;
+   m_Decay = d.m_Decay;
+   m_Sustain = d.m_Sustain;
+   m_Release = d.m_Release;
+}
+
+
 ENV::~ENV()
 {
 }
@@ -99,7 +108,7 @@ double ENV::paramToDuration( double p )
 }
 
 
-void ENV::step( double s )
+void ENV::step( double s, double bpm )
 {
    if( m_State == StateAttack )
    {

@@ -29,7 +29,7 @@ namespace SamplerEngine
       Engine();
       ~Engine();
 
-      bool process( std::vector<OutputBus> &buses, double sampleRate );
+      bool process( std::vector<OutputBus> &buses, double sampleRate, double bpm );
 
       void deleteSample( size_t part, Sample *pSample );
       std::list<Sample *> samples( size_t nPart ) const;

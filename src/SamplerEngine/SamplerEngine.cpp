@@ -21,12 +21,12 @@ Engine::~Engine()
 }
 
 
-bool Engine::process( std::vector<OutputBus> &buses, double sampleRate )
+bool Engine::process( std::vector<OutputBus> &buses, double sampleRate, double bpm )
 {
    bool update = false;
    for( Part *pPart : m_Parts )
    {
-      update = update || pPart->process( buses, sampleRate );
+      update = update || pPart->process( buses, sampleRate, bpm );
    }
 
    return( update );

@@ -17,7 +17,7 @@ Part::~Part()
 }
 
 
-bool Part::process( std::vector<OutputBus> &buses, double sampleRate )
+bool Part::process( std::vector<OutputBus> &buses, double sampleRate, double bpm )
 {
    std::set<Voice *> stoppedVoices;
    for( auto k = m_Voices.begin(); k != m_Voices.end(); k++ )
@@ -45,7 +45,7 @@ bool Part::process( std::vector<OutputBus> &buses, double sampleRate )
                float *pLeft = buses[busNum].getWritePointers()[0];
                float *pRight = buses[busNum].getWritePointers()[1];
 
-               if( !pVoice->process( pLeft, pRight, buses[busNum].getNumSamples(), sampleRate ) )
+               if( !pVoice->process( pLeft, pRight, buses[busNum].getNumSamples(), sampleRate, bpm ) )
                {
                   stoppedVoices.insert( pVoice );
                }

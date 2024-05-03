@@ -48,6 +48,14 @@ Filter::~Filter()
 }
 
 
+void Filter::getSettings( const Filter &d )
+{
+   m_Type = d.m_Type;
+   m_Cutoff = d.m_Cutoff;
+   m_Resonance = d.m_Resonance;
+}
+
+
 void Filter::setType( Filter::Type type )
 {
    m_Type = type;

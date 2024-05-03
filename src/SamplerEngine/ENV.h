@@ -13,6 +13,8 @@ namespace SamplerEngine
       ENV();
       ~ENV();
 
+      void getSettings( const ENV &d );
+
       enum State
       {
          StateStart,
@@ -43,7 +45,7 @@ namespace SamplerEngine
       void noteOn();
       void noteOff();
 
-      void step( double s );
+      void step( double s, double bpm );
 
       static ENV *fromXml( const juce::XmlElement *pe );
       juce::XmlElement *toXml() const;
