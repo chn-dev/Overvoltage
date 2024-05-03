@@ -148,6 +148,7 @@ juce::XmlElement *Sample::toXml() const
       {
          juce::XmlElement *peLFO = m_LFOs[i]->toXml();
          peLFO->setAttribute( "num", stdformat( "{}", i ) );
+         peSample->addChildElement( peLFO );
       }
    }
 
@@ -263,8 +264,8 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
          LFO *pLFO = LFO::fromXml( pChild );
          if( pLFO )
          {
-            if( num >= lfos.size() )
-               lfos.resize( num );
+            if( ( num + 1 ) >= lfos.size() )
+               lfos.resize( num + 1 );
             lfos[num] = pLFO;
          }
       } else
