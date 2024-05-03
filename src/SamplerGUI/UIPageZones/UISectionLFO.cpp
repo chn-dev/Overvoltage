@@ -179,6 +179,7 @@ void UISectionLFO::samplesUpdated()
    {
       m_pcbWaveform->setSelectedId( pSample->getLFO( getCurrentLFO() )->getWaveform(), dontSendNotification );
       SamplerEngine::LFO *pLFO = pSample->getLFO( getCurrentLFO() );
+      m_pbSync->setToggleState( pLFO->getSyncEnabled(), dontSendNotification );
       if( pLFO->getSyncEnabled() )
       {
          m_psFrequency->setRange( 0.1, 10.0, 0.1 );

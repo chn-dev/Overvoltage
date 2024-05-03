@@ -114,6 +114,7 @@ std::set<LFO::Waveform> LFO::allWaveforms()
       Waveform_Pulse,
       Waveform_Rectangle,
       Waveform_Sawtooth,
+      Waveform_Random,
       Waveform_Custom } ) );
 }
 
@@ -132,6 +133,8 @@ std::string LFO::toString( Waveform wf )
          return( "Rectangle" );
       case Waveform_Sawtooth:
          return( "Sawtooth" );
+      case Waveform_Random:
+         return( "Random" );
       case Waveform_Custom:
          return( "Custom" );
       case Waveform_None:
@@ -159,6 +162,9 @@ LFO::Waveform LFO::waveformFromString( const std::string &wf )
    if( util::toLower( util::trim( wf ) ) == "sawtooth" )
       return( Waveform_Sawtooth );
    else
+   if( util::toLower( util::trim( wf ) ) == "random" )
+      return( Waveform_Random );
+   else
    if( util::toLower( util::trim( wf ) ) == "custom" )
       return( Waveform_Custom );
    else
@@ -175,6 +181,7 @@ void LFO::step( double s, double bpm )
    }
 
    m_Period += ( s * freq );
+   bool step = floor( m_Period ) > 0.0;
    m_Period -= floor( m_Period );
 
    if( m_Waveform == Waveform_Sine )
@@ -204,6 +211,13 @@ void LFO::step( double s, double bpm )
    if( m_Waveform == Waveform_Sawtooth )
       m_Value = 1.0 - ( 2.0 * m_Period );
    else
+   if( m_Waveform == Waveform_Random )
+   {
+      if( step )
+      {
+         m_Value = util::randomValue( -1.0, 1.0 );
+      }
+   } else
    if( m_Waveform == Waveform_Custom )
    {
    }

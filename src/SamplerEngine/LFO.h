@@ -16,6 +16,7 @@ namespace SamplerEngine
          Waveform_Pulse,
          Waveform_Rectangle,
          Waveform_Sawtooth,
+         Waveform_Random,
          Waveform_Custom,
          Waveform_None
       };
