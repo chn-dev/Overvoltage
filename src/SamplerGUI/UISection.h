@@ -48,13 +48,22 @@ namespace SamplerGUI
          void setCurrentItem( int item );
          int getCurrentItem() const;
 
+         void setCurrentItemByValue( double value );
+         double getCurrentItemValue() const;
+
          void setItems( double minVal, double maxVal, double step, std::string format, std::string unit );
+         double getMinVal() const;
+         double getMaxVal() const;
+         double getStep() const;
 
          virtual void mouseDown( const MouseEvent &event );
          virtual void mouseDrag( const MouseEvent &event );
          virtual void mouseUp( const MouseEvent &event );
 
       private:
+         double m_MinVal;
+         double m_MaxVal;
+         double m_Step;
          std::vector<std::string> m_Items;
          int m_CurrentItem;
          juce::Point<float> m_MouseStartPoint;

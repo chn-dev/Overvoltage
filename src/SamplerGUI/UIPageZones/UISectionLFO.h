@@ -13,7 +13,8 @@ namespace SamplerGUI
    class UISectionLFO : public UISection,
                         public juce::Button::Listener,
                         public juce::ComboBox::Listener,
-                        public juce::Slider::Listener
+                        public juce::Slider::Listener,
+                        public juce::Label::Listener
    {
    public:
       UISectionLFO( UIPage *pUIPage, std::string label );
@@ -29,20 +30,19 @@ namespace SamplerGUI
 
       virtual void buttonClicked( Button *pButton );
       virtual void buttonStateChanged( Button *pButton );
-
       virtual void comboBoxChanged( ComboBox *pComboBox );
-
       virtual void sliderValueChanged( Slider *pSlider );
+      virtual void labelTextChanged( Label *pLabel );
 
    protected:
 
    private:
       std::vector<juce::TextButton *> m_SelButtons;
       juce::ComboBox *m_pcbWaveform;
-      juce::Label *m_plWaveform;
 
-      juce::Label *m_plFrequency;
-      juce::Slider *m_psFrequency;
+      juce::Label *m_plRate;
+//      juce::Slider *m_psRate;
+      CycleComponent *m_pcRate;
 
       juce::TextButton *m_pbSync;
    };

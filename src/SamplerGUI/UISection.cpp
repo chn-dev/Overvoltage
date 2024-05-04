@@ -44,6 +44,9 @@ UIPage *UISection::uiPage() const
 
 
 UISection::CycleComponent::CycleComponent() :
+   m_MinVal( 0.0 ),
+   m_MaxVal( 1.0 ),
+   m_Step( 1.0 ),
    m_PixelsPerItem( 16 ),
    m_OrigMouseCursor( juce::MouseCursor::NormalCursor )
 {
@@ -52,6 +55,9 @@ UISection::CycleComponent::CycleComponent() :
 
 
 UISection::CycleComponent::CycleComponent( std::vector<std::string> items ) :
+   m_MinVal( 0.0 ),
+   m_MaxVal( items.size() - 1.0 ),
+   m_Step( 1.0 ),
    m_Items( items ),
    m_PixelsPerItem( 16 ),
    m_OrigMouseCursor( juce::MouseCursor::NormalCursor )
@@ -65,8 +71,29 @@ UISection::CycleComponent::~CycleComponent()
 }
 
 
+double UISection::CycleComponent::getMinVal() const
+{
+   return( m_MinVal );
+}
+
+
+double UISection::CycleComponent::getMaxVal() const
+{
+   return( m_MaxVal );
+}
+
+
+double UISection::CycleComponent::getStep() const
+{
+   return( m_Step );
+}
+
+
 void UISection::CycleComponent::setItems( double minVal, double maxVal, double step, std::string format, std::string unit )
 {
+   m_MinVal = minVal;
+   m_MaxVal = maxVal;
+   m_Step = step;
    m_Items.clear();
 
    for( int i = 0; ; i++ )
@@ -79,6 +106,19 @@ void UISection::CycleComponent::setItems( double minVal, double maxVal, double s
 
    setCurrentItem( 0 );
 }
+
+
+double UISection::CycleComponent::getCurrentItemValue() const
+{
+   return( ( getCurrentItem() * getStep() ) + getMinVal() );
+}
+
+
+void UISection::CycleComponent::setCurrentItemByValue( double value )
+{
+   setCurrentItem( (int)( ( ( value - getMinVal() ) / getStep() ) + 0.5 ) );
+}
+
 
 
 void UISection::CycleComponent::setCurrentItem( int item )
