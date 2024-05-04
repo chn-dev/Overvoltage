@@ -61,6 +61,7 @@ public:
    virtual void handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity );
 
    void handlePitchbend( int midiChannel, double v );
+   void handleControllerChange( int midiChannel, int ccNum, double v );
 
    std::list<SamplerEngine::Sample *> &samples();
    const std::list<SamplerEngine::Sample *> &constSamples() const;

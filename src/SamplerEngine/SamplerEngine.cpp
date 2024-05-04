@@ -72,6 +72,15 @@ void Engine::pitchbend( size_t nPart, double v )
 }
 
 
+void Engine::controllerChange( size_t nPart, int ccNum, double v )
+{
+   if( nPart >= m_Parts.size() )
+      return;
+
+   m_Parts[nPart]->setController( ccNum, v );
+}
+
+
 Engine *Engine::fromXml( const juce::XmlElement *peOvervoltage )
 {
    if( peOvervoltage->getTagName() == "overvoltage" )

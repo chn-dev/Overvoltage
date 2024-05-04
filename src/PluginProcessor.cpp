@@ -159,6 +159,12 @@ void PluginProcessor::handlePitchbend( int midiChannel, double v )
 }
 
 
+void PluginProcessor::handleControllerChange( int midiChannel, int ccNum, double v )
+{
+   m_pEngine->controllerChange( (size_t)( midiChannel - 1 ), ccNum, v );
+}
+
+
 bool PluginProcessor::outputBusReady( juce::AudioBuffer<float>& buffer, int n ) const
 {
    if( n >= getBusCount( false ) )
@@ -216,14 +222,11 @@ void PluginProcessor::processBlock( juce::AudioBuffer<float>& buffer,
       if( msg.isController() )
       {
          // ccNum == 1 -> modwheel
-         // int ccNum = msg.getControllerNumber();
+         int ccNum = msg.getControllerNumber();
          // ccVal = 0..127
-         // int ccVal = msg.getControllerValue();
-      } else
-      if( msg.isTempoMetaEvent() )
-      {
-         double t = msg.getTempoSecondsPerQuarterNote();
-         printf("\n");
+         int ccVal = msg.getControllerValue();
+         double v = (double)ccVal / 127.0;
+         handleControllerChange( msg.getChannel(), ccNum, v );
       }
    }
 

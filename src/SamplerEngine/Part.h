@@ -2,6 +2,7 @@
 #define __PART_H__
 
 #include <list>
+#include <map>
 #include "Sample.h"
 #include "Voice.h"
 
@@ -20,6 +21,8 @@ namespace SamplerEngine
       void noteOff( int note, int vel );
       void setPitchbend( double v );
       double getPitchbend() const;
+      void setController( int ccNum, double v );
+      double getController( int ccNum ) const;
 
       std::list<Sample *> &samples();
       const std::list<Sample *> &constSamples() const;
@@ -41,6 +44,7 @@ namespace SamplerEngine
    private:
       size_t m_PartNum;
       double m_Pitchbend;
+      std::map<int, double> m_ControllerValues;
       std::list<Sample *> m_Samples;
       std::multimap<int, Voice *> m_Voices;
    };

@@ -155,6 +155,9 @@ double Voice::getModValue( ModMatrix::ModSrc modSrc, double defaultValue ) const
    if( modSrc == ModMatrix::ModSrc_LFO3 )
       return( m_LFOs[2]->getValue() );
    else
+   if( modSrc == ModMatrix::ModSrc_ModWheel )
+      return( m_pPart->getController( 1 ) );
+   else
    if( modSrc == ModMatrix::ModSrc_Velocity )
       return( (double)m_Velocity / 127.0f );
    else

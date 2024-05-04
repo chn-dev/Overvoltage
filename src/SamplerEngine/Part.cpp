@@ -238,3 +238,21 @@ double Part::getPitchbend() const
 {
    return( m_Pitchbend );
 }
+
+
+void Part::setController( int ccNum, double v )
+{
+   m_ControllerValues[ccNum] = v;
+}
+
+
+double Part::getController( int ccNum ) const
+{
+   if( m_ControllerValues.find( ccNum ) == m_ControllerValues.end() )
+   {
+      return( 0.0 );
+   } else
+   {
+      return( m_ControllerValues.at( ccNum ) );
+   }
+}

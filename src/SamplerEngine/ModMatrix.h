@@ -19,7 +19,8 @@ namespace SamplerEngine
          ModSrc_RelNote,
          ModSrc_LFO1,
          ModSrc_LFO2,
-         ModSrc_LFO3
+         ModSrc_LFO3,
+         ModSrc_ModWheel
       };
 
       enum ModDest
