@@ -38,7 +38,11 @@ namespace SamplerEngine
          MathFunc_X = 1,
          MathFunc_OneMinusX,
          MathFunc_BiPolar2UniPolar,
-         MathFunc_UniPolar2BiPolar
+         MathFunc_UniPolar2BiPolar,
+         MathFunc_Squared,
+         MathFunc_Cubed,
+         MathFunc_Abs,
+         MathFunc_Neg
       };
 
       class ModDestInfo
@@ -125,6 +129,8 @@ namespace SamplerEngine
       static std::set<ModSrc> allModSrc();
       static std::set<ModDest> allModDest();
       static std::set<MathFunc> allMathFunc();
+
+      static double calc( MathFunc f, double v );
 
    protected:
 

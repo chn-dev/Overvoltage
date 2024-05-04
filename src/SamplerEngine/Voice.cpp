@@ -193,14 +193,7 @@ void Voice::handleModulations( double sampleRate, double bpm )
             modVal = modVal * modVal2 * modAmount;
 
             ModMatrix::MathFunc mathFunc = pSlot->getMathFunc();
-            if( mathFunc == ModMatrix::MathFunc_OneMinusX )
-               modVal = 1.0 - modVal;
-            else
-            if( mathFunc == ModMatrix::MathFunc_BiPolar2UniPolar )
-               modVal = ( modVal + 1.0 ) / 2.0;
-            else
-            if( mathFunc == ModMatrix::MathFunc_UniPolar2BiPolar )
-               modVal = ( modVal * 2.0 ) - 1.0;
+            modVal = ModMatrix::calc( mathFunc, modVal );
 
             if( modValues.find( modDest ) != modValues.end() )
                modValues[modDest] += modVal;

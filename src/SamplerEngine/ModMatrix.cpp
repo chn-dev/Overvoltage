@@ -378,14 +378,101 @@ std::set<ModMatrix::ModDest> ModMatrix::allModDest()
 }
 
 
+double ModMatrix::calc( MathFunc f, double v )
+{
+   if( f == ModMatrix::MathFunc_OneMinusX )
+      v = 1.0 - v;
+   else
+   if( f == ModMatrix::MathFunc_BiPolar2UniPolar )
+      v = ( v + 1.0 ) / 2.0;
+   else
+   if( f == ModMatrix::MathFunc_UniPolar2BiPolar )
+      v = ( v * 2.0 ) - 1.0;
+   else
+   if( f == ModMatrix::MathFunc_Squared )
+      v = v * v;
+   else
+   if( f == MathFunc_Cubed )
+      v = v * v * v;
+   else
+   if( f == MathFunc_Abs )
+      v = v < 0 ? -v : v;
+   else
+   if( f == MathFunc_Neg )
+      v = -v;
+
+   return( v );
+}
+
+
+std::string ModMatrix::toString( MathFunc v )
+{
+   switch( v )
+   {
+      case MathFunc_X:
+         return( "x" );
+      case MathFunc_OneMinusX:
+         return( "1-x" );
+      case MathFunc_BiPolar2UniPolar:
+         return( "+-->+" );
+      case MathFunc_UniPolar2BiPolar:
+         return( "+->+-" );
+      case MathFunc_Squared:
+         return( "x^2" );
+      case MathFunc_Cubed:
+         return( "x^3" );
+      case MathFunc_Abs:
+         return( "abs" );
+      case MathFunc_Neg:
+         return( "-x" );
+
+      default:
+         return( "x" );
+   }
+}
+
+
+ModMatrix::MathFunc ModMatrix::mathFuncFromString( const std::string &s )
+{
+   if( util::trim( util::toLower( s ) ) == "x" )
+      return( MathFunc_X );
+   else
+   if( util::trim( util::toLower( s ) ) == "1-x" )
+      return( MathFunc_OneMinusX );
+   else
+   if( util::trim( util::toLower( s ) ) == "+-->+" )
+      return( MathFunc_BiPolar2UniPolar );
+   else
+   if( util::trim( util::toLower( s ) ) == "+->+-" )
+      return( MathFunc_UniPolar2BiPolar );
+   else
+   if( util::trim( util::toLower( s ) ) == "x^2" )
+      return( MathFunc_Squared );
+   else
+   if( util::trim( util::toLower( s ) ) == "x^3" )
+      return( MathFunc_Cubed );
+   else
+   if( util::trim( util::toLower( s ) ) == "abs" )
+      return( MathFunc_Abs );
+   else
+   if( util::trim( util::toLower( s ) ) == "-x" )
+      return( MathFunc_Neg );
+   else
+      return( MathFunc_X );
+}
+
+
 std::set<ModMatrix::MathFunc> ModMatrix::allMathFunc()
 {
    return( std::set<MathFunc>( {
       MathFunc_X,
       MathFunc_OneMinusX,
       MathFunc_BiPolar2UniPolar,
-      MathFunc_UniPolar2BiPolar
-
+      MathFunc_UniPolar2BiPolar,
+      MathFunc_Squared,
+      MathFunc_Cubed,
+      MathFunc_Abs,
+      MathFunc_Neg
    } ) );
 }
 
@@ -460,42 +547,6 @@ ModMatrix::ModDest ModMatrix::modDestFromString( const std::string &s )
       return( ModDest_Amp );
    else
       return( ModDest_None );
-}
-
-
-std::string ModMatrix::toString( MathFunc v )
-{
-   switch( v )
-   {
-      case MathFunc_X:
-         return( "x" );
-      case MathFunc_OneMinusX:
-         return( "1-x" );
-      case MathFunc_BiPolar2UniPolar:
-         return( "+-->+" );
-      case MathFunc_UniPolar2BiPolar:
-         return( "+->+-" );
-      default:
-         return( "x" );
-   }
-}
-
-
-ModMatrix::MathFunc ModMatrix::mathFuncFromString( const std::string &s )
-{
-   if( util::trim( util::toLower( s ) ) == "x" )
-      return( MathFunc_X );
-   else
-   if( util::trim( util::toLower( s ) ) == "1-x" )
-      return( MathFunc_OneMinusX );
-   else
-   if( util::trim( util::toLower( s ) ) == "+-->+" )
-      return( MathFunc_BiPolar2UniPolar );
-   else
-   if( util::trim( util::toLower( s ) ) == "+->+-" )
-      return( MathFunc_UniPolar2BiPolar );
-   else
-      return( MathFunc_X );
 }
 
 
