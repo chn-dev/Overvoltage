@@ -50,6 +50,9 @@ namespace SamplerGUI
       juce::Label *m_plFadeIn;
       CycleComponent *m_pcFadeIn;
       juce::TextButton *m_pbFadeInSync;
+
+      juce::TextButton *m_pbOnce;
+      juce::TextButton *m_pbRndPhase;
    };
 }
 #endif

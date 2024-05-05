@@ -90,6 +90,25 @@ UISectionLFO::UISectionLFO( UIPage *pUIPage, std::string label ) :
    m_pbFadeInSync->setBounds( m_pbDelaySync->getX(), m_pbDelaySync->getY() + yStep, m_pbDelaySync->getWidth(), m_pbDelaySync->getHeight() );
    addAndMakeVisible( m_pbFadeInSync );
 
+   // Once
+   m_pbOnce = new juce::TextButton( "once" );
+   m_pbOnce->setToggleable( true );
+   m_pbOnce->setClickingTogglesState( true );
+   m_pbOnce->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
+   m_pbOnce->addListener( this );
+   m_pbOnce->setBounds( 16, m_pbFadeInSync->getY() + yStep, m_pbFadeInSync->getWidth() * 7 / 4, m_pbFadeInSync->getHeight() );
+   addAndMakeVisible( m_pbOnce );
+
+   // Random phase
+   m_pbRndPhase = new juce::TextButton( "rndphase" );
+   m_pbRndPhase->setToggleable( true );
+   m_pbRndPhase->setClickingTogglesState( true );
+   m_pbRndPhase->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
+   m_pbRndPhase->addListener( this );
+   m_pbRndPhase->setBounds( m_pbOnce->getX() + m_pbOnce->getWidth() + 4, m_pbOnce->getY(), m_pbOnce->getWidth(), m_pbOnce->getHeight());
+   addAndMakeVisible( m_pbRndPhase );
+
+
    setCurrentLFO( 0 );
 }
 
@@ -112,6 +131,8 @@ UISectionLFO::~UISectionLFO()
    delete m_plFadeIn;
    delete m_pcFadeIn;
    delete m_pbFadeInSync;
+   delete m_pbOnce;
+   delete m_pbRndPhase;
 }
 
 
@@ -220,6 +241,9 @@ void UISectionLFO::updateInfo()
       m_pcFadeIn->setItems( 0.0, 10.0, 0.01, "{:.2f}", "s" );
       m_pcFadeIn->setCurrentItemByValue( pLFO->getFadeInSecs() );
    }
+
+   m_pbOnce->setToggleState( pLFO->getOnceEnabled(), dontSendNotification );
+   m_pbRndPhase->setToggleState( pLFO->getRandomPhaseEnabled(), dontSendNotification );
 }
 
 
@@ -270,6 +294,26 @@ void UISectionLFO::buttonClicked( Button *pButton )
       }
 
       updateInfo();
+   } else
+   if( pButton == m_pbOnce )
+   {
+      for( SamplerEngine::Sample *pSample : samples() )
+      {
+         SamplerEngine::LFO *pLFO = pSample->getLFO( getCurrentLFO() );
+         pLFO->setOnceEnabled( m_pbOnce->getToggleState() );
+      }
+
+      updateInfo();
+   } else
+   if( pButton == m_pbRndPhase )
+   {
+      for( SamplerEngine::Sample *pSample : samples() )
+      {
+         SamplerEngine::LFO *pLFO = pSample->getLFO( getCurrentLFO() );
+         pLFO->setRandomPhaseEnabled( m_pbRndPhase->getToggleState() );
+      }
+
+      updateInfo();
    }
 }
 
@@ -310,6 +354,8 @@ void UISectionLFO::samplesUpdated()
    m_plFadeIn->setVisible( pSample != nullptr );
    m_pcFadeIn->setVisible( pSample != nullptr );
    m_pbFadeInSync->setVisible( pSample != nullptr );
+   m_pbOnce->setVisible( pSample != nullptr );
+   m_pbRndPhase->setVisible( pSample != nullptr );
 
    if( pSample )
    {
