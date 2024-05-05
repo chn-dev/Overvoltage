@@ -24,27 +24,71 @@ UISectionLFO::UISectionLFO( UIPage *pUIPage, std::string label ) :
       m_pcbWaveform->addItem( SamplerEngine::LFO::toString( wf ), wf );
    }
    m_pcbWaveform->addListener( this );
-   m_pcbWaveform->setBounds( 4, 22, 100, 18 );
+   m_pcbWaveform->setBounds( 46, 22, 88, 18 );
    addAndMakeVisible( m_pcbWaveform );
 
+   int yStep = 22;
+   int yy = 44;
+
+   // Rate
    m_plRate = new juce::Label( juce::String(), "Rate:" );
-   m_plRate->setBounds( 4 + 98, 21, 40, 18 );
+   m_plRate->setBounds( 0, yy, 48, 18 );
    addAndMakeVisible( m_plRate );
 
    m_pcRate = new CycleComponent();
    m_pcRate->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
    m_pcRate->addListener( this );
    m_pcRate->setJustificationType( juce::Justification::centred );
-   m_pcRate->setBounds( 4 + 100 + 34, 24, 48, 13 );
+   m_pcRate->setBounds( 46, yy + 3, 47, 13 );
    addAndMakeVisible( m_pcRate );
 
-   m_pbSync = new juce::TextButton( "sync" );
-   m_pbSync->setToggleable( true );
-   m_pbSync->setClickingTogglesState( true );
-   m_pbSync->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
-   m_pbSync->addListener( this );
-   m_pbSync->setBounds( 4 + 100 + 34 + 48 + 2, 23, 38, 16 );
-   addAndMakeVisible( m_pbSync );
+   m_pbRateSync = new juce::TextButton( "sync" );
+   m_pbRateSync->setToggleable( true );
+   m_pbRateSync->setClickingTogglesState( true );
+   m_pbRateSync->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
+   m_pbRateSync->addListener( this );
+   m_pbRateSync->setBounds( m_pcRate->getX() + m_pcRate->getWidth() + 10, yy + 2, 30, 16 );
+   addAndMakeVisible( m_pbRateSync );
+
+   // Delay
+   m_plDelay = new juce::Label( juce::String(), "Delay:" );
+   m_plDelay-> setBounds( m_plRate->getX(), m_plRate->getY() + yStep, m_plRate->getWidth(), m_plRate->getHeight());
+   addAndMakeVisible( m_plDelay );
+
+   m_pcDelay = new CycleComponent();
+   m_pcDelay->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
+   m_pcDelay->addListener( this );
+   m_pcDelay->setJustificationType( juce::Justification::centred );
+   m_pcDelay->setBounds( m_pcRate->getX(), m_pcRate->getY() + yStep, m_pcRate->getWidth(), m_pcRate->getHeight() );
+   addAndMakeVisible( m_pcDelay );
+
+   m_pbDelaySync = new juce::TextButton( "sync" );
+   m_pbDelaySync->setToggleable( true );
+   m_pbDelaySync->setClickingTogglesState( true );
+   m_pbDelaySync->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
+   m_pbDelaySync->addListener( this );
+   m_pbDelaySync->setBounds( m_pbRateSync->getX(), m_pbRateSync->getY() + yStep, m_pbRateSync->getWidth(), m_pbRateSync->getHeight() );
+   addAndMakeVisible( m_pbDelaySync );
+
+   // Fade In
+   m_plFadeIn = new juce::Label( juce::String(), "Fade In:" );
+   m_plFadeIn->setBounds( m_plDelay->getX(), m_plDelay->getY() + yStep, m_plDelay->getWidth(), m_plDelay->getHeight());
+   addAndMakeVisible( m_plFadeIn );
+
+   m_pcFadeIn = new CycleComponent();
+   m_pcFadeIn->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
+   m_pcFadeIn->addListener( this );
+   m_pcFadeIn->setJustificationType( juce::Justification::centred );
+   m_pcFadeIn->setBounds( m_pcDelay->getX(), m_pcDelay->getY() + yStep, m_pcDelay->getWidth(), m_pcDelay->getHeight() );
+   addAndMakeVisible( m_pcFadeIn );
+
+   m_pbFadeInSync = new juce::TextButton( "sync" );
+   m_pbFadeInSync->setToggleable( true );
+   m_pbFadeInSync->setClickingTogglesState( true );
+   m_pbFadeInSync->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
+   m_pbFadeInSync->addListener( this );
+   m_pbFadeInSync->setBounds( m_pbDelaySync->getX(), m_pbDelaySync->getY() + yStep, m_pbDelaySync->getWidth(), m_pbDelaySync->getHeight() );
+   addAndMakeVisible( m_pbFadeInSync );
 
    setCurrentLFO( 0 );
 }
@@ -61,7 +105,13 @@ UISectionLFO::~UISectionLFO()
    delete m_pcbWaveform;
    delete m_plRate;
    delete m_pcRate;
-   delete m_pbSync;
+   delete m_pbRateSync;
+   delete m_plDelay;
+   delete m_pcDelay;
+   delete m_pbDelaySync;
+   delete m_plFadeIn;
+   delete m_pcFadeIn;
+   delete m_pbFadeInSync;
 }
 
 
@@ -71,7 +121,7 @@ void UISectionLFO::labelTextChanged( Label *pLabel )
    {
       double value = m_pcRate->getCurrentItemValue();
       size_t nLFO = getCurrentLFO();
-      bool syncEnabled = m_pbSync->getToggleState();
+      bool syncEnabled = m_pbRateSync->getToggleState();
       for( SamplerEngine::Sample *pSample : samples() )
       {
          if( pSample->getLFO( nLFO )->getSyncEnabled() == syncEnabled )
@@ -85,12 +135,91 @@ void UISectionLFO::labelTextChanged( Label *pLabel )
             }
          }
       }
+   } else
+   if( m_pcDelay == pLabel )
+   {
+      double value = m_pcDelay->getCurrentItemValue();
+      size_t nLFO = getCurrentLFO();
+      bool syncEnabled = m_pbDelaySync->getToggleState();
+      for( SamplerEngine::Sample *pSample : samples() )
+      {
+         if( pSample->getLFO( nLFO )->getDelaySyncEnabled() == syncEnabled )
+         {
+            if( syncEnabled )
+            {
+               pSample->getLFO( nLFO )->setDelayBeats( value );
+            } else
+            {
+               pSample->getLFO( nLFO )->setDelaySecs( value );
+            }
+         }
+      }
+   } else
+   if( m_pcFadeIn == pLabel )
+   {
+      double value = m_pcFadeIn->getCurrentItemValue();
+      size_t nLFO = getCurrentLFO();
+      bool syncEnabled = m_pbFadeInSync->getToggleState();
+      for( SamplerEngine::Sample *pSample : samples() )
+      {
+         if( pSample->getLFO( nLFO )->getFadeInSyncEnabled() == syncEnabled )
+         {
+            if( syncEnabled )
+            {
+               pSample->getLFO( nLFO )->setFadeInBeats( value );
+            } else
+            {
+               pSample->getLFO( nLFO )->setFadeInSecs( value );
+            }
+         }
+      }
    }
 }
 
 
-void UISectionLFO::sliderValueChanged( Slider *pSlider )
+void UISectionLFO::updateInfo()
 {
+   SamplerEngine::Sample *pSample = sample();
+   if( !pSample )
+      return;
+
+   size_t nLFO = getCurrentLFO();
+   SamplerEngine::LFO *pLFO = pSample->getLFO( nLFO );
+
+   m_pcbWaveform->setSelectedId( pLFO->getWaveform(), dontSendNotification );
+
+   m_pbRateSync->setToggleState( pLFO->getSyncEnabled(), dontSendNotification );
+   if( pLFO->getSyncEnabled() )
+   {
+      m_pcRate->setItems( 0.1, 10.0, 0.1, "{:.1f}", "b" );
+      m_pcRate->setCurrentItemByValue( pLFO->getSyncBeats() );
+   } else
+   {
+      m_pcRate->setItems( 0.01, 10.0, 0.01, "{:.2f}", "Hz" );
+      m_pcRate->setCurrentItemByValue( pLFO->getFrequency() );
+   }
+
+   m_pbDelaySync->setToggleState( pLFO->getDelaySyncEnabled(), dontSendNotification );
+   if( pLFO->getDelaySyncEnabled() )
+   {
+      m_pcDelay->setItems( 0.0, 10.0, 0.1, "{:.1f}", "b" );
+      m_pcDelay->setCurrentItemByValue( pLFO->getDelayBeats() );
+   } else
+   {
+      m_pcDelay->setItems( 0.0, 10.0, 0.01, "{:.2f}", "s" );
+      m_pcDelay->setCurrentItemByValue( pLFO->getDelaySecs() );
+   }
+
+   m_pbFadeInSync->setToggleState( pLFO->getFadeInSyncEnabled(), dontSendNotification );
+   if( pLFO->getFadeInSyncEnabled() )
+   {
+      m_pcFadeIn->setItems( 0.0, 10.0, 0.1, "{:.1f}", "b" );
+      m_pcFadeIn->setCurrentItemByValue( pLFO->getFadeInBeats() );
+   } else
+   {
+      m_pcFadeIn->setItems( 0.0, 10.0, 0.01, "{:.2f}", "s" );
+      m_pcFadeIn->setCurrentItemByValue( pLFO->getFadeInSecs() );
+   }
 }
 
 
@@ -112,25 +241,35 @@ void UISectionLFO::buttonClicked( Button *pButton )
    }
 
 
-   if( pButton == m_pbSync )
+   if( pButton == m_pbRateSync )
    {
-      nLFO = getCurrentLFO();
       for( SamplerEngine::Sample *pSample : samples() )
       {
-         SamplerEngine::LFO *pLFO = pSample->getLFO( nLFO );
-         pLFO->setSyncEnabled( m_pbSync->getToggleState() );
+         SamplerEngine::LFO *pLFO = pSample->getLFO( getCurrentLFO() );
+         pLFO->setSyncEnabled( m_pbRateSync->getToggleState() );
       }
 
-      SamplerEngine::LFO *pLFO = sample()->getLFO( nLFO );
-      if( pLFO->getSyncEnabled() )
+      updateInfo();
+   } else
+   if( pButton == m_pbDelaySync )
+   {
+      for( SamplerEngine::Sample *pSample : samples() )
       {
-         m_pcRate->setItems( 0.1, 10.0, 0.1, "{:.1f}", "b" );
-         m_pcRate->setCurrentItemByValue( pLFO->getFrequency() );
-      } else
-      {
-         m_pcRate->setItems( 0.01, 10.0, 0.01, "{:.2f}", "Hz" );
-         m_pcRate->setCurrentItemByValue( pLFO->getFrequency() );
+         SamplerEngine::LFO *pLFO = pSample->getLFO( getCurrentLFO() );
+         pLFO->setDelaySyncEnabled( m_pbDelaySync->getToggleState() );
       }
+
+      updateInfo();
+   } else
+   if( pButton == m_pbFadeInSync )
+   {
+      for( SamplerEngine::Sample *pSample : samples() )
+      {
+         SamplerEngine::LFO *pLFO = pSample->getLFO( getCurrentLFO() );
+         pLFO->setFadeInSyncEnabled( m_pbFadeInSync->getToggleState() );
+      }
+
+      updateInfo();
    }
 }
 
@@ -164,23 +303,17 @@ void UISectionLFO::samplesUpdated()
    m_pcbWaveform->setVisible( pSample != nullptr );
    m_plRate->setVisible( pSample != nullptr );
    m_pcRate->setVisible( pSample != nullptr );
-   m_pbSync->setVisible( pSample != nullptr );
+   m_pbRateSync->setVisible( pSample != nullptr );
+   m_plDelay->setVisible( pSample != nullptr );
+   m_pcDelay->setVisible( pSample != nullptr );
+   m_pbDelaySync->setVisible( pSample != nullptr );
+   m_plFadeIn->setVisible( pSample != nullptr );
+   m_pcFadeIn->setVisible( pSample != nullptr );
+   m_pbFadeInSync->setVisible( pSample != nullptr );
 
    if( pSample )
    {
-      m_pcbWaveform->setSelectedId( pSample->getLFO( getCurrentLFO() )->getWaveform(), dontSendNotification );
-      SamplerEngine::LFO *pLFO = pSample->getLFO( getCurrentLFO() );
-      m_pbSync->setToggleState( pLFO->getSyncEnabled(), dontSendNotification );
-
-      if( pLFO->getSyncEnabled() )
-      {
-         m_pcRate->setItems( 0.1, 10.0, 0.1, "{:.1f}", "b" );
-         m_pcRate->setCurrentItemByValue( pLFO->getSyncBeats() );
-      } else
-      {
-         m_pcRate->setItems( 0.1, 10.0, 0.01, "{:.2f}", "Hz" );
-         m_pcRate->setCurrentItemByValue( pLFO->getFrequency() );
-      }
+      updateInfo();
    }
 }
 

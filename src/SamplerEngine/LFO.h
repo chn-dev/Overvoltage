@@ -40,6 +40,26 @@ namespace SamplerEngine
       void setSyncBeats( double beats );
       double getSyncBeats() const;
 
+      void setDelaySyncEnabled( bool e );
+      bool getDelaySyncEnabled() const;
+      void setDelayBeats( double beats );
+      double getDelayBeats() const;
+      void setDelaySecs( double s );
+      double getDelaySecs() const;
+
+      void setFadeInSyncEnabled( bool e );
+      bool getFadeInSyncEnabled() const;
+      void setFadeInBeats( double beats );
+      double getFadeInBeats() const;
+      void setFadeInSecs( double s );
+      double getFadeInSecs() const;
+
+      void setOnceEnabled( bool e );
+      bool getOnceEnabled() const;
+
+      void setRandomPhaseEnabled( bool e );
+      bool getRandomPhaseEnabled() const;
+
       void noteOn();
       void noteOff();
 
@@ -61,6 +81,17 @@ namespace SamplerEngine
       double m_Frequency;
       bool m_SyncEnabled;
       double m_SyncBeats;
+
+      bool m_DelaySyncEnabled;
+      double m_DelaySecs;
+      double m_DelayBeats;
+
+      bool m_FadeInSyncEnabled;
+      double m_FadeInSecs;
+      double m_FadeInBeats;
+
+      bool m_OnceEnabled;
+      bool m_RandomPhaseEnabled;
    };
 }
 #endif

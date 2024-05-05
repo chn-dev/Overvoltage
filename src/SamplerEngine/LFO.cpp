@@ -12,7 +12,15 @@ LFO::LFO() :
    m_Waveform( LFO::Waveform_Triangle ),
    m_Frequency( 1.0 ),
    m_SyncEnabled( false ),
-   m_SyncBeats( 4.0 )
+   m_SyncBeats( 4.0 ),
+   m_DelaySyncEnabled( false ),
+   m_DelaySecs( 0.0 ),
+   m_DelayBeats( 0.0 ),
+   m_FadeInSyncEnabled( false ),
+   m_FadeInSecs( 0.0 ),
+   m_FadeInBeats( 0.0 ),
+   m_OnceEnabled( false ),
+   m_RandomPhaseEnabled( false )
 {
 }
 
@@ -23,7 +31,15 @@ LFO::LFO( const LFO &d ) :
    m_Waveform( d.m_Waveform ),
    m_Frequency( d.m_Frequency ),
    m_SyncEnabled( d.m_SyncEnabled ),
-   m_SyncBeats( d.m_SyncBeats )
+   m_SyncBeats( d.m_SyncBeats ),
+   m_DelaySyncEnabled( d.m_DelaySyncEnabled ),
+   m_DelaySecs( d.m_DelaySecs ),
+   m_DelayBeats( d.m_DelayBeats ),
+   m_FadeInSyncEnabled( d.m_DelaySyncEnabled ),
+   m_FadeInSecs( d.m_DelaySecs ),
+   m_FadeInBeats( d.m_DelayBeats ),
+   m_OnceEnabled( d.m_OnceEnabled ),
+   m_RandomPhaseEnabled( d.m_RandomPhaseEnabled )
 {
 }
 
@@ -39,6 +55,14 @@ void LFO::getSettings( const LFO &d )
    m_Frequency = d.m_Frequency;
    m_SyncEnabled = d.m_SyncEnabled;
    m_SyncBeats = d.m_SyncBeats;
+   m_DelaySyncEnabled = d.m_DelaySyncEnabled;
+   m_DelaySecs = d.m_DelaySecs;
+   m_DelayBeats = d.m_DelayBeats;
+   m_FadeInSyncEnabled = d.m_FadeInSyncEnabled;
+   m_FadeInSecs = d.m_FadeInSecs;
+   m_FadeInBeats = d.m_FadeInBeats;
+   m_OnceEnabled = d.m_OnceEnabled;
+   m_RandomPhaseEnabled = d.m_RandomPhaseEnabled;
 }
 
 
@@ -57,6 +81,78 @@ LFO::Waveform LFO::getWaveform() const
 void LFO::setWaveform( LFO::Waveform wf )
 {
    m_Waveform = wf;
+}
+
+
+void LFO::setDelaySyncEnabled( bool e )
+{
+   m_DelaySyncEnabled = e;
+}
+
+
+bool LFO::getDelaySyncEnabled() const
+{
+   return( m_DelaySyncEnabled );
+}
+
+
+void LFO::setDelayBeats( double beats )
+{
+   m_DelayBeats = beats;
+}
+
+
+double LFO::getDelayBeats() const
+{
+   return( m_DelayBeats );
+}
+
+
+void LFO::setDelaySecs( double s )
+{
+   m_DelaySecs = s;
+}
+
+
+double LFO::getDelaySecs() const
+{
+   return( m_DelaySecs );
+}
+
+
+void LFO::setFadeInSyncEnabled( bool e )
+{
+   m_FadeInSyncEnabled = e;
+}
+
+
+bool LFO::getFadeInSyncEnabled() const
+{
+   return( m_FadeInSyncEnabled );
+}
+
+
+void LFO::setFadeInBeats( double beats )
+{
+   m_FadeInBeats = beats;
+}
+
+
+double LFO::getFadeInBeats() const
+{
+   return( m_FadeInBeats );
+}
+
+
+void LFO::setFadeInSecs( double s )
+{
+   m_FadeInSecs = s;
+}
+
+
+double LFO::getFadeInSecs() const
+{
+   return( m_FadeInSecs );
 }
 
 
@@ -93,6 +189,30 @@ void LFO::setSyncBeats( double beats )
 double LFO::getSyncBeats() const
 {
    return( m_SyncBeats );
+}
+
+
+void LFO::setOnceEnabled( bool e )
+{
+   m_OnceEnabled = e;
+}
+
+
+bool LFO::getOnceEnabled() const
+{
+   return( m_OnceEnabled );
+}
+
+
+void LFO::setRandomPhaseEnabled( bool e )
+{
+   m_RandomPhaseEnabled = e;
+}
+
+
+bool LFO::getRandomPhaseEnabled() const
+{
+   return( m_RandomPhaseEnabled );
 }
 
 
@@ -252,6 +372,38 @@ LFO *LFO::fromXml( const juce::XmlElement *pe )
       if( tagName == "syncbeats" )
       {
          pLFO->m_SyncBeats = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "delaysyncenabled" )
+      {
+         pLFO->m_DelaySyncEnabled = util::toLower( util::trim( pChild->getChildElement( 0 )->getText().toStdString() ) ) == "true";
+      } else
+      if( tagName == "delaysecs" )
+      {
+         pLFO->m_DelaySecs = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "delaybeats" )
+      {
+         pLFO->m_DelayBeats = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "fadeinsyncenabled" )
+      {
+         pLFO->m_FadeInSyncEnabled = util::toLower( util::trim( pChild->getChildElement( 0 )->getText().toStdString() ) ) == "true";
+      } else
+      if( tagName == "fadeinsecs" )
+      {
+         pLFO->m_FadeInSecs = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "fadeinbeats" )
+      {
+         pLFO->m_FadeInBeats = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "onceenabled" )
+      {
+         pLFO->m_OnceEnabled = util::toLower( util::trim( pChild->getChildElement( 0 )->getText().toStdString() ) ) == "true";
+      } else
+      if( tagName == "randomphaseenabled" )
+      {
+         pLFO->m_RandomPhaseEnabled = util::toLower( util::trim( pChild->getChildElement( 0 )->getText().toStdString() ) ) == "true";
       }
    }
 
@@ -278,6 +430,38 @@ juce::XmlElement *LFO::toXml() const
    juce::XmlElement *peSyncBeats = new juce::XmlElement( "syncbeats" );
    peSyncBeats->addTextElement( stdformat( "{:.2f}", m_SyncBeats ) );
    pe->addChildElement( peSyncBeats );
+
+   juce::XmlElement *peDelaySyncEnabled = new juce::XmlElement( "delaysyncenabled" );
+   peDelaySyncEnabled->addTextElement( m_DelaySyncEnabled ? "true" : "false" );
+   pe->addChildElement( peDelaySyncEnabled );
+
+   juce::XmlElement *peDelaySecs = new juce::XmlElement( "delaysecs" );
+   peDelaySecs->addTextElement( stdformat( "{:.2f}", m_DelaySecs ) );
+   pe->addChildElement( peDelaySecs );
+
+   juce::XmlElement *peDelayBeats = new juce::XmlElement( "delaybeats" );
+   peDelayBeats->addTextElement( stdformat( "{:.2f}", m_DelayBeats ) );
+   pe->addChildElement( peDelayBeats );
+
+   juce::XmlElement *peFadeInSyncEnabled = new juce::XmlElement( "fadeinsyncenabled" );
+   peFadeInSyncEnabled->addTextElement( m_FadeInSyncEnabled ? "true" : "false" );
+   pe->addChildElement( peFadeInSyncEnabled );
+
+   juce::XmlElement *peFadeInSecs = new juce::XmlElement( "fadeinsecs" );
+   peFadeInSecs->addTextElement( stdformat( "{:.2f}", m_FadeInSecs ) );
+   pe->addChildElement( peFadeInSecs );
+
+   juce::XmlElement *peFadeInBeats = new juce::XmlElement( "fadeinbeats" );
+   peFadeInBeats->addTextElement( stdformat( "{:.2f}", m_FadeInBeats ) );
+   pe->addChildElement( peFadeInBeats );
+
+   juce::XmlElement *peOnceEnabled = new juce::XmlElement( "onceenabled" );
+   peOnceEnabled->addTextElement( m_OnceEnabled ? "true" : "false" );
+   pe->addChildElement( peOnceEnabled );
+
+   juce::XmlElement *peRandomPhaseEnabled = new juce::XmlElement( "randomphaseenabled" );
+   peRandomPhaseEnabled->addTextElement( m_RandomPhaseEnabled ? "true" : "false" );
+   pe->addChildElement( peRandomPhaseEnabled );
 
    return( pe );
 }
