@@ -20,7 +20,8 @@ LFO::LFO() :
    m_FadeInSecs( 0.0 ),
    m_FadeInBeats( 0.0 ),
    m_OnceEnabled( false ),
-   m_RandomPhaseEnabled( false )
+   m_RandomPhaseEnabled( false ),
+   m_StartPhase( 0.0 )
 {
 }
 
@@ -39,7 +40,8 @@ LFO::LFO( const LFO &d ) :
    m_FadeInSecs( d.m_DelaySecs ),
    m_FadeInBeats( d.m_DelayBeats ),
    m_OnceEnabled( d.m_OnceEnabled ),
-   m_RandomPhaseEnabled( d.m_RandomPhaseEnabled )
+   m_RandomPhaseEnabled( d.m_RandomPhaseEnabled ),
+   m_StartPhase( d.m_StartPhase )
 {
 }
 
@@ -218,6 +220,15 @@ bool LFO::getRandomPhaseEnabled() const
 
 void LFO::noteOn()
 {
+   if( m_RandomPhaseEnabled )
+   {
+      m_StartPhase = util::randomValue( 0.0, 1.0 );
+      m_StartPhase -= floor( m_StartPhase );
+   } else
+   {
+      m_StartPhase = 0.0;
+   }
+
    m_Period = 0.0;
 }
 
@@ -302,7 +313,7 @@ void LFO::step( double s, double bpm )
    }
 
    m_Period += ( s * freq );
-   bool step = floor( m_Period ) > 0.0;
+   bool stepped = floor( m_Period ) > 0.0;
    m_Period -= floor( m_Period );
 
    if( m_Waveform == Waveform_Sine )
@@ -334,7 +345,7 @@ void LFO::step( double s, double bpm )
    else
    if( m_Waveform == Waveform_Random )
    {
-      if( step )
+      if( stepped )
       {
          m_Value = util::randomValue( -1.0, 1.0 );
       }

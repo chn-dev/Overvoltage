@@ -92,6 +92,8 @@ namespace SamplerEngine
 
       bool m_OnceEnabled;
       bool m_RandomPhaseEnabled;
+
+      double m_StartPhase;
    };
 }
 #endif
