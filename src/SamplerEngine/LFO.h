@@ -60,6 +60,9 @@ namespace SamplerEngine
       void setRandomPhaseEnabled( bool e );
       bool getRandomPhaseEnabled() const;
 
+      std::vector<double> getCustom() const;
+      void setCustom( std::vector<double> v );
+
       void noteOn();
       void noteOff();
 
@@ -94,6 +97,8 @@ namespace SamplerEngine
 
       bool m_OnceEnabled;
       bool m_RandomPhaseEnabled;
+
+      std::vector<double> m_Custom;
 
       double m_StartPhase;
    };

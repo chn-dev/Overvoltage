@@ -23,6 +23,7 @@ LFO::LFO() :
    m_FadeInBeats( 0.0 ),
    m_OnceEnabled( false ),
    m_RandomPhaseEnabled( false ),
+   m_Custom( { 1.0, -1.0 } ),
    m_StartPhase( 0.0 )
 {
 }
@@ -45,6 +46,7 @@ LFO::LFO( const LFO &d ) :
    m_FadeInBeats( d.m_DelayBeats ),
    m_OnceEnabled( d.m_OnceEnabled ),
    m_RandomPhaseEnabled( d.m_RandomPhaseEnabled ),
+   m_Custom( d.m_Custom ),
    m_StartPhase( d.m_StartPhase )
 {
 }
@@ -69,6 +71,7 @@ void LFO::getSettings( const LFO &d )
    m_FadeInBeats = d.m_FadeInBeats;
    m_OnceEnabled = d.m_OnceEnabled;
    m_RandomPhaseEnabled = d.m_RandomPhaseEnabled;
+   m_Custom = d.m_Custom;
 }
 
 
@@ -219,6 +222,18 @@ void LFO::setRandomPhaseEnabled( bool e )
 bool LFO::getRandomPhaseEnabled() const
 {
    return( m_RandomPhaseEnabled );
+}
+
+
+std::vector<double> LFO::getCustom() const
+{
+   return( m_Custom );
+}
+
+
+void LFO::setCustom( std::vector<double> v )
+{
+   m_Custom = v;
 }
 
 
@@ -462,6 +477,19 @@ LFO *LFO::fromXml( const juce::XmlElement *pe )
       if( tagName == "randomphaseenabled" )
       {
          pLFO->m_RandomPhaseEnabled = util::toLower( util::trim( pChild->getChildElement( 0 )->getText().toStdString() ) ) == "true";
+      } else
+      if( tagName == "custom" )
+      {
+         std::vector<std::string> sVals =
+            util::strsplit(
+               util::trim(
+                  pChild->getChildElement( 0 )->getText().toStdString() ), ",", false );
+         std::vector<double> dVals;
+         for( size_t i = 0; i < sVals.size(); i++ )
+         {
+            dVals.push_back( std::stod( sVals[i] ) );
+         }
+         pLFO->m_Custom = dVals;
       }
    }
 
@@ -520,6 +548,15 @@ juce::XmlElement *LFO::toXml() const
    juce::XmlElement *peRandomPhaseEnabled = new juce::XmlElement( "randomphaseenabled" );
    peRandomPhaseEnabled->addTextElement( m_RandomPhaseEnabled ? "true" : "false" );
    pe->addChildElement( peRandomPhaseEnabled );
+
+   juce::XmlElement *peCustom = new juce::XmlElement( "custom" );
+   std::vector<std::string> vals;
+   for( size_t i = 0; i < m_Custom.size(); i++ )
+   {
+      vals.push_back( stdformat( "{:.2f}", m_Custom[i] ) );
+   }
+   peCustom->addTextElement( util::strjoin( vals, "," ) );
+   pe->addChildElement( peCustom );
 
    return( pe );
 }

@@ -26,6 +26,7 @@ namespace util
    int indexOfMaxValue( const std::vector<double> &a );
    std::string trim( std::string s );
    std::vector<std::string> strsplit( std::string str, std::string sep, bool keepEmpty );
+   std::string strjoin( std::vector<std::string> s, std::string sep );
    double randomValue( double min, double max );
    std::string toLower( const std::string &str );
    double clamp( double min, double max, double v );

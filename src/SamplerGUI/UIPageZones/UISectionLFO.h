@@ -16,6 +16,21 @@ namespace SamplerGUI
                         public juce::Label::Listener
    {
    public:
+      class StepEditor : public juce::Component
+      {
+         public:
+            StepEditor( UISectionLFO *pSectionLFO );
+            ~StepEditor();
+
+            virtual void paint( juce::Graphics &g ) override;
+
+            void setSteps( std::vector<double> s );
+
+         private:
+            UISectionLFO *m_pSectionLFO;
+            std::vector<double> m_Steps;
+      };
+
       UISectionLFO( UIPage *pUIPage, std::string label );
       ~UISectionLFO();
 
@@ -53,6 +68,8 @@ namespace SamplerGUI
 
       juce::TextButton *m_pbOnce;
       juce::TextButton *m_pbRndPhase;
+
+      StepEditor *m_pStepEditor;
    };
 }
 #endif

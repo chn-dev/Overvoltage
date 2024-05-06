@@ -3,6 +3,55 @@
 
 using namespace SamplerGUI;
 
+UISectionLFO::StepEditor::StepEditor( UISectionLFO *pSectionLFO ) :
+   m_pSectionLFO( pSectionLFO )
+{
+}
+
+
+UISectionLFO::StepEditor::~StepEditor()
+{
+}
+
+
+void UISectionLFO::StepEditor::paint( juce::Graphics &g )
+{
+   g.setColour( juce::Colour::fromRGB( 16, 32, 16 ) );
+   g.fillAll();
+
+   g.setColour( juce::Colour::fromRGB( 255, 255, 255 ) );
+   g.drawRect( 0, 0, getBounds().getWidth(), getBounds().getHeight() );
+
+   for( size_t i = 0; i < m_Steps.size(); i++ )
+   {
+      double v = m_Steps[i];
+
+      int x = ( i * getBounds().getWidth() / m_Steps.size() );
+      int y = getBounds().getHeight() / 2;
+      int w = getBounds().getWidth() / m_Steps.size();
+      int h = v * getBounds().getHeight() / 2;
+
+      if( h < 0 )
+      {
+         h = -h;
+         y -= h;
+      }
+
+      g.setColour( juce::Colour::fromRGB( 96, 96, 96 ) );
+      g.fillRect( x, y, w, h );
+      g.setColour( juce::Colour::fromRGB( 96, 32, 32 ) );
+      g.drawRect( x, y, w, h );
+   }
+}
+
+
+void UISectionLFO::StepEditor::setSteps( std::vector<double> s )
+{
+   m_Steps = s;
+   repaint();
+}
+
+
 UISectionLFO::UISectionLFO( UIPage *pUIPage, std::string label ) :
    UISection( pUIPage, label )
 {
@@ -108,6 +157,9 @@ UISectionLFO::UISectionLFO( UIPage *pUIPage, std::string label ) :
    m_pbRndPhase->setBounds( m_pbOnce->getX() + m_pbOnce->getWidth() + 4, m_pbOnce->getY(), m_pbOnce->getWidth(), m_pbOnce->getHeight());
    addAndMakeVisible( m_pbRndPhase );
 
+   m_pStepEditor = new StepEditor( this );
+   m_pStepEditor->setBounds( 138, 22, 272, 109 );
+   addAndMakeVisible( m_pStepEditor );
 
    setCurrentLFO( 0 );
 }
@@ -133,6 +185,7 @@ UISectionLFO::~UISectionLFO()
    delete m_pbFadeInSync;
    delete m_pbOnce;
    delete m_pbRndPhase;
+   delete m_pStepEditor;
 }
 
 
@@ -207,6 +260,7 @@ void UISectionLFO::updateInfo()
    size_t nLFO = getCurrentLFO();
    SamplerEngine::LFO *pLFO = pSample->getLFO( nLFO );
 
+   m_pStepEditor->setSteps( pLFO->getCustom() );
    m_pcbWaveform->setSelectedId( pLFO->getWaveform(), dontSendNotification );
 
    m_pbRateSync->setToggleState( pLFO->getSyncEnabled(), dontSendNotification );
@@ -356,6 +410,7 @@ void UISectionLFO::samplesUpdated()
    m_pbFadeInSync->setVisible( pSample != nullptr );
    m_pbOnce->setVisible( pSample != nullptr );
    m_pbRndPhase->setVisible( pSample != nullptr );
+   m_pStepEditor->setVisible( pSample != nullptr );
 
    if( pSample )
    {

@@ -64,6 +64,20 @@ namespace util
    }
 
 
+   std::string strjoin( std::vector<std::string> s, std::string sep )
+   {
+      std::string r = "";
+      for( size_t i = 0; i < s.size(); i++ )
+      {
+         if( i > 0 )
+            r += sep;
+         r += s[i];
+      }
+
+      return( r );
+   }
+
+
    /*----------------------------------------------------------------------------*/
    /*! 2023-12-15
    Split a string into substrings where a given separator occurs.
