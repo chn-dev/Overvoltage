@@ -9,6 +9,8 @@ using namespace SamplerEngine;
 LFO::LFO() :
    m_Value( 0.0 ),
    m_Period( 0.0 ),
+   m_PeriodCount( 0 ),
+   m_TimeS( 0.0 ),
    m_Waveform( LFO::Waveform_Triangle ),
    m_Frequency( 1.0 ),
    m_SyncEnabled( false ),
@@ -29,6 +31,8 @@ LFO::LFO() :
 LFO::LFO( const LFO &d ) :
    m_Value( 0.0 ),
    m_Period( 0.0 ),
+   m_PeriodCount( 0 ),
+   m_TimeS( 0.0 ),
    m_Waveform( d.m_Waveform ),
    m_Frequency( d.m_Frequency ),
    m_SyncEnabled( d.m_SyncEnabled ),
@@ -230,6 +234,7 @@ void LFO::noteOn()
    }
 
    m_Period = 0.0;
+   m_PeriodCount = 0;
 }
 
 
@@ -306,42 +311,82 @@ LFO::Waveform LFO::waveformFromString( const std::string &wf )
 
 void LFO::step( double s, double bpm )
 {
+   double delaySecs = getDelaySecs();
+   if( getDelaySyncEnabled() )
+   {
+      delaySecs = ( 60.0 * getDelayBeats() ) / bpm;
+   }
+
+   double fadeInSecs = getFadeInSecs();
+   if( getFadeInSyncEnabled() )
+   {
+      fadeInSecs = ( 60.0 * getFadeInBeats() ) / bpm;
+   }
+
    double freq = m_Frequency;
    if( m_SyncEnabled )
    {
-      freq = 240.0 / ( bpm * m_SyncBeats );
+      freq = bpm / ( 60 * m_SyncBeats );
+   }
+
+   m_TimeS += s;
+
+   if( m_TimeS < delaySecs )
+   {
+      m_Value = 0.0;
+      return;
+   }
+
+   double amp = 1.0;
+   if( m_TimeS - delaySecs < fadeInSecs )
+   {
+      amp = ( m_TimeS - delaySecs ) / fadeInSecs;
    }
 
    m_Period += ( s * freq );
-   bool stepped = floor( m_Period ) > 0.0;
-   m_Period -= floor( m_Period );
+   size_t nCycle = (size_t)( m_Period );
+   bool stepped = false;
+   if( nCycle != m_PeriodCount )
+   {
+      stepped = true;
+      m_PeriodCount = nCycle;
+   }
+
+   double period = m_Period + m_StartPhase;
+   period -= floor( period );
+
+   if( getOnceEnabled() && ( m_Waveform != Waveform_Random ) && ( m_PeriodCount > 0 ) )
+   {
+      m_Value = 0.0;
+      return;
+   }
 
    if( m_Waveform == Waveform_Sine )
-      m_Value = sin( 2.0 * M_PI * m_Period );
+      m_Value = sin( 2.0 * M_PI * period );
    else
    if( m_Waveform == Waveform_Triangle )
    {
-      if( m_Period <= 0.25 )
+      if( period <= 0.25 )
       {
-         m_Value = 4.0 * m_Period;
+         m_Value = 4.0 * period;
       } else
-      if( m_Period <= 0.75 )
+      if( period <= 0.75 )
       {
-         m_Value = 1.0 - ( 4.0 * ( m_Period - 0.25 ) );
+         m_Value = 1.0 - ( 4.0 * ( period - 0.25 ) );
       } else
-      if( m_Period <= 1.0 )
+      if( period <= 1.0 )
       {
-         m_Value = -1.0 + ( 4.0 * ( m_Period - 0.75 ) );
+         m_Value = -1.0 + ( 4.0 * ( period - 0.75 ) );
       }
    } else
    if( m_Waveform == Waveform_Pulse )
-      m_Value = m_Period < 0.5 ? 0.0 : 1.0;
+      m_Value = period < 0.5 ? 0.0 : 1.0;
    else
    if( m_Waveform == Waveform_Rectangle )
-      m_Value = m_Period < 0.5 ? -1.0 : 1.0;
+      m_Value = period < 0.5 ? -1.0 : 1.0;
    else
    if( m_Waveform == Waveform_Sawtooth )
-      m_Value = 1.0 - ( 2.0 * m_Period );
+      m_Value = 1.0 - ( 2.0 * period );
    else
    if( m_Waveform == Waveform_Random )
    {
@@ -353,6 +398,8 @@ void LFO::step( double s, double bpm )
    if( m_Waveform == Waveform_Custom )
    {
    }
+
+   m_Value *= amp;
 }
 
 

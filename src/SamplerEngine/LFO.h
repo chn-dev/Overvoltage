@@ -77,6 +77,8 @@ namespace SamplerEngine
    private:
       double m_Value;
       double m_Period;
+      size_t m_PeriodCount;
+      double m_TimeS;
       Waveform m_Waveform;
       double m_Frequency;
       bool m_SyncEnabled;
