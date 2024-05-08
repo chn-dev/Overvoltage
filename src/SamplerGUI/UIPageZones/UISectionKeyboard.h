@@ -47,6 +47,10 @@ namespace SamplerGUI
       static int keySize( int note );
       std::list<SamplerEngine::Sample *> &samples();
       const std::list<SamplerEngine::Sample *> &constSamples() const;
+      int diagramXPos() const;
+      int diagramYPos() const;
+      int diagramWidth() const;
+      int diagramHeight() const;
 
    private:
       void drawNote( juce::Graphics &g, int note );

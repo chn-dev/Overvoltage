@@ -6,30 +6,158 @@ using namespace SamplerGUI;
 UISectionLFO::StepEditor::StepEditor( UISectionLFO *pSectionLFO ) :
    m_pSectionLFO( pSectionLFO )
 {
+   m_plNumSteps = new juce::Label( juce::String(), "Steps:" );
+   m_plNumSteps->setBounds( 0, 91, 38, 18 );
+   addAndMakeVisible( m_plNumSteps );
+
+   m_pcNumSteps = new CycleComponent();
+   m_pcNumSteps->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
+   m_pcNumSteps->setJustificationType( juce::Justification::centred );
+   m_pcNumSteps->setBounds( 38, 91, 32, 18 );
+   m_pcNumSteps->setItems( 1.0, 128, 1.0, "{:.0f}", "" );
+   m_pcNumSteps->addListener( this );
+   addAndMakeVisible( m_pcNumSteps );
+
+   m_pbQuantize = new juce::TextButton( "Quantize:" );
+   m_pbQuantize->setToggleable( true );
+   m_pbQuantize->setClickingTogglesState( true );
+   m_pbQuantize->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
+   m_pbQuantize->addListener( this );
+   m_pbQuantize->setBounds( 78, 91, 48, 18 );
+   addAndMakeVisible( m_pbQuantize );
+
+   m_pcQuantize = new CycleComponent();
+   m_pcQuantize->setColour( juce::Label::ColourIds::outlineColourId, juce::Colour::fromRGBA( 255, 255, 255, 64 ) );
+   m_pcQuantize->setJustificationType( juce::Justification::centred );
+   m_pcQuantize->setBounds( 130, 91, 32, 18 );
+   m_pcQuantize->setItems( 1.0, 32, 1.0, "{:.0f}", "" );
+   m_pcQuantize->addListener( this );
+   addAndMakeVisible( m_pcQuantize );
 }
 
 
 UISectionLFO::StepEditor::~StepEditor()
 {
+   delete m_plNumSteps;
+   delete m_pcNumSteps;
+   delete m_pbQuantize;
+   delete m_pcQuantize;
+}
+
+
+int UISectionLFO::StepEditor::getDiagramXPos() const
+{
+   return( 0 );
+}
+
+
+int UISectionLFO::StepEditor::getDiagramYPos() const
+{
+   return( 0 );
+}
+
+
+int UISectionLFO::StepEditor::getDiagramWidth() const
+{
+   return( getBounds().getWidth() );
+}
+
+
+int UISectionLFO::StepEditor::getDiagramHeight() const
+{
+   return( getBounds().getHeight() - 20 );
+}
+
+
+void UISectionLFO::StepEditor::update()
+{
+   SamplerEngine::LFO *pLFO = m_pSectionLFO->getLFO();
+   if( pLFO )
+   {
+      m_pcNumSteps->setCurrentItemByValue( pLFO->getCustomRef().size() );
+      m_pbQuantize->setToggleState( pLFO->getCustomQuantizeEnabled(), dontSendNotification );
+      m_pcQuantize->setCurrentItemByValue( pLFO->getCustomQuantize() );
+   }
+
+   repaint();
+}
+
+
+void UISectionLFO::StepEditor::buttonClicked( Button *pButton )
+{
+   if( m_pbQuantize == pButton )
+   {
+      SamplerEngine::LFO *pLFO = m_pSectionLFO->getLFO();
+      if( pLFO )
+      {
+         pLFO->setCustomQuantizeEnabled( m_pbQuantize->getToggleState() );
+         update();
+      }
+   }
+}
+
+
+void UISectionLFO::StepEditor::buttonStateChanged( Button *pButton )
+{
+}
+
+
+void UISectionLFO::StepEditor::labelTextChanged( Label *pLabel )
+{
+   if( pLabel == m_pcNumSteps )
+   {
+      SamplerEngine::LFO *pLFO = m_pSectionLFO->getLFO();
+      if( pLFO )
+      {
+         size_t s = (size_t)( m_pcNumSteps->getCurrentItemValue() + 0.5 );
+         if( s != pLFO->getCustomRef().size() )
+         {
+            pLFO->getCustomRef().resize( s );
+            update();
+         }
+      }
+   } else
+   if( pLabel == m_pcQuantize )
+   {
+      SamplerEngine::LFO *pLFO = m_pSectionLFO->getLFO();
+      if( pLFO )
+      {
+         size_t q = (size_t)( m_pcQuantize->getCurrentItemValue() + 0.5 );
+         if( q != pLFO->getCustomQuantize() )
+         {
+            pLFO->setCustomQuantize( q );
+            update();
+         }
+      }
+   }
 }
 
 
 void UISectionLFO::StepEditor::paint( juce::Graphics &g )
 {
-   g.setColour( juce::Colour::fromRGB( 16, 32, 16 ) );
+   g.setColour( juce::Colour::fromRGB( 32, 64, 64 ) );
    g.fillAll();
 
-   g.setColour( juce::Colour::fromRGB( 255, 255, 255 ) );
-   g.drawRect( 0, 0, getBounds().getWidth(), getBounds().getHeight() );
+   g.setColour( juce::Colour::fromRGB( 16, 32, 16 ) );
+   g.fillRect( getDiagramXPos(), getDiagramYPos(), getDiagramWidth(), getDiagramHeight() );
 
-   for( size_t i = 0; i < m_Steps.size(); i++ )
+   SamplerEngine::LFO *pLFO = m_pSectionLFO->getLFO();
+   if( !pLFO )
    {
-      double v = m_Steps[i];
+      return;
+   }
 
-      int x = ( i * getBounds().getWidth() / m_Steps.size() );
-      int y = getBounds().getHeight() / 2;
-      int w = getBounds().getWidth() / m_Steps.size();
-      int h = v * getBounds().getHeight() / 2;
+   for( size_t i = 0; i < pLFO->getNumCustomValues(); i++ )
+   {
+      double v = pLFO->getCustomValue( i );
+
+      int x = ( (double)( i * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5;
+      int y = getDiagramHeight() / 2;
+      int x2 = ( (double)( ( i + 1 ) * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5;
+      int w = x2 - x;
+      int h = -v * getDiagramHeight() / 2;
+
+      int yy = y + h;
 
       if( h < 0 )
       {
@@ -38,17 +166,99 @@ void UISectionLFO::StepEditor::paint( juce::Graphics &g )
       }
 
       g.setColour( juce::Colour::fromRGB( 96, 96, 96 ) );
-      g.fillRect( x, y, w, h );
-      g.setColour( juce::Colour::fromRGB( 96, 32, 32 ) );
-      g.drawRect( x, y, w, h );
+      g.fillRect( x + getDiagramXPos(), y + getDiagramYPos(), w, h );
+
+      g.setColour( juce::Colour::fromRGB( 48, 48, 48 ) );
+      g.drawVerticalLine( x + getDiagramXPos(), getDiagramYPos(), getDiagramYPos() + getDiagramHeight() - 1 );
    }
+
+   if( pLFO->getCustomQuantizeEnabled() )
+   {
+      g.setColour( juce::Colour::fromRGB( 48, 48, 48 ) );
+      for( size_t i = 1; i <= pLFO->getCustomQuantize(); i++ )
+      {
+         int ybase = getDiagramHeight() / 2;
+         int yofs = ( i * getDiagramHeight() ) / ( 2 * pLFO->getCustomQuantize() );
+         g.drawHorizontalLine( ybase + yofs, getDiagramXPos(), getDiagramXPos() + getDiagramWidth() );
+         g.drawHorizontalLine( ybase - yofs, getDiagramXPos(), getDiagramXPos() + getDiagramWidth() );
+      }
+   }
+
+   for( size_t i = 0; i < pLFO->getNumCustomValues(); i++ )
+   {
+      double v = pLFO->getCustomValue( i );;
+
+      int x = ( (double)( i * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5;
+      int y = getDiagramHeight() / 2;
+      int x2 = ( (double)( ( i + 1 ) * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5;
+      int w = x2 - x;
+      int h = -v * getDiagramHeight() / 2;
+
+      int yy = y + h;
+
+      g.setColour( juce::Colour::fromRGB( 255, 32, 32 ) );
+      g.drawHorizontalLine( yy + getDiagramYPos(), x + getDiagramXPos(), x + w + getDiagramXPos() );
+   }
+
+   g.setColour( juce::Colour::fromRGB( 128, 128, 128 ) );
+   g.drawRect( getDiagramXPos(), getDiagramYPos(), getDiagramWidth(), getDiagramHeight() );
 }
 
 
-void UISectionLFO::StepEditor::setSteps( std::vector<double> s )
+void UISectionLFO::StepEditor::mouseMove( const MouseEvent &event)
 {
-   m_Steps = s;
+}
+
+
+void UISectionLFO::StepEditor::mouseDrag( const MouseEvent &event )
+{
+   int x = event.getPosition().getX();
+   int y = event.getPosition().getY();
+   changeStepValue( x, y );
+}
+
+
+void UISectionLFO::StepEditor::mouseDown( const MouseEvent &event )
+{
+   int x = event.getMouseDownPosition().getX();
+   int y = event.getMouseDownPosition().getY();
+   changeStepValue( x, y );
+}
+
+
+void UISectionLFO::StepEditor::mouseUp( const MouseEvent &event )
+{
+}
+
+
+void UISectionLFO::StepEditor::changeStepValue( int x, int y )
+{
+   SamplerEngine::LFO *pLFO = m_pSectionLFO->getLFO();
+   if( !pLFO )
+      return;
+
+   std::vector<double> &steps = pLFO->getCustomRef();
+
+   int nStep = ( ( x - getDiagramXPos() ) * steps.size() ) / getDiagramWidth();
+   double v = ( ( (double)( y - getDiagramYPos() ) / (double)( getDiagramHeight() - 1 ) ) * 2.0 ) - 1.0;
+   v = -v;
+   if( nStep < 0 || nStep >= steps.size() ||
+       v < -1.0 || v > 1.0 )
+      return;
+
+   steps[nStep] = v;
    repaint();
+}
+
+
+SamplerEngine::LFO *UISectionLFO::getLFO() const
+{
+   if( !sample() )
+   {
+      return( nullptr );
+   }
+
+   return( sample()->getLFO( getCurrentLFO() ) );
 }
 
 
@@ -66,6 +276,10 @@ UISectionLFO::UISectionLFO( UIPage *pUIPage, std::string label ) :
       addAndMakeVisible( pB );
       m_SelButtons.push_back( pB );
    }
+
+   m_plWaveform = new juce::Label( juce::String(), "Wave:" );
+   m_plWaveform->setBounds( 0, 22, 48, 18 );
+   addAndMakeVisible( m_plWaveform );
 
    m_pcbWaveform = new juce::ComboBox( "Waveform" );
    for( SamplerEngine::LFO::Waveform wf : SamplerEngine::LFO::allWaveforms() )
@@ -174,6 +388,7 @@ UISectionLFO::~UISectionLFO()
    m_SelButtons.clear();
 
    delete m_pcbWaveform;
+   delete m_plWaveform;
    delete m_plRate;
    delete m_pcRate;
    delete m_pbRateSync;
@@ -260,7 +475,7 @@ void UISectionLFO::updateInfo()
    size_t nLFO = getCurrentLFO();
    SamplerEngine::LFO *pLFO = pSample->getLFO( nLFO );
 
-   m_pStepEditor->setSteps( pLFO->getCustom() );
+   m_pStepEditor->update();
    m_pcbWaveform->setSelectedId( pLFO->getWaveform(), dontSendNotification );
 
    m_pbRateSync->setToggleState( pLFO->getSyncEnabled(), dontSendNotification );
@@ -399,6 +614,7 @@ void UISectionLFO::samplesUpdated()
       m_SelButtons[i]->setVisible( pSample != nullptr );
    }
    m_pcbWaveform->setVisible( pSample != nullptr );
+   m_plWaveform->setVisible( pSample != nullptr );
    m_plRate->setVisible( pSample != nullptr );
    m_pcRate->setVisible( pSample != nullptr );
    m_pbRateSync->setVisible( pSample != nullptr );

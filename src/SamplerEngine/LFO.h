@@ -60,8 +60,18 @@ namespace SamplerEngine
       void setRandomPhaseEnabled( bool e );
       bool getRandomPhaseEnabled() const;
 
+      void setCustomQuantizeEnabled( bool e );
+      bool getCustomQuantizeEnabled() const;
+      void setCustomQuantize( size_t q );
+      size_t getCustomQuantize() const;
+
+      double getCustomValue( size_t i ) const;
+      size_t getNumCustomValues() const;
+
       std::vector<double> getCustom() const;
       void setCustom( std::vector<double> v );
+
+      std::vector<double> &getCustomRef();
 
       void noteOn();
       void noteOff();
@@ -99,6 +109,8 @@ namespace SamplerEngine
       bool m_RandomPhaseEnabled;
 
       std::vector<double> m_Custom;
+      bool m_CustomQuantizeEnabled;
+      size_t m_CustomQuantize;
 
       double m_StartPhase;
    };

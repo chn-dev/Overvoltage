@@ -24,6 +24,8 @@ LFO::LFO() :
    m_OnceEnabled( false ),
    m_RandomPhaseEnabled( false ),
    m_Custom( { 1.0, -1.0 } ),
+   m_CustomQuantizeEnabled( false ),
+   m_CustomQuantize( 12 ),
    m_StartPhase( 0.0 )
 {
 }
@@ -47,6 +49,8 @@ LFO::LFO( const LFO &d ) :
    m_OnceEnabled( d.m_OnceEnabled ),
    m_RandomPhaseEnabled( d.m_RandomPhaseEnabled ),
    m_Custom( d.m_Custom ),
+   m_CustomQuantizeEnabled( d.m_CustomQuantizeEnabled ),
+   m_CustomQuantize( d.m_CustomQuantize ),
    m_StartPhase( d.m_StartPhase )
 {
 }
@@ -72,6 +76,8 @@ void LFO::getSettings( const LFO &d )
    m_OnceEnabled = d.m_OnceEnabled;
    m_RandomPhaseEnabled = d.m_RandomPhaseEnabled;
    m_Custom = d.m_Custom;
+   m_CustomQuantizeEnabled = d.m_CustomQuantizeEnabled;
+   m_CustomQuantize = d.m_CustomQuantize;
 }
 
 
@@ -231,6 +237,36 @@ std::vector<double> LFO::getCustom() const
 }
 
 
+std::vector<double> &LFO::getCustomRef()
+{
+   return( m_Custom );
+}
+
+
+void LFO::setCustomQuantizeEnabled( bool e )
+{
+   m_CustomQuantizeEnabled = e;
+}
+
+
+bool LFO::getCustomQuantizeEnabled() const
+{
+   return( m_CustomQuantizeEnabled );
+}
+
+
+void LFO::setCustomQuantize( size_t q )
+{
+   m_CustomQuantize = q;
+}
+
+
+size_t LFO::getCustomQuantize() const
+{
+   return( m_CustomQuantize );
+}
+
+
 void LFO::setCustom( std::vector<double> v )
 {
    m_Custom = v;
@@ -324,6 +360,30 @@ LFO::Waveform LFO::waveformFromString( const std::string &wf )
 }
 
 
+double LFO::getCustomValue( size_t i ) const
+{
+   if( i >= m_Custom.size() )
+      return( 0.0 );
+
+   double v = m_Custom[i];
+
+   if( getCustomQuantizeEnabled() )
+   {
+      int x = (int)( ( v * getCustomQuantize() ) + ( v < 0.0 ? -0.5 : 0.5 ) );
+      v = (double)x / (double)getCustomQuantize();
+   }
+
+   return( v );
+}
+
+
+size_t LFO::getNumCustomValues() const
+{
+   return( m_Custom.size() );
+}
+
+
+
 void LFO::step( double s, double bpm )
 {
    double delaySecs = getDelaySecs();
@@ -412,6 +472,7 @@ void LFO::step( double s, double bpm )
    } else
    if( m_Waveform == Waveform_Custom )
    {
+      m_Value = getCustomValue( (size_t)( period * getNumCustomValues() ) );
    }
 
    m_Value *= amp;
@@ -480,6 +541,16 @@ LFO *LFO::fromXml( const juce::XmlElement *pe )
       } else
       if( tagName == "custom" )
       {
+         if( pChild->hasAttribute( "quantizeenabled" ) )
+         {
+            pLFO->m_CustomQuantizeEnabled = util::toLower( util::trim( pChild->getStringAttribute( "quantizeenabled" ).toStdString() ) ) == "true";
+         }
+
+         if( pChild->hasAttribute( "quantize") )
+         {
+            pLFO->m_CustomQuantize = std::stoul( util::trim( pChild->getStringAttribute( "quantize" ).toStdString() ) );
+         }
+
          std::vector<std::string> sVals =
             util::strsplit(
                util::trim(
@@ -550,6 +621,8 @@ juce::XmlElement *LFO::toXml() const
    pe->addChildElement( peRandomPhaseEnabled );
 
    juce::XmlElement *peCustom = new juce::XmlElement( "custom" );
+   peCustom->setAttribute( "quantizeenabled", m_CustomQuantizeEnabled ? "true" : "false" );
+   peCustom->setAttribute( "quantize", stdformat( "{}", m_CustomQuantize ) );
    std::vector<std::string> vals;
    for( size_t i = 0; i < m_Custom.size(); i++ )
    {

@@ -16,7 +16,9 @@ namespace SamplerGUI
                         public juce::Label::Listener
    {
    public:
-      class StepEditor : public juce::Component
+      class StepEditor : public juce::Component,
+                         public juce::Label::Listener,
+                         public juce::Button::Listener
       {
          public:
             StepEditor( UISectionLFO *pSectionLFO );
@@ -24,11 +26,32 @@ namespace SamplerGUI
 
             virtual void paint( juce::Graphics &g ) override;
 
-            void setSteps( std::vector<double> s );
+            void mouseMove( const MouseEvent &event) override;
+            void mouseDrag( const MouseEvent &event ) override;
+            void mouseDown( const MouseEvent &event ) override;
+            void mouseUp( const MouseEvent &event ) override;
+
+            virtual void labelTextChanged( Label *pLabel );
+            virtual void buttonClicked( Button *pButton );
+            virtual void buttonStateChanged( Button *pButton );
+
+            void update();
+
+         private:
+            void changeStepValue( int x, int y );
+            int getDiagramXPos() const;
+            int getDiagramYPos() const;
+            int getDiagramWidth() const;
+            int getDiagramHeight() const;
 
          private:
             UISectionLFO *m_pSectionLFO;
-            std::vector<double> m_Steps;
+
+            juce::Label *m_plNumSteps;
+            CycleComponent *m_pcNumSteps;
+
+            juce::TextButton *m_pbQuantize;
+            CycleComponent *m_pcQuantize;
       };
 
       UISectionLFO( UIPage *pUIPage, std::string label );
@@ -36,6 +59,8 @@ namespace SamplerGUI
 
       void setCurrentLFO( size_t n );
       size_t getCurrentLFO() const;
+
+      SamplerEngine::LFO *getLFO() const;
 
       virtual void paint( juce::Graphics &g );
       virtual void resized();
@@ -52,6 +77,7 @@ namespace SamplerGUI
 
    private:
       std::vector<juce::TextButton *> m_SelButtons;
+      juce::Label *m_plWaveform;
       juce::ComboBox *m_pcbWaveform;
 
       juce::Label *m_plRate;
