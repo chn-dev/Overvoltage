@@ -20,7 +20,7 @@ PluginEditor::PluginEditor( PluginProcessor& p )
       addAndMakeVisible( pPage );
    }
 
-   for( int i = 0; i < 16; i++ )
+   for( int i = 0; i < SAMPLERENGINE_NUMPARTS; i++ )
    {
       juce::TextButton *pButton = new juce::TextButton( stdformat( "{}", i + 1 ) );
       pButton->setToggleable( true );

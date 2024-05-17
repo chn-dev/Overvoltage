@@ -547,6 +547,16 @@ void UISectionSamplerKeyboard::mouseDown( const MouseEvent &event )
             moveToLayer.addItem( i + 1, tmp );
          }
          main.addSubMenu( "Move to Layer", moveToLayer );
+
+         juce::PopupMenu moveToPart;
+         for( int i = 0; i < SAMPLERENGINE_NUMPARTS; i++ )
+         {
+            char tmp[32];
+            sprintf( tmp, "%d", i + 1 );
+            moveToPart.addItem( SAMPLERENGINE_NUMLAYERS + i + 1, tmp );
+         }
+         main.addSubMenu( "Move to Part", moveToPart );
+
          int r = main.show();
 
          if( r > 0 )
@@ -561,6 +571,25 @@ void UISectionSamplerKeyboard::mouseDown( const MouseEvent &event )
                }
                m_pPageZones->setCurrentLayer( r );
                repaint();
+            } else
+            if( r >= SAMPLERENGINE_NUMLAYERS && r < ( SAMPLERENGINE_NUMLAYERS + SAMPLERENGINE_NUMPARTS ) )
+            {
+               SamplerEngine::Engine *pEngine = m_pPageZones->editor()->processor().samplerEngine();
+
+               // Move to Part
+               int nPart = r - SAMPLERENGINE_NUMLAYERS;
+               for( SamplerEngine::Sample *pSample : m_SelectedSamples )
+               {
+                  SamplerEngine::Part *pPart = pEngine->findPart( pSample );
+                  if( pPart )
+                  {
+                     pPart->removeSample( pSample );
+                  }
+
+                  pPart = pEngine->getPart( nPart );
+                  pPart->addSample( pSample );
+               }
+               m_pPageZones->editor()->activatePart( nPart );
             }
          }
       }

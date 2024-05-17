@@ -17,7 +17,7 @@ UISectionKeyboard::UISectionKeyboard( UIPageZones *pPageZones ) :
 {
    for( int i = 0; i < 128; i++ )
    {
-      for( int j = 0; j < 16; j++ )
+      for( int j = 0; j < SAMPLERENGINE_NUMPARTS; j++ )
       {
          m_Notes[j][i] = -1;
       }

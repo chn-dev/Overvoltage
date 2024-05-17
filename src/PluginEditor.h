@@ -31,11 +31,11 @@ public:
    bool isSoloEnabled() const;
 
    size_t currentPart() const;
+   void activatePart( size_t nPart );
 
    PluginProcessor &processor() const;
 
 private:
-   void activatePart( size_t nPart );
 
    // This reference is provided as a quick way for your editor to
    // access the processor object that created it.

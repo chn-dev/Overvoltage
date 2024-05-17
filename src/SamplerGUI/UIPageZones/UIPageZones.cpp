@@ -232,7 +232,7 @@ void UIPageZones::buttonStateChanged( Button *pButton )
 
 void UIPageZones::currentPartChanged( size_t /*nPart*/ )
 {
-   m_pUISectionKeyboard->clearSelectedSamples();
+//   m_pUISectionKeyboard->clearSelectedSamples();
 }
 
 

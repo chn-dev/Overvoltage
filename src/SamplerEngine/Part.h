@@ -30,8 +30,12 @@ namespace SamplerEngine
       std::list<Sample *> &samples();
       const std::list<Sample *> &constSamples() const;
 
+      bool containsSample( const Sample *pSample ) const;
+
       size_t getPartNum() const;
       void deleteSample( Sample *pSample );
+      void removeSample( Sample *pSample );
+      void addSample( Sample *pSample );
 
       bool isPlaying( const Sample *pSample ) const;
 

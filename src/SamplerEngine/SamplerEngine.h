@@ -5,6 +5,7 @@
 #include "Voice.h"
 
 #define SAMPLERENGINE_NUMLAYERS 8
+#define SAMPLERENGINE_NUMPARTS 16
 
 class PluginProcessor;
 
@@ -36,6 +37,9 @@ namespace SamplerEngine
       bool process( std::vector<OutputBus> &buses, double sampleRate, double bpm );
 
       void setProcessor( PluginProcessor *pProcessor );
+
+      Part *findPart( const Sample *pSample );
+      Part *getPart( size_t nPart );
 
       void deleteSample( size_t part, Sample *pSample );
       std::list<Sample *> samples( size_t nPart ) const;

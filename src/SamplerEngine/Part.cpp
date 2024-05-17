@@ -150,6 +150,38 @@ const std::list<Sample *> &Part::constSamples() const
 }
 
 
+void Part::addSample( Sample *pSample )
+{
+   if( containsSample( pSample ) )
+      return;
+
+   m_Samples.push_back( pSample );
+}
+
+
+void Part::removeSample( Sample *pSample )
+{
+   std::vector<Voice *> voicesToStop;
+   for( std::pair<int, Voice *> sv : m_Voices )
+   {
+      if( sv.second->sample() == pSample )
+      {
+         voicesToStop.push_back( sv.second );
+      }
+   }
+
+   for( Voice *pVoice : voicesToStop )
+   {
+      stopVoice( pVoice );
+   }
+
+   if( containsSample( pSample ) )
+   {
+      m_Samples.remove( pSample );
+   }
+}
+
+
 void Part::deleteSample( Sample *pSample )
 {
    std::vector<Voice *> voicesToStop;
@@ -277,4 +309,10 @@ double Part::getController( int ccNum ) const
 void Part::setEngine( Engine *pEngine )
 {
    m_pEngine = pEngine;
+}
+
+
+bool Part::containsSample( const Sample *pSample ) const
+{
+   return( std::find( m_Samples.begin(), m_Samples.end(), pSample ) != m_Samples.end() );
 }

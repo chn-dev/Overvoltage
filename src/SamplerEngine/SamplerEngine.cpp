@@ -7,7 +7,7 @@ using namespace SamplerEngine;
 Engine::Engine( PluginProcessor *pProcessor ) :
    m_pProcessor( pProcessor )
 {
-   for( size_t i = 0; i < 16; i++ )
+   for( size_t i = 0; i < SAMPLERENGINE_NUMPARTS; i++ )
    {
       m_Parts.push_back( new Part( i, this ) );
    }
@@ -195,6 +195,27 @@ bool Engine::isPlaying( size_t nPart, const Sample *pSample ) const
       return( false );
    else
       return( m_Parts[nPart]->isPlaying( pSample ) );
+}
+
+
+Part *Engine::getPart( size_t nPart )
+{
+   if( nPart >= m_Parts.size() )
+      return( nullptr );
+   else
+      return( m_Parts[nPart] );
+}
+
+
+Part *Engine::findPart( const Sample *pSample )
+{
+   for( size_t i = 0; i < m_Parts.size(); i++ )
+   {
+      if( m_Parts[i]->containsSample( pSample ) )
+         return( m_Parts[i] );
+   }
+
+   return( nullptr );
 }
 
 
