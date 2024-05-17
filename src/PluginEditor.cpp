@@ -53,6 +53,33 @@ PluginEditor::~PluginEditor()
 }
 
 
+SamplerGUI::UIPageZones *PluginEditor::getUIPageZones() const
+{
+   for( size_t i = 0; i < m_UIPages.size(); i++ )
+   {
+      SamplerGUI::UIPageZones *pP = dynamic_cast<SamplerGUI::UIPageZones *>( m_UIPages[i] );
+      if( pP )
+      {
+         return( pP );
+      }
+   }
+
+   return( nullptr );
+}
+
+
+std::set<SamplerEngine::Sample *> PluginEditor::getSelectedSamples() const
+{
+   return( getUIPageZones()->getSamplerKeyboard()->selectedSamples() );
+}
+
+
+bool PluginEditor::isSoloEnabled() const
+{
+   return( getUIPageZones()->isSoloEnabled() );
+}
+
+
 size_t PluginEditor::currentPart() const
 {
    return( m_CurrentPart );

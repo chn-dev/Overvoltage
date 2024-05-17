@@ -11,14 +11,14 @@ class PluginEditor;
 //==============================================================================
 namespace SamplerGUI
 {
-   class UIPage;
+   class UIPageZones;
 
    class UISectionKeyboard  : public UISection,
                                public juce::MidiKeyboardState,
                                public juce::MidiKeyboardStateListener
    {
    public:
-      explicit UISectionKeyboard( UIPage *pPage );
+      explicit UISectionKeyboard( UIPageZones *pPageZones );
       ~UISectionKeyboard() override;
 
       //==============================================================================
@@ -60,7 +60,7 @@ namespace SamplerGUI
       int getKeyboardHeight( int noteStart, int noteEnd ) const;
 
    protected:
-      UIPage *m_pPage;
+      UIPageZones *m_pPageZones;
       int m_KeyHeight;
       int m_NoteOffset;
       int m_MaxNoteOffset;

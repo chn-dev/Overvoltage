@@ -28,7 +28,7 @@ namespace SamplerEngine
          PlayModeLoopUntilRelease
       };
 
-      Sample( std::string name, WaveFile *pWave, int minNote, int maxNote );
+      Sample( std::string name, WaveFile *pWave, int minNote, int maxNote, int nLayer );
       ~Sample();
 
       static Sample *fromXml( const juce::XmlElement *pe );
@@ -77,6 +77,9 @@ namespace SamplerEngine
       static PlayMode fromString( std::string mode );
       static std::set<PlayMode> allPlayModes();
 
+      void setLayer( int nLayer );
+      int getLayer() const;
+
    protected:
 
    private:
@@ -103,6 +106,7 @@ namespace SamplerEngine
       int m_MaxNote;
       int m_MinVelocity;
       int m_MaxVelocity;
+      int m_NLayer;
    };
 }
 

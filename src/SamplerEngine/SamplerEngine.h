@@ -4,6 +4,10 @@
 #include "Part.h"
 #include "Voice.h"
 
+#define SAMPLERENGINE_NUMLAYERS 8
+
+class PluginProcessor;
+
 namespace SamplerEngine
 {
    class OutputBus
@@ -26,10 +30,12 @@ namespace SamplerEngine
    class Engine
    {
    public:
-      Engine();
+      Engine( PluginProcessor *pProcessor = nullptr );
       ~Engine();
 
       bool process( std::vector<OutputBus> &buses, double sampleRate, double bpm );
+
+      void setProcessor( PluginProcessor *pProcessor );
 
       void deleteSample( size_t part, Sample *pSample );
       std::list<Sample *> samples( size_t nPart ) const;
@@ -42,12 +48,16 @@ namespace SamplerEngine
       std::list<Sample *> &samples( size_t nPart );
       const std::list<Sample *> &constSamples( size_t nPart ) const;
 
+      bool isSoloEnabled() const;
+      std::set<Sample *> getSelectedSamples() const;
+
       bool isPlaying( size_t nPart, const Sample *pSample ) const;
 
       static Engine *fromXml( const juce::XmlElement *peOvervoltage );
       juce::XmlElement *toXml() const;
 
    private:
+      PluginProcessor *m_pProcessor;
       std::vector<Part *> m_Parts;
    };
 }

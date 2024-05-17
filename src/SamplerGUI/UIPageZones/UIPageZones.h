@@ -18,13 +18,23 @@ class PluginEditor;
 
 namespace SamplerGUI
 {
-   class UIPageZones : public UIPage
+   class UIPageZones : public UIPage,
+                       public juce::Button::Listener
    {
    public:
       UIPageZones( PluginEditor *pEditor );
       ~UIPageZones();
 
       virtual void currentPartChanged( size_t nPart );
+      virtual void buttonClicked( Button *pButton );
+      virtual void buttonStateChanged( Button *pButton );
+
+      int getCurrentLayer() const;
+      void setCurrentLayer( int nLayer );
+
+      SamplerGUI::UISectionSamplerKeyboard *getSamplerKeyboard() const;
+
+      bool isSoloEnabled() const;
 
    protected:
       SamplerGUI::UISectionSamplerKeyboard *m_pUISectionKeyboard;
@@ -37,6 +47,11 @@ namespace SamplerGUI
       SamplerGUI::UISectionFilter *m_pUISectionFilter;
       SamplerGUI::UISectionOutput *m_pUISectionOutput;
       SamplerGUI::UISectionModMatrix *m_pUISectionModMatrix;
+
+      std::vector<juce::TextButton *> m_LayerButtons;
+      juce::TextButton *m_pbSolo;
+      juce::TextButton *m_pbSelLayer;
+      juce::TextButton *m_pbSelAll;
    };
 }
 

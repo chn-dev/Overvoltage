@@ -1,16 +1,16 @@
 #include <filesystem>
 
 #include <SamplerEngine/WaveFile.h>
+#include <SamplerGUI/UIPageZones/UIPageZones.h>
 
 #include "PluginEditor.h"
 #include "UISectionSamplerKeyboard.h"
-
 #include "util.h"
 
 using namespace SamplerGUI;
 
-UISectionSamplerKeyboard::UISectionSamplerKeyboard( UIPage *pPage ) :
-   UISectionKeyboard( pPage ),
+UISectionSamplerKeyboard::UISectionSamplerKeyboard( UIPageZones *pPageZones ) :
+   UISectionKeyboard( pPageZones ),
    m_pCurrentSample( nullptr ),
    m_CurrentSampleNote( -1 ),
    m_CurrentSampleNoteOffset( 0 ),
@@ -54,7 +54,7 @@ bool UISectionSamplerKeyboard::keyPressed( const KeyPress &key, Component */*pOr
    {
       for( SamplerEngine::Sample *pSample : m_SelectedSamples )
       {
-         emitDeleteSample( m_pPage->editor()->currentPart(), pSample );
+         emitDeleteSample( m_pPageZones->editor()->currentPart(), pSample );
       }
 
       m_SelectedSamples.clear();
@@ -79,11 +79,15 @@ bool UISectionSamplerKeyboard::keyStateChanged( bool /*isKeyDown*/, Component */
 
 SamplerEngine::Sample *UISectionSamplerKeyboard::getSampleAt( int x, int y ) const
 {
+   int curLayer = m_pPageZones->getCurrentLayer();
    for( SamplerEngine::Sample *pSample : constSamples() )
    {
-      juce::Rectangle<int> r = getNoteRect( pSample->getMinNote(), pSample->getMaxNote(), pSample->getMinVelocity(), pSample->getMaxVelocity() );
-      if( r.contains( x, y ) )
-         return( pSample );
+      if( pSample->getLayer() == curLayer )
+      {
+         juce::Rectangle<int> r = getNoteRect( pSample->getMinNote(), pSample->getMaxNote(), pSample->getMinVelocity(), pSample->getMaxVelocity() );
+         if( r.contains( x, y ) )
+            return( pSample );
+      }
    }
 
    return( nullptr );
@@ -98,7 +102,7 @@ bool UISectionSamplerKeyboard::drawSample( juce::Graphics &g, SamplerEngine::Sam
 
    bool isSelected = m_SelectedSamples.find( pSample ) != m_SelectedSamples.end();
 
-   if( m_pPage->editor()->processor().samplerEngine()->isPlaying( m_pPage->editor()->currentPart(), pSample ) )
+   if( m_pPageZones->editor()->processor().samplerEngine()->isPlaying( m_pPageZones->editor()->currentPart(), pSample ) )
    {
       g.setColour( juce::Colour::fromRGB( 255, 64, 64 ) );
    } else
@@ -135,13 +139,18 @@ void UISectionSamplerKeyboard::paint( juce::Graphics &g )
 {
    UISectionKeyboard::paint( g );
 
+   int curLayer = m_pPageZones->getCurrentLayer();
+
    g.setFont( 13.0 );
    std::list<SamplerEngine::Sample *> highlighted;
    for( SamplerEngine::Sample *pSample : samples() )
    {
-      if( drawSample( g, pSample ) )
+      if( pSample->getLayer() == curLayer )
       {
-         highlighted.push_back( pSample );
+         if( drawSample( g, pSample ) )
+         {
+            highlighted.push_back( pSample );
+         }
       }
    }
 
@@ -262,7 +271,7 @@ void UISectionSamplerKeyboard::filesDropped( const StringArray &files, int /*x*/
       SamplerEngine::WaveFile *pWave = SamplerEngine::WaveFile::load( f.toStdString() );
       if( pWave )
       {
-         SamplerEngine::Sample *pSample = new SamplerEngine::Sample( std::filesystem::path( f.toStdString() ).stem().string(), pWave, m_DragDropNote + n, m_DragDropNote + n );
+         SamplerEngine::Sample *pSample = new SamplerEngine::Sample( std::filesystem::path( f.toStdString() ).stem().string(), pWave, m_DragDropNote + n, m_DragDropNote + n, m_pPageZones->getCurrentLayer() );
          samples().push_back( pSample );
          n++;
       }
@@ -386,13 +395,17 @@ void UISectionSamplerKeyboard::mouseDrag( const MouseEvent &event )
       m_SelectionRectangle = r;
 
       m_SelectedSamples.clear();
+      int curLayer = m_pPageZones->getCurrentLayer();
       for( SamplerEngine::Sample *pSample : samples() )
       {
-         juce::Rectangle<int> noteRect = getNoteRect( pSample );
-         if( m_SelectionRectangle.contains( noteRect ) ||
-             m_SelectionRectangle.intersects( noteRect ) )
+         if( pSample->getLayer() == curLayer )
          {
-            m_SelectedSamples.insert( pSample );
+            juce::Rectangle<int> noteRect = getNoteRect( pSample );
+            if( m_SelectionRectangle.contains( noteRect ) ||
+                m_SelectionRectangle.intersects( noteRect ) )
+            {
+               m_SelectedSamples.insert( pSample );
+            }
          }
       }
 
@@ -502,7 +515,6 @@ void UISectionSamplerKeyboard::mouseDown( const MouseEvent &event )
    if( pSample )
    {
       bool isCtrlDown = juce::ModifierKeys::getCurrentModifiers().isCtrlDown();
-
       if( m_SelectedSamples.find( pSample ) == m_SelectedSamples.end() )
       {
          if( !isCtrlDown )
@@ -522,6 +534,36 @@ void UISectionSamplerKeyboard::mouseDown( const MouseEvent &event )
       m_CurrentSampleNoteOffset = 0;
 
       emitSampleSelectionUpdated();
+
+      if( event.mods.isRightButtonDown() )
+      {
+         juce::PopupMenu main;
+
+         juce::PopupMenu moveToLayer;
+         for( int i = 0; i < SAMPLERENGINE_NUMLAYERS; i++ )
+         {
+            char tmp[32];
+            sprintf( tmp, "%c", 'A' + i );
+            moveToLayer.addItem( i + 1, tmp );
+         }
+         main.addSubMenu( "Move to Layer", moveToLayer );
+         int r = main.show();
+
+         if( r > 0 )
+         {
+            r = r - 1;
+            if( r >= 0 && r < SAMPLERENGINE_NUMLAYERS )
+            {
+               // Move to Layer
+               for( SamplerEngine::Sample *pSample : m_SelectedSamples )
+               {
+                  pSample->setLayer( r );
+               }
+               m_pPageZones->setCurrentLayer( r );
+               repaint();
+            }
+         }
+      }
    } else
    if( x >= m_Width )
    {
@@ -589,6 +631,30 @@ std::set<SamplerEngine::Sample *> UISectionSamplerKeyboard::selectedSamples() co
 void UISectionSamplerKeyboard::clearSelectedSamples()
 {
    m_SelectedSamples.clear();
+   emitSampleSelectionUpdated();
+   repaint();
+}
+
+
+void UISectionSamplerKeyboard::selectAll()
+{
+   selectLayer();
+}
+
+
+void UISectionSamplerKeyboard::selectLayer( int nLayer )
+{
+   m_SelectedSamples.clear();
+
+   int curLayer = m_pPageZones->getCurrentLayer();
+   for( SamplerEngine::Sample *pSample : constSamples() )
+   {
+      if( nLayer < 0 || pSample->getLayer() == nLayer )
+      {
+         m_SelectedSamples.insert( pSample );
+      }
+   }
+
    emitSampleSelectionUpdated();
    repaint();
 }

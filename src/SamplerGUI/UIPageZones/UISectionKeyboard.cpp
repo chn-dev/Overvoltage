@@ -1,14 +1,14 @@
 #include "UISectionKeyboard.h"
 #include "PluginEditor.h"
-#include <SamplerGUI/UIPage.h>
+#include <SamplerGUI/UIPageZones/UIPageZones.h>
 
 #include "util.h"
 
 using namespace SamplerGUI;
 
-UISectionKeyboard::UISectionKeyboard( UIPage *pPage ) :
-   UISection( pPage ),
-   m_pPage( pPage ),
+UISectionKeyboard::UISectionKeyboard( UIPageZones *pPageZones ) :
+   UISection( pPageZones ),
+   m_pPageZones( pPageZones ),
    m_KeyHeight( 28 ),
    m_NoteOffset( 36 ),
    m_MaxNoteOffset( 128 ),
@@ -32,13 +32,13 @@ UISectionKeyboard::~UISectionKeyboard()
 
 std::list<SamplerEngine::Sample *> &UISectionKeyboard::samples()
 {
-   return( m_pPage->editor()->processor().samples() );
+   return( m_pPageZones->editor()->processor().samples() );
 }
 
 
 const std::list<SamplerEngine::Sample *> &UISectionKeyboard::constSamples() const
 {
-   return( m_pPage->editor()->processor().constSamples() );
+   return( m_pPageZones->editor()->processor().constSamples() );
 }
 
 
@@ -177,7 +177,7 @@ void UISectionKeyboard::drawNote( juce::Graphics &g, int note )
    if( r.getY() + r.getHeight() < 0 )
       return;
 
-   if( m_Notes[m_pPage->editor()->currentPart()][note] >= 0 )
+   if( m_Notes[m_pPageZones->editor()->currentPart()][note] >= 0 )
       g.setColour( juce::Colour::fromRGB( 255, 64, 64 ) );
    else
       g.setColour( c );
@@ -316,17 +316,17 @@ void UISectionKeyboard::mouseDrag( const MouseEvent &event )
    {
       if( m_CurrentNote != note )
       {
-         m_Notes[m_pPage->editor()->currentPart()][m_CurrentNote] = -1;
-         noteOff( (int)m_pPage->editor()->currentPart() + 1, m_CurrentNote, 1.0 );
+         m_Notes[m_pPageZones->editor()->currentPart()][m_CurrentNote] = -1;
+         noteOff( (int)m_pPageZones->editor()->currentPart() + 1, m_CurrentNote, 1.0 );
 
          m_CurrentNote = -1;
 
          if( note >= 0 )
          {
             int velocity = 127;
-            m_Notes[m_pPage->editor()->currentPart()][note] = velocity;
+            m_Notes[m_pPageZones->editor()->currentPart()][note] = velocity;
             m_CurrentNote = note;
-            noteOn( (int)m_pPage->editor()->currentPart() + 1, m_CurrentNote, (double)velocity / 127.0 );
+            noteOn( (int)m_pPageZones->editor()->currentPart() + 1, m_CurrentNote, (double)velocity / 127.0 );
          }
 
          repaint();
@@ -366,12 +366,12 @@ void UISectionKeyboard::mouseDown( const MouseEvent &event )
 
    if( note >= 0 )
    {
-      if( m_Notes[m_pPage->editor()->currentPart()][note] < 0 )
+      if( m_Notes[m_pPageZones->editor()->currentPart()][note] < 0 )
       {
          int velocity = 127;
-         m_Notes[m_pPage->editor()->currentPart()][note] = velocity;
+         m_Notes[m_pPageZones->editor()->currentPart()][note] = velocity;
          m_CurrentNote = note;
-         noteOn( (int)m_pPage->editor()->currentPart() + 1, note, (double)velocity / 127.0 );
+         noteOn( (int)m_pPageZones->editor()->currentPart() + 1, note, (double)velocity / 127.0 );
          repaint();
       }
    }
@@ -387,9 +387,9 @@ void UISectionKeyboard::mouseUp( const MouseEvent &event )
 
    if( m_CurrentNote >= 0 )
    {
-      m_Notes[m_pPage->editor()->currentPart()][m_CurrentNote] = -1;
+      m_Notes[m_pPageZones->editor()->currentPart()][m_CurrentNote] = -1;
       m_CurrentNote = -1;
-      noteOff( (int)m_pPage->editor()->currentPart() + 1, note, 1.0 );
+      noteOff( (int)m_pPageZones->editor()->currentPart() + 1, note, 1.0 );
       repaint();
    }
 }

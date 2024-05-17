@@ -1,12 +1,15 @@
+#include <PluginProcessor.h>
+#include <PluginEditor.h>
 #include "SamplerEngine.h"
 
 using namespace SamplerEngine;
 
-Engine::Engine()
+Engine::Engine( PluginProcessor *pProcessor ) :
+   m_pProcessor( pProcessor )
 {
    for( size_t i = 0; i < 16; i++ )
    {
-      m_Parts.push_back( new Part( i ) );
+      m_Parts.push_back( new Part( i, this ) );
    }
 }
 
@@ -42,6 +45,38 @@ void Engine::deleteSample( size_t part, Sample *pSample )
 std::list<Sample *> Engine::samples( size_t nPart ) const
 {
    return( m_Parts[nPart]->samples() );
+}
+
+
+bool Engine::isSoloEnabled() const
+{
+   bool bSolo = false;
+
+   if( m_pProcessor )
+   {
+      if( m_pProcessor->pluginEditor() )
+      {
+         bSolo = m_pProcessor->pluginEditor()->isSoloEnabled();
+      }
+   }
+
+   return( bSolo );
+}
+
+
+std::set<SamplerEngine::Sample *> Engine::getSelectedSamples() const
+{
+   std::set<SamplerEngine::Sample *> selSamples;
+
+   if( m_pProcessor )
+   {
+      if( m_pProcessor->pluginEditor() )
+      {
+         selSamples = m_pProcessor->pluginEditor()->getSelectedSamples();
+      }
+   }
+
+   return( selSamples );
 }
 
 
@@ -81,6 +116,12 @@ void Engine::controllerChange( size_t nPart, int ccNum, double v )
 }
 
 
+void Engine::setProcessor( PluginProcessor *pProcessor )
+{
+   m_pProcessor = pProcessor;
+}
+
+
 Engine *Engine::fromXml( const juce::XmlElement *peOvervoltage )
 {
    if( peOvervoltage->getTagName() == "overvoltage" )
@@ -100,6 +141,7 @@ Engine *Engine::fromXml( const juce::XmlElement *peOvervoltage )
                   Part *pPart = Part::fromXml( pePart );
                   if( pPart )
                   {
+                     pPart->setEngine( pEngine );
                      if( pEngine->m_Parts[pPart->getPartNum()] )
                      {
                         delete pEngine->m_Parts[pPart->getPartNum()];

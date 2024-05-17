@@ -1,3 +1,5 @@
+#include <util.h>
+
 #include "UIPageZones.h"
 #include "PluginEditor.h"
 #include "UISectionSamplerKeyboard.h"
@@ -17,9 +19,44 @@ UIPageZones::UIPageZones( PluginEditor *pEditor ) :
    int editorSectionHeight = 640 - 32 - yStart;
    int margin = 2;
 
+   for( size_t i = 0; i < SAMPLERENGINE_NUMLAYERS; i++ )
+   {
+      char tmp[32];
+      sprintf( tmp, "%c", 'A' + i );
+      juce::TextButton *pB = new juce::TextButton( tmp );
+      m_LayerButtons.push_back( pB );
+      pB->setBounds( i * 24 + 4, 0, 18, 18 );
+      pB->setToggleable( true );
+      pB->setClickingTogglesState( true );
+      pB->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
+      pB->addListener( this );
+      addAndMakeVisible( pB );
+   }
+
+   m_pbSolo = new juce::TextButton( "Solo" );
+   m_pbSolo->setToggleable( true );
+   m_pbSolo->setClickingTogglesState( true );
+   m_pbSolo->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
+   m_pbSolo->setBounds( 4, 24, 60, 18 );
+   m_pbSolo->addListener( this );
+   addAndMakeVisible( m_pbSolo );
+
+   m_pbSelLayer = new juce::TextButton( "Sel. Layer" );
+   m_pbSelLayer->setBounds( 68, 24, 60, 18 );
+   m_pbSelLayer->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
+   m_pbSelLayer->addListener( this );
+   addAndMakeVisible( m_pbSelLayer );
+
+   m_pbSelAll = new juce::TextButton( "Sel. All" );
+   m_pbSelAll->setBounds( 132, 24, 60, 18 );
+   m_pbSelAll->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
+   m_pbSelAll->addListener( this );
+   addAndMakeVisible( m_pbSelAll );
+
+   int kbofs = yofs + 48;
    m_pUISectionKeyboard = new SamplerGUI::UISectionSamplerKeyboard( this );
    pEditor->addKeyListener( m_pUISectionKeyboard );
-   m_pUISectionKeyboard->setBounds( 0, yofs, kbWidth, 640 - yofs );
+   m_pUISectionKeyboard->setBounds( 0, kbofs, kbWidth, 640 - kbofs );
    m_pUISectionKeyboard->addListener( &( editor()->processor() ) );
    m_pUISectionKeyboard->addSamplerKeyboardListener( &( editor()->processor() ) );
    m_pUISectionKeyboard->setWidth( 64 );
@@ -99,6 +136,8 @@ UIPageZones::UIPageZones( PluginEditor *pEditor ) :
    addAndMakeVisible( m_pUISectionModMatrix );
 
    updateUISections();
+
+   setCurrentLayer( 0 );
 }
 
 
@@ -114,10 +153,96 @@ UIPageZones::~UIPageZones()
    delete m_pUISectionFilter;
    delete m_pUISectionOutput;
    delete m_pUISectionModMatrix;
+
+   for( size_t i = 0; i < m_LayerButtons.size(); i++ )
+   {
+      delete m_LayerButtons[i];
+   }
+   m_LayerButtons.clear();
+
+   delete m_pbSelLayer;
+   delete m_pbSelAll;
+   delete m_pbSolo;
+}
+
+
+void UIPageZones::buttonClicked( Button *pButton )
+{
+   int nLayerButton = -1;
+   for( int i = 0; i < m_LayerButtons.size(); i++ )
+   {
+      if( pButton == m_LayerButtons[i] )
+      {
+         nLayerButton = i;
+         break;
+      }
+   }
+
+   if( pButton == m_pbSelAll )
+   {
+      m_pUISectionKeyboard->selectAll();
+   } else
+   if( pButton == m_pbSelLayer )
+   {
+      m_pUISectionKeyboard->selectLayer( getCurrentLayer() );
+   } else
+   if( pButton == m_pbSolo )
+   {
+      bool bSolo = m_pbSolo->getToggleState();
+   } else
+   if( nLayerButton >= 0 )
+   {
+      setCurrentLayer( nLayerButton );
+   }
+}
+
+
+void UIPageZones::setCurrentLayer( int nLayer )
+{
+   if( nLayer < 0 || nLayer >= m_LayerButtons.size() )
+   {
+      return;
+   }
+
+   for( int i = 0; i < m_LayerButtons.size(); i++ )
+   {
+      m_LayerButtons[i]->setToggleState( i == nLayer, dontSendNotification );
+   }
+
+   repaint();
+}
+
+
+int UIPageZones::getCurrentLayer() const
+{
+   for( int i = 0; i < m_LayerButtons.size(); i++ )
+   {
+      if( m_LayerButtons[i]->getToggleState() )
+         return( i );
+   }
+
+   return( -1 );
+}
+
+
+void UIPageZones::buttonStateChanged( Button *pButton )
+{
 }
 
 
 void UIPageZones::currentPartChanged( size_t /*nPart*/ )
 {
    m_pUISectionKeyboard->clearSelectedSamples();
+}
+
+
+SamplerGUI::UISectionSamplerKeyboard *UIPageZones::getSamplerKeyboard() const
+{
+   return( m_pUISectionKeyboard );
+}
+
+
+bool UIPageZones::isSoloEnabled() const
+{
+   return( m_pbSolo->getToggleState() );
 }

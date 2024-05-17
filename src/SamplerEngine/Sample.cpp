@@ -4,7 +4,7 @@
 
 using namespace SamplerEngine;
 
-Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
+Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote, int nLayer ) :
    m_Name( name ),
    m_OutputBus( 0 ),
    m_pAEG( nullptr ),
@@ -23,7 +23,8 @@ Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote ) :
    m_MinNote( minNote ),
    m_MaxNote( maxNote ),
    m_MinVelocity( 0 ),
-   m_MaxVelocity( 127 )
+   m_MaxVelocity( 127 ),
+   m_NLayer( nLayer )
 {
    m_pAEG = new ENV();
    m_pEG2 = new ENV();
@@ -56,7 +57,8 @@ Sample::Sample() :
    m_MinNote( -1 ),
    m_MaxNote( -1 ),
    m_MinVelocity( -1 ),
-   m_MaxVelocity( -1 )
+   m_MaxVelocity( -1 ),
+   m_NLayer( 0 )
 {
 }
 
@@ -130,6 +132,10 @@ juce::XmlElement *Sample::toXml() const
    peMaxVelocity->addTextElement( stdformat( "{}", m_MaxVelocity ) );
    peSample->addChildElement( peMaxVelocity );
 
+   juce::XmlElement *peLayer = new juce::XmlElement( "layer" );
+   peLayer->addTextElement( stdformat( "{}", m_NLayer ) );
+   peSample->addChildElement( peLayer );
+
    juce::XmlElement *peOutputBus = new juce::XmlElement( "outputbus" );
    peOutputBus->addTextElement( stdformat( "{}", m_OutputBus ) );
    peSample->addChildElement( peOutputBus );
@@ -186,6 +192,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
    int minVelocity = -1;
    int maxVelocity = -1;
    int outputBus = 0;
+   int nLayer = 0;
    ENV *pAEG = nullptr;
    ENV *pEG2 = nullptr;
    std::vector<LFO *> lfos;
@@ -245,6 +252,10 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       if( tagName == "maxvelocity" )
       {
          maxVelocity = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+      } else
+      if( tagName == "layer" )
+      {
+         nLayer = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
       } else
       if( tagName == "outputbus" )
       {
@@ -353,6 +364,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       pSample->m_MaxNote = maxNote;
       pSample->m_MinVelocity = minVelocity;
       pSample->m_MaxVelocity = maxVelocity;
+      pSample->m_NLayer = nLayer;
       pSample->m_OutputBus = outputBus;
 
       return( pSample );
@@ -688,4 +700,16 @@ int Sample::getOutputBus() const
 void Sample::setOutputBus( int n )
 {
    m_OutputBus = n;
+}
+
+
+void Sample::setLayer( int nLayer )
+{
+   m_NLayer = nLayer;
+}
+
+
+int Sample::getLayer() const
+{
+   return( m_NLayer );
 }

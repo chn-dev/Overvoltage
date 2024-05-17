@@ -10,12 +10,15 @@
 namespace SamplerEngine
 {
    class OutputBus;
+   class Engine;
 
    class Part
    {
    public:
-      Part( size_t partNum );
+      Part( size_t partNum, Engine *pEngine  = nullptr );
       ~Part();
+
+      void setEngine( Engine *pEngine );
 
       void noteOn( int note, int vel );
       void noteOff( int note, int vel );
@@ -43,6 +46,7 @@ namespace SamplerEngine
 
    private:
       size_t m_PartNum;
+      Engine *m_pEngine;
       double m_Pitchbend;
       std::map<int, double> m_ControllerValues;
       std::list<Sample *> m_Samples;

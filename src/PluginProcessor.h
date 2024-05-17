@@ -66,6 +66,7 @@ public:
    std::list<SamplerEngine::Sample *> &samples();
    const std::list<SamplerEngine::Sample *> &constSamples() const;
    SamplerEngine::Engine *samplerEngine() const;
+   PluginEditor *pluginEditor() const;
 
 private:
    bool outputBusReady( juce::AudioBuffer<float>& buffer, int n ) const;

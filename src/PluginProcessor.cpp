@@ -14,7 +14,7 @@ PluginProcessor::PluginProcessor()
       .withOutput( "Output 8", juce::AudioChannelSet::stereo(), true )
    ), m_pEditor( nullptr )
 {
-   m_pEngine = new SamplerEngine::Engine();
+   m_pEngine = new SamplerEngine::Engine( this );
 }
 
 
@@ -325,6 +325,7 @@ void PluginProcessor::setStateInformation( const void* data, int sizeInBytes )
       if( pEngine )
       {
          delete m_pEngine;
+         pEngine->setProcessor( this );
          m_pEngine = pEngine;
       }
    }
@@ -359,3 +360,8 @@ SamplerEngine::Engine *PluginProcessor::samplerEngine() const
    return( m_pEngine );
 }
 
+
+PluginEditor *PluginProcessor::pluginEditor() const
+{
+   return( m_pEditor );
+}

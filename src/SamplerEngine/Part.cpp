@@ -5,8 +5,9 @@
 
 using namespace SamplerEngine;
 
-Part::Part( size_t partNum ) :
+Part::Part( size_t partNum, Engine *pEngine ) :
    m_PartNum( partNum ),
+   m_pEngine( pEngine ),
    m_Pitchbend( 0.0 )
 {
 }
@@ -206,10 +207,25 @@ bool Part::isPlaying( const Sample *pSample ) const
 void Part::noteOn( int note, int vel )
 {
    std::list<Sample *> s = getSamplesByMidiNoteAndVelocity( note, vel );
+
+   bool isSoloEnabled = false;
+   std::set<Sample *> selectedSamples;
+   if( m_pEngine )
+   {
+      isSoloEnabled = m_pEngine->isSoloEnabled();
+      if( isSoloEnabled )
+      {
+         selectedSamples = m_pEngine->getSelectedSamples();
+      }
+   }
+
    for( Sample *pSample : s )
    {
-      Voice *pVoice = new Voice( this, pSample, note, vel );
-      m_Voices.insert( std::pair{ note, pVoice } );
+      if( !isSoloEnabled || ( selectedSamples.find( pSample ) != selectedSamples.end() ) )
+      {
+         Voice *pVoice = new Voice( this, pSample, note, vel );
+         m_Voices.insert( std::pair{ note, pVoice } );
+      }
    }
 }
 
@@ -255,4 +271,10 @@ double Part::getController( int ccNum ) const
    {
       return( m_ControllerValues.at( ccNum ) );
    }
+}
+
+
+void Part::setEngine( Engine *pEngine )
+{
+   m_pEngine = pEngine;
 }

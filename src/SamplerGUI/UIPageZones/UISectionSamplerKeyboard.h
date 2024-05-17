@@ -29,7 +29,7 @@ namespace SamplerGUI
 
    {
    public:
-      UISectionSamplerKeyboard( UIPage *pPage );
+      UISectionSamplerKeyboard( UIPageZones *pPageZones );
       ~UISectionSamplerKeyboard();
 
       //==============================================================================
@@ -62,6 +62,8 @@ namespace SamplerGUI
 
       std::set<SamplerEngine::Sample *> selectedSamples() const;
       void clearSelectedSamples();
+      void selectAll();
+      void selectLayer( int nLayer = -1 );
 
    protected:
       int dragDropNote( int y ) const;

@@ -25,6 +25,11 @@ public:
    virtual void buttonClicked( juce::Button *pButton );
    virtual void buttonStateChanged( juce::Button *pButton );
 
+   SamplerGUI::UIPageZones *getUIPageZones() const;
+
+   std::set<SamplerEngine::Sample *> getSelectedSamples() const;
+   bool isSoloEnabled() const;
+
    size_t currentPart() const;
 
    PluginProcessor &processor() const;
