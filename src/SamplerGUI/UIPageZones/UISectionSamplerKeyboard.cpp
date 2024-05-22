@@ -18,7 +18,8 @@ UISectionSamplerKeyboard::UISectionSamplerKeyboard( UIPageZones *pPageZones ) :
    m_DragDropNote( -1 ),
    m_SelectionStartPoint( juce::Point<int>( 0, 0 ) ),
    m_SelectionRectangle( juce::Rectangle<int>( 0, 0, 0, 0 ) ),
-   m_Selecting( false )
+   m_Selecting( false ),
+   m_AddSamples( false )
 {
 }
 
@@ -50,7 +51,7 @@ bool UISectionSamplerKeyboard::keyPressed( const KeyPress &/*key*/ )
 
 bool UISectionSamplerKeyboard::keyPressed( const KeyPress &key, Component */*pOriginatingComponent*/ )
 {
-   if( key == KeyPress::deleteKey )
+  if( key == KeyPress::deleteKey )
    {
       for( SamplerEngine::Sample *pSample : m_SelectedSamples )
       {
@@ -100,7 +101,8 @@ bool UISectionSamplerKeyboard::drawSample( juce::Graphics &g, SamplerEngine::Sam
 
    juce::Rectangle<int> r = getNoteRect( pSample );
 
-   bool isSelected = m_SelectedSamples.find( pSample ) != m_SelectedSamples.end();
+   bool isSelected = ( m_SelectedSamples.find( pSample ) != m_SelectedSamples.end() ) ||
+                     ( m_AddSelectedSamples.find( pSample ) != m_AddSelectedSamples.end() );
 
    if( m_pPageZones->editor()->processor().samplerEngine()->isPlaying( m_pPageZones->editor()->currentPart(), pSample ) )
    {
@@ -394,7 +396,14 @@ void UISectionSamplerKeyboard::mouseDrag( const MouseEvent &event )
 
       m_SelectionRectangle = r;
 
-      m_SelectedSamples.clear();
+      if( m_AddSamples )
+      {
+         m_AddSelectedSamples.clear();
+      } else
+      {
+         m_SelectedSamples.clear();
+      }
+
       int curLayer = m_pPageZones->getCurrentLayer();
       for( SamplerEngine::Sample *pSample : samples() )
       {
@@ -404,7 +413,13 @@ void UISectionSamplerKeyboard::mouseDrag( const MouseEvent &event )
             if( m_SelectionRectangle.contains( noteRect ) ||
                 m_SelectionRectangle.intersects( noteRect ) )
             {
-               m_SelectedSamples.insert( pSample );
+               if( m_AddSamples )
+               {
+                  m_AddSelectedSamples.insert( pSample );
+               } else
+               {
+                  m_SelectedSamples.insert( pSample );
+               }
             }
          }
       }
@@ -510,11 +525,11 @@ void UISectionSamplerKeyboard::mouseDown( const MouseEvent &event )
 
    int x = event.getMouseDownX();
    int y = event.getMouseDownY();
+   bool isCtrlDown = juce::ModifierKeys::getCurrentModifiers().isCtrlDown();
 
    SamplerEngine::Sample *pSample = getSampleAt( x, y );
    if( pSample )
    {
-      bool isCtrlDown = juce::ModifierKeys::getCurrentModifiers().isCtrlDown();
       if( m_SelectedSamples.find( pSample ) == m_SelectedSamples.end() )
       {
          if( !isCtrlDown )
@@ -596,11 +611,17 @@ void UISectionSamplerKeyboard::mouseDown( const MouseEvent &event )
    } else
    if( x >= m_Width )
    {
-      m_SelectedSamples.clear();
-
       m_Selecting = true;
       m_SelectionRectangle = juce::Rectangle<int>( x, y, 0, 0 );
       m_SelectionStartPoint = juce::Point<int>( x, y );
+
+      m_AddSamples = isCtrlDown;
+
+      m_AddSelectedSamples.clear();
+      if( !m_AddSamples )
+      {
+         m_SelectedSamples.clear();
+      }
 
       emitSampleSelectionUpdated();
    }
@@ -620,6 +641,15 @@ void UISectionSamplerKeyboard::mouseUp( const MouseEvent &event )
       m_Selecting = false;
       m_SelectionRectangle = juce::Rectangle<int>( 0, 0, 0, 0 );
       m_SelectionStartPoint = juce::Point<int>( 0, 0 );
+
+      if( m_AddSamples )
+      {
+         for( SamplerEngine::Sample *pSample : m_AddSelectedSamples )
+         {
+            m_SelectedSamples.insert( pSample );
+         }
+      }
+      m_AddSelectedSamples.clear();
    } else
    if( m_CurrentSampleNote >= 0 )
    {
@@ -653,13 +683,19 @@ void UISectionSamplerKeyboard::handleNoteOff( MidiKeyboardState *pSource, int mi
 
 std::set<SamplerEngine::Sample *> UISectionSamplerKeyboard::selectedSamples() const
 {
-   return( m_SelectedSamples );
+   std::set<SamplerEngine::Sample *> result = m_SelectedSamples;
+   for( SamplerEngine::Sample *pSample : m_AddSelectedSamples )
+   {
+      result.insert( pSample );
+   }
+   return( result );
 }
 
 
 void UISectionSamplerKeyboard::clearSelectedSamples()
 {
    m_SelectedSamples.clear();
+   m_AddSelectedSamples.clear();
    emitSampleSelectionUpdated();
    repaint();
 }

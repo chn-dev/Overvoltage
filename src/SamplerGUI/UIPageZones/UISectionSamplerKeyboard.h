@@ -80,6 +80,7 @@ namespace SamplerGUI
 
    private:
       std::set<SamplerEngine::Sample *> m_SelectedSamples;
+      std::set<SamplerEngine::Sample *> m_AddSelectedSamples;
       std::vector<UISectionSamplerKeyboardListener *> m_Listeners;
 
       SamplerEngine::Sample *m_pCurrentSample;
@@ -92,6 +93,7 @@ namespace SamplerGUI
       juce::Point<int> m_SelectionStartPoint;
       juce::Rectangle<int> m_SelectionRectangle;
       bool m_Selecting;
+      bool m_AddSamples;
    };
 }
 #endif
