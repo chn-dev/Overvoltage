@@ -77,6 +77,7 @@ namespace SamplerGUI
       void updateCursor( const MouseEvent &event );
       void emitSampleSelectionUpdated();
       void emitDeleteSample( size_t nPart, SamplerEngine::Sample *pSample );
+      void deleteSelectedSamples();
 
    private:
       std::set<SamplerEngine::Sample *> m_SelectedSamples;

@@ -49,18 +49,25 @@ bool UISectionSamplerKeyboard::keyPressed( const KeyPress &/*key*/ )
 }
 
 
+void UISectionSamplerKeyboard::deleteSelectedSamples()
+{
+   for( SamplerEngine::Sample *pSample : m_SelectedSamples )
+   {
+      emitDeleteSample( m_pPageZones->editor()->currentPart(), pSample );
+   }
+
+   m_SelectedSamples.clear();
+   m_AddSelectedSamples.clear();
+   emitSampleSelectionUpdated();
+   repaint();
+}
+
+
 bool UISectionSamplerKeyboard::keyPressed( const KeyPress &key, Component */*pOriginatingComponent*/ )
 {
-  if( key == KeyPress::deleteKey )
+   if( key == KeyPress::deleteKey )
    {
-      for( SamplerEngine::Sample *pSample : m_SelectedSamples )
-      {
-         emitDeleteSample( m_pPageZones->editor()->currentPart(), pSample );
-      }
-
-      m_SelectedSamples.clear();
-      emitSampleSelectionUpdated();
-      repaint();
+      deleteSelectedSamples();
    }
    return( true );
 }
@@ -572,6 +579,8 @@ void UISectionSamplerKeyboard::mouseDown( const MouseEvent &event )
          }
          main.addSubMenu( "Move to Part", moveToPart );
 
+         main.addItem( SAMPLERENGINE_NUMPARTS + SAMPLERENGINE_NUMLAYERS + 1, "Delete" );
+
          int r = main.show();
 
          if( r > 0 )
@@ -605,6 +614,10 @@ void UISectionSamplerKeyboard::mouseDown( const MouseEvent &event )
                   pPart->addSample( pSample );
                }
                m_pPageZones->editor()->activatePart( nPart );
+            } else
+            if( r == SAMPLERENGINE_NUMPARTS + SAMPLERENGINE_NUMLAYERS  )
+            {
+               deleteSelectedSamples();
             }
          }
       }
