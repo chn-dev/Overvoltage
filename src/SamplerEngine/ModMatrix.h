@@ -22,7 +22,8 @@ namespace SamplerEngine
          ModSrc_LFO3,
          ModSrc_ModWheel,
          ModSrc_RandomUnipolar,
-         ModSrc_RandomBipolar
+         ModSrc_RandomBipolar,
+         ModSrc_Gate
       };
 
       enum ModDest

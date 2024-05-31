@@ -175,6 +175,9 @@ double Voice::getModValue( ModMatrix::ModSrc modSrc, double defaultValue ) const
    if( modSrc == ModMatrix::ModSrc_RandomBipolar )
       return( m_RandomBipolar );
    else
+   if( modSrc == ModMatrix::ModSrc_Gate )
+      return( m_NoteIsOn ? 1.0 : 0.0 );
+   else
       return( defaultValue );
 }
 

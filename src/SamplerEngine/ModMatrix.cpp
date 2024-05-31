@@ -362,6 +362,7 @@ std::set<ModMatrix::ModSrc> ModMatrix::allModSrc()
       ModSrc_ModWheel,
       ModSrc_RandomUnipolar,
       ModSrc_RandomBipolar,
+      ModSrc_Gate,
       ModSrc_None
    } ) );
 }
@@ -505,6 +506,8 @@ std::string ModMatrix::toString( ModSrc v )
          return( "Random+" );
       case( ModSrc_RandomBipolar ):
          return( "Random+-" );
+      case( ModSrc_Gate ):
+         return( "Gate" );
       case( ModSrc_None ):
          return( "None" );
       default:
@@ -589,6 +592,9 @@ ModMatrix::ModSrc ModMatrix::modSrcFromString( const std::string &s )
       return( ModSrc_RandomUnipolar );
    if( util::trim( util::toLower( s ) ) == "random+-" )
       return( ModSrc_RandomBipolar );
+   else
+   if( util::trim( util::toLower( s ) ) == "gate" )
+      return( ModSrc_Gate );
    else
       return( ModSrc_None );
 }
