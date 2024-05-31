@@ -23,7 +23,8 @@ namespace SamplerEngine
          ModSrc_ModWheel,
          ModSrc_RandomUnipolar,
          ModSrc_RandomBipolar,
-         ModSrc_Gate
+         ModSrc_Gate,
+         ModSrc_IsWithinLoop
       };
 
       enum ModDest

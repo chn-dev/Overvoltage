@@ -363,6 +363,7 @@ std::set<ModMatrix::ModSrc> ModMatrix::allModSrc()
       ModSrc_RandomUnipolar,
       ModSrc_RandomBipolar,
       ModSrc_Gate,
+      ModSrc_IsWithinLoop,
       ModSrc_None
    } ) );
 }
@@ -508,6 +509,8 @@ std::string ModMatrix::toString( ModSrc v )
          return( "Random+-" );
       case( ModSrc_Gate ):
          return( "Gate" );
+      case( ModSrc_IsWithinLoop ):
+         return( "IsWithinLoop" );
       case( ModSrc_None ):
          return( "None" );
       default:
@@ -595,6 +598,9 @@ ModMatrix::ModSrc ModMatrix::modSrcFromString( const std::string &s )
    else
    if( util::trim( util::toLower( s ) ) == "gate" )
       return( ModSrc_Gate );
+   else
+   if( util::trim( util::toLower( s ) ) == "iswithinloop" )
+      return( ModSrc_IsWithinLoop );
    else
       return( ModSrc_None );
 }

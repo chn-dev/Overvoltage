@@ -178,6 +178,14 @@ double Voice::getModValue( ModMatrix::ModSrc modSrc, double defaultValue ) const
    if( modSrc == ModMatrix::ModSrc_Gate )
       return( m_NoteIsOn ? 1.0 : 0.0 );
    else
+   if( modSrc == ModMatrix::ModSrc_IsWithinLoop )
+   {
+      const WaveFile *pWav = m_pSample->getWave();
+      if( m_Ofs >= pWav->loopStart() && m_Ofs < pWav->loopEnd() )
+         return( 1.0 );
+      else
+         return( 0.0 );
+   } else
       return( defaultValue );
 }
 
