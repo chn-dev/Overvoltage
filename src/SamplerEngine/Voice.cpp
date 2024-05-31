@@ -45,6 +45,8 @@ Voice::Voice( const Part *pPart, const Sample *pSample, int note, int velocity )
    }
 
    m_pFilter = new Filter( *pSample->getFilter() );
+
+   m_RandomBipolar = util::randomValue( -1.0, 1.0 );
 }
 
 
@@ -166,6 +168,12 @@ double Voice::getModValue( ModMatrix::ModSrc modSrc, double defaultValue ) const
    else
    if( modSrc == ModMatrix::ModSrc_RelNote )
       return( 2.0 * (double)( m_Note - m_pSample->getMinNote() ) / (double)( m_pSample->getMaxNote() - m_pSample->getMinNote() ) );
+   else
+   if( modSrc == ModMatrix::ModSrc_RandomUnipolar )
+      return( ( m_RandomBipolar + 1.0 ) / 2.0 );
+   else
+   if( modSrc == ModMatrix::ModSrc_RandomBipolar )
+      return( m_RandomBipolar );
    else
       return( defaultValue );
 }

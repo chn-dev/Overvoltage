@@ -360,6 +360,8 @@ std::set<ModMatrix::ModSrc> ModMatrix::allModSrc()
       ModSrc_LFO2,
       ModSrc_LFO3,
       ModSrc_ModWheel,
+      ModSrc_RandomUnipolar,
+      ModSrc_RandomBipolar,
       ModSrc_None
    } ) );
 }
@@ -499,6 +501,10 @@ std::string ModMatrix::toString( ModSrc v )
          return( "AbsNote" );
       case( ModSrc_RelNote ):
          return( "RelNote" );
+      case( ModSrc_RandomUnipolar ):
+         return( "Random+" );
+      case( ModSrc_RandomBipolar ):
+         return( "Random+-" );
       case( ModSrc_None ):
          return( "None" );
       default:
@@ -578,6 +584,11 @@ ModMatrix::ModSrc ModMatrix::modSrcFromString( const std::string &s )
    else
    if( util::trim( util::toLower( s ) ) == "relnote" )
       return( ModSrc_RelNote );
+   else
+   if( util::trim( util::toLower( s ) ) == "random+" )
+      return( ModSrc_RandomUnipolar );
+   if( util::trim( util::toLower( s ) ) == "random+-" )
+      return( ModSrc_RandomBipolar );
    else
       return( ModSrc_None );
 }

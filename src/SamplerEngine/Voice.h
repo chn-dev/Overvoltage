@@ -45,6 +45,7 @@ namespace SamplerEngine
       int m_Velocity;
       double m_Ofs;
       unsigned long m_nSample;
+      double m_RandomBipolar;
    };
 }
 
