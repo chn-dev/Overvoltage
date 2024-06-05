@@ -122,6 +122,21 @@ void Engine::setProcessor( PluginProcessor *pProcessor )
 }
 
 
+void Engine::importPart( size_t nPart, juce::XmlElement *pXmlPart )
+{
+   if( nPart >= SAMPLERENGINE_NUMPARTS )
+      return;
+
+   Part *pPart = Part::fromXml( pXmlPart );
+   if( pPart )
+   {
+      pPart->setPartNum( nPart );
+      delete m_Parts[nPart];
+      m_Parts[nPart] = pPart;
+   }
+}
+
+
 Engine *Engine::fromXml( const juce::XmlElement *peOvervoltage )
 {
    if( peOvervoltage->getTagName() == "overvoltage" )

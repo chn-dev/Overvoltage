@@ -15,6 +15,13 @@ Part::Part( size_t partNum, Engine *pEngine ) :
 
 Part::~Part()
 {
+   stopAllVoices();
+
+   for( Sample *pSample : m_Samples )
+   {
+      delete pSample;
+   }
+   m_Samples.clear();
 }
 
 
@@ -64,6 +71,16 @@ bool Part::process( std::vector<OutputBus> &buses, double sampleRate, double bpm
    {
       return( false );
    }
+}
+
+
+void Part::stopAllVoices()
+{
+   for( auto v : m_Voices )
+   {
+      delete v.second;
+   }
+   m_Voices.clear();
 }
 
 
@@ -135,6 +152,12 @@ Part *Part::fromXml( const juce::XmlElement *pe )
 size_t Part::getPartNum() const
 {
    return( m_PartNum );
+}
+
+
+void Part::setPartNum( size_t n )
+{
+   m_PartNum = n;
 }
 
 

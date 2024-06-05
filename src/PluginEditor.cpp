@@ -1,3 +1,6 @@
+#include <iostream>
+#include <fstream>
+
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
@@ -32,6 +35,18 @@ PluginEditor::PluginEditor( PluginProcessor& p )
       addAndMakeVisible( pButton );
    }
 
+   m_pExportProgram = new juce::TextButton( "Export prg.." );
+   m_pExportProgram->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
+   m_pExportProgram->addListener( this );
+   m_pExportProgram->setBounds( getBounds().getWidth() - 100, 7, 96, 18 );
+   addAndMakeVisible( m_pExportProgram );
+
+   m_pImportProgram = new juce::TextButton( "Import prg.." );
+   m_pImportProgram->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
+   m_pImportProgram->addListener( this );
+   m_pImportProgram->setBounds( m_pExportProgram->getBounds().getX() - 100, 7, 96, 18 );
+   addAndMakeVisible( m_pImportProgram );
+
    activatePart( 0 );
 }
 
@@ -50,6 +65,9 @@ PluginEditor::~PluginEditor()
    }
 
    m_PartButtons.clear();
+
+   delete m_pExportProgram;
+   delete m_pImportProgram;
 }
 
 
@@ -112,6 +130,53 @@ void PluginEditor::buttonClicked( Button *pButton )
       size_t partIndex = (size_t)( partIter - m_PartButtons.begin() );
       activatePart( partIndex );
       repaint();
+   } else
+   if( pButton == m_pImportProgram )
+   {
+      juce::FileChooser ch = juce::FileChooser( "Import program..", juce::File(), "*.xml", false, true, this );
+      if( ch.browseForFileToOpen( nullptr ) )
+      {
+         std::string fname = ch.getResult().getFullPathName().toStdString();
+         std::ifstream file;
+         file.open( fname, std::ifstream::in );
+         if( file.is_open() )
+         {
+            file.seekg( 0, std::ios::end );
+            size_t fsize = file.tellg();
+            file.seekg( 0, std::ios::beg );
+            char *pTmp = new char[fsize];
+            file.read( pTmp, fsize );
+            std::string xml = std::string( pTmp );
+            delete pTmp;
+            file.close();
+
+            std::unique_ptr<juce::XmlElement> pXml = parseXML( xml );
+            if( pXml.get() )
+            {
+               processor().samplerEngine()->importPart( currentPart(), pXml.get() );
+               repaint();
+            }
+         }
+      }
+   } else
+   if( pButton == m_pExportProgram )
+   {
+      juce::FileChooser ch = juce::FileChooser( "Export current program..", juce::File(), "*.xml", false, true, this );
+      if( ch.browseForFileToSave( true ) )
+      {
+         std::string fname = ch.getResult().getFullPathName().toStdString();
+         juce::XmlElement *pPartXml = processor().samplerEngine()->getPart( currentPart() )->toXml();
+         std::string partXml = pPartXml->toString().toStdString();
+         delete pPartXml;
+
+         std::ofstream file;
+         file.open( fname, std::ofstream::out );
+         if( file.is_open() )
+         {
+            file.write( partXml.c_str(), partXml.size() );
+            file.close();
+         }
+      }
    }
 }
 

@@ -45,6 +45,8 @@ private:
 
    size_t m_CurrentPart;
    std::vector<juce::TextButton *> m_PartButtons;
+   juce::TextButton *m_pExportProgram;
+   juce::TextButton *m_pImportProgram;
 
    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( PluginEditor )
 };

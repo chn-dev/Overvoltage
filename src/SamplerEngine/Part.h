@@ -33,6 +33,7 @@ namespace SamplerEngine
       bool containsSample( const Sample *pSample ) const;
 
       size_t getPartNum() const;
+      void setPartNum( size_t n );
       void deleteSample( Sample *pSample );
       void removeSample( Sample *pSample );
       void addSample( Sample *pSample );
@@ -47,6 +48,7 @@ namespace SamplerEngine
    private:
       std::list<Sample *> getSamplesByMidiNoteAndVelocity( int note, int vel ) const;
       void stopVoice( const Voice *pVoice );
+      void stopAllVoices();
 
    private:
       size_t m_PartNum;

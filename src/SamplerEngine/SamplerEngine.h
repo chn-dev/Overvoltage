@@ -57,6 +57,8 @@ namespace SamplerEngine
 
       bool isPlaying( size_t nPart, const Sample *pSample ) const;
 
+      void importPart( size_t nPart, juce::XmlElement *pXmlPart );
+
       static Engine *fromXml( const juce::XmlElement *peOvervoltage );
       juce::XmlElement *toXml() const;
 
