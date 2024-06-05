@@ -44,8 +44,33 @@ PluginEditor::PluginEditor( PluginProcessor& p )
    m_pImportProgram = new juce::TextButton( "Import prg.." );
    m_pImportProgram->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
    m_pImportProgram->addListener( this );
-   m_pImportProgram->setBounds( m_pExportProgram->getBounds().getX() - 100, 7, 96, 18 );
+   m_pImportProgram->setBounds(
+      m_pExportProgram->getBounds().getX() - m_pExportProgram->getBounds().getWidth() - 4,
+      m_pExportProgram->getBounds().getY(),
+      m_pExportProgram->getBounds().getWidth(),
+      m_pExportProgram->getBounds().getHeight()
+   );
    addAndMakeVisible( m_pImportProgram );
+
+   m_pExportMulti = new juce::TextButton( "Export multi.." );
+   m_pExportMulti->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
+   m_pExportMulti->addListener( this );
+   m_pExportMulti->setBounds(
+      m_pImportProgram->getBounds().getX() - m_pImportProgram->getBounds().getWidth() - 4,
+      m_pImportProgram->getBounds().getY(),
+      m_pImportProgram->getBounds().getWidth(),
+      m_pImportProgram->getBounds().getHeight() );
+   addAndMakeVisible( m_pExportMulti );
+
+   m_pImportMulti = new juce::TextButton( "Import multi.." );
+   m_pImportMulti->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
+   m_pImportMulti->addListener( this );
+   m_pImportMulti->setBounds(
+      m_pExportMulti->getBounds().getX() - m_pExportMulti->getBounds().getWidth() - 4,
+      m_pExportMulti->getBounds().getY(),
+      m_pExportMulti->getBounds().getWidth(),
+      m_pExportMulti->getBounds().getHeight());
+   addAndMakeVisible( m_pImportMulti );
 
    activatePart( 0 );
 }
@@ -68,6 +93,8 @@ PluginEditor::~PluginEditor()
 
    delete m_pExportProgram;
    delete m_pImportProgram;
+   delete m_pExportMulti;
+   delete m_pImportMulti;
 }
 
 
@@ -174,6 +201,53 @@ void PluginEditor::buttonClicked( Button *pButton )
          if( file.is_open() )
          {
             file.write( partXml.c_str(), partXml.size() );
+            file.close();
+         }
+      }
+   } else
+   if( pButton == m_pImportMulti )
+   {
+      juce::FileChooser ch = juce::FileChooser( "Import multi..", juce::File(), "*.xml", false, true, this );
+      if( ch.browseForFileToOpen( nullptr ) )
+      {
+         std::string fname = ch.getResult().getFullPathName().toStdString();
+         std::ifstream file;
+         file.open( fname, std::ifstream::in );
+         if( file.is_open() )
+         {
+            file.seekg( 0, std::ios::end );
+            size_t fsize = file.tellg();
+            file.seekg( 0, std::ios::beg );
+            char *pTmp = new char[fsize];
+            file.read( pTmp, fsize );
+            std::string xml = std::string( pTmp );
+            delete pTmp;
+            file.close();
+
+            std::unique_ptr<juce::XmlElement> pXml = parseXML( xml );
+            if( pXml.get() )
+            {
+               processor().importMulti( pXml.get() );
+               repaint();
+            }
+         }
+      }
+   } else
+   if( pButton == m_pExportMulti )
+   {
+      juce::FileChooser ch = juce::FileChooser( "Export multi..", juce::File(), "*.xml", false, true, this );
+      if( ch.browseForFileToSave( true ) )
+      {
+         std::string fname = ch.getResult().getFullPathName().toStdString();
+         juce::XmlElement *pXmlMulti = processor().samplerEngine()->toXml();
+         std::string xmlMulti = pXmlMulti->toString().toStdString();
+         delete pXmlMulti;
+
+         std::ofstream file;
+         file.open( fname, std::ofstream::out );
+         if( file.is_open() )
+         {
+            file.write( xmlMulti.c_str(), xmlMulti.size() );
             file.close();
          }
       }

@@ -89,7 +89,7 @@ void PluginProcessor::setCurrentProgram( int index )
 const juce::String PluginProcessor::getProgramName( int index )
 {
    juce::ignoreUnused( index );
-   return {};
+   return( "Overvoltage" );
 }
 
 
@@ -364,4 +364,15 @@ SamplerEngine::Engine *PluginProcessor::samplerEngine() const
 PluginEditor *PluginProcessor::pluginEditor() const
 {
    return( m_pEditor );
+}
+
+
+void PluginProcessor::importMulti( juce::XmlElement *pXmlMulti )
+{
+   SamplerEngine::Engine *pEngine = SamplerEngine::Engine::fromXml( pXmlMulti );
+   if( pEngine )
+   {
+      delete m_pEngine;
+      m_pEngine = pEngine;
+   }
 }

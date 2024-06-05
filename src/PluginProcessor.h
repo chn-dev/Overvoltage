@@ -65,6 +65,7 @@ public:
 
    std::list<SamplerEngine::Sample *> &samples();
    const std::list<SamplerEngine::Sample *> &constSamples() const;
+   void importMulti( juce::XmlElement *pXmlMulti );
    SamplerEngine::Engine *samplerEngine() const;
    PluginEditor *pluginEditor() const;
 
