@@ -193,7 +193,7 @@ Callback function from juce::Button::Listener
 void UIPageZones::buttonClicked( Button *pButton )
 {
    int nLayerButton = -1;
-   for( int i = 0; i < m_LayerButtons.size(); i++ )
+   for( size_t i = 0; i < m_LayerButtons.size(); i++ )
    {
       if( pButton == m_LayerButtons[i] )
       {
@@ -229,14 +229,14 @@ Set the current layer.
 /*----------------------------------------------------------------------------*/
 void UIPageZones::setCurrentLayer( int nLayer )
 {
-   if( nLayer < 0 || nLayer >= m_LayerButtons.size() )
+   if( nLayer < 0 || nLayer >= (int)m_LayerButtons.size() )
    {
       return;
    }
 
-   for( int i = 0; i < m_LayerButtons.size(); i++ )
+   for( size_t i = 0; i < m_LayerButtons.size(); i++ )
    {
-      m_LayerButtons[i]->setToggleState( i == nLayer, dontSendNotification );
+      m_LayerButtons[i]->setToggleState( (int)i == nLayer, dontSendNotification );
    }
 
    repaint();
@@ -250,10 +250,10 @@ void UIPageZones::setCurrentLayer( int nLayer )
 /*----------------------------------------------------------------------------*/
 int UIPageZones::getCurrentLayer() const
 {
-   for( int i = 0; i < m_LayerButtons.size(); i++ )
+   for( size_t i = 0; i < m_LayerButtons.size(); i++ )
    {
       if( m_LayerButtons[i]->getToggleState() )
-         return( i );
+         return( (int)i );
    }
 
    return( -1 );

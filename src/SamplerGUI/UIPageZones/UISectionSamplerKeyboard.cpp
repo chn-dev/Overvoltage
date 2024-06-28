@@ -756,10 +756,10 @@ void UISectionSamplerKeyboard::mouseDown( const MouseEvent &event )
                      pPart->removeSample( pS );
                   }
 
-                  pPart = pEngine->getPart( nPart );
+                  pPart = pEngine->getPart( (size_t)nPart );
                   pPart->addSample( pS );
                }
-               m_pPageZones->editor()->activatePart( nPart );
+               m_pPageZones->editor()->activatePart( (size_t)nPart );
             } else
             if( r == SAMPLERENGINE_NUMPARTS + SAMPLERENGINE_NUMLAYERS  )
             {

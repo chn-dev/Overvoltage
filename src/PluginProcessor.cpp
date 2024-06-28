@@ -330,12 +330,10 @@ void PluginProcessor::processBlock( juce::AudioBuffer<float>& buffer,
                                               juce::MidiBuffer& midiMessages )
 {
    double bpm = 120.0;
-   bool hasBpm = false;
    if( auto p = getPlayHead()->getPosition() )
    {
       if( auto pBpm = p->getBpm() )
       {
-         hasBpm = true;
          bpm = *pBpm;
       }
    }

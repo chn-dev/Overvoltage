@@ -208,9 +208,9 @@ void UISectionLFO::StepEditor::paint( juce::Graphics &g )
    {
       double v = pLFO->getCustomValue( i );
 
-      int x = (int)( ( (double)( i * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5 );
+      int x = (int)( ( (double)( (int)i * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5 );
       int y = getDiagramHeight() / 2;
-      int x2 = (int)( ( (double)( ( i + 1 ) * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5 );
+      int x2 = (int)( ( (double)( ( (int)i + 1 ) * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5 );
       int w = x2 - x;
       int h = (int)( - v * getDiagramHeight() / 2.0 );
 
@@ -233,7 +233,7 @@ void UISectionLFO::StepEditor::paint( juce::Graphics &g )
       for( size_t i = 1; i <= pLFO->getCustomQuantize(); i++ )
       {
          int ybase = getDiagramHeight() / 2;
-         int yofs = (int)( ( i * getDiagramHeight() ) / ( 2 * pLFO->getCustomQuantize() ) );
+         int yofs = (int)( ( (int)i * getDiagramHeight() ) / ( 2 * (int)pLFO->getCustomQuantize() ) );
          g.drawHorizontalLine( ybase + yofs, (float)getDiagramXPos(), (float)( getDiagramXPos() + getDiagramWidth() ) );
          g.drawHorizontalLine( ybase - yofs, (float)getDiagramXPos(), (float)( getDiagramXPos() + getDiagramWidth() ) );
       }
@@ -243,9 +243,9 @@ void UISectionLFO::StepEditor::paint( juce::Graphics &g )
    {
       double v = pLFO->getCustomValue( i );;
 
-      int x = (int)( ( (double)( i * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5 );
+      int x = (int)( ( (double)( (int)i * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5 );
       int y = getDiagramHeight() / 2;
-      int x2 = (int)( ( (double)( ( i + 1 ) * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5 );
+      int x2 = (int)( ( (double)( ( (int)i + 1 ) * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5 );
       int w = x2 - x;
       int h = (int)( - v * getDiagramHeight() / 2.0 );
 
@@ -324,11 +324,11 @@ void UISectionLFO::StepEditor::changeStepValue( int x, int y )
    int nStep = ( ( x - getDiagramXPos() ) * (int)steps.size() ) / getDiagramWidth();
    double v = ( ( (double)( y - getDiagramYPos() ) / (double)( getDiagramHeight() - 1 ) ) * 2.0 ) - 1.0;
    v = -v;
-   if( nStep < 0 || nStep >= steps.size() ||
+   if( nStep < 0 || nStep >= (int)steps.size() ||
        v < -1.0 || v > 1.0 )
       return;
 
-   steps[nStep] = v;
+   steps[(size_t)nStep] = v;
    repaint();
 }
 

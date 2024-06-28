@@ -220,10 +220,10 @@ void PluginEditor::buttonClicked( Button *pButton )
          if( file.is_open() )
          {
             file.seekg( 0, std::ios::end );
-            size_t fsize = file.tellg();
+            size_t fsize = (size_t)file.tellg();
             file.seekg( 0, std::ios::beg );
             char *pTmp = new char[fsize];
-            file.read( pTmp, fsize );
+            file.read( pTmp, (std::streamsize)fsize );
             std::string xml = std::string( pTmp );
             delete pTmp;
             file.close();
@@ -251,7 +251,7 @@ void PluginEditor::buttonClicked( Button *pButton )
          file.open( fname, std::ofstream::out );
          if( file.is_open() )
          {
-            file.write( partXml.c_str(), partXml.size() );
+            file.write( partXml.c_str(), (std::streamsize)partXml.size() );
             file.close();
          }
       }
@@ -267,10 +267,10 @@ void PluginEditor::buttonClicked( Button *pButton )
          if( file.is_open() )
          {
             file.seekg( 0, std::ios::end );
-            size_t fsize = file.tellg();
+            size_t fsize = (size_t)file.tellg();
             file.seekg( 0, std::ios::beg );
             char *pTmp = new char[fsize];
-            file.read( pTmp, fsize );
+            file.read( pTmp, (std::streamsize)fsize );
             std::string xml = std::string( pTmp );
             delete pTmp;
             file.close();
@@ -298,7 +298,7 @@ void PluginEditor::buttonClicked( Button *pButton )
          file.open( fname, std::ofstream::out );
          if( file.is_open() )
          {
-            file.write( xmlMulti.c_str(), xmlMulti.size() );
+            file.write( xmlMulti.c_str(), (std::streamsize)xmlMulti.size() );
             file.close();
          }
       }
