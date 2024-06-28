@@ -212,11 +212,11 @@ void UISectionNameRanges::labelTextChanged( Label *pLabel )
    } else
    if( pLabel == m_pcKeytrack )
    {
-      sample()->setKeytrack( m_pcKeytrack->getCurrentItem() - 400.0 );
+      sample()->setKeytrack( (float)m_pcKeytrack->getCurrentItem() - 400.0f );
    } else
    if( pLabel == m_pcPitchbendRange )
    {
-      sample()->setPitchbendRange( ( (double)m_pcPitchbendRange->getCurrentItem() * 0.1 ) - 12.0 );
+      sample()->setPitchbendRange( ( (float)m_pcPitchbendRange->getCurrentItem() * 0.1f ) - 12.0f );
    }
    uiPage()->editor()->repaint();
 

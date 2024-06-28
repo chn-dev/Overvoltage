@@ -308,14 +308,14 @@ Callback function from juce::FileDragAndDropTarget
 /*----------------------------------------------------------------------------*/
 bool UISectionSamplerKeyboard::isInterestedInFileDrag( const StringArray &files )
 {
-/*   for( String f : files )
+   for( String f : files )
    {
       if( !juce::String( util::toLower( f.toStdString() ) ).endsWith( ".wav" ) )
       {
          return( false );
       }
    }
-*/
+
    return( true );
 }
 
@@ -735,9 +735,9 @@ void UISectionSamplerKeyboard::mouseDown( const MouseEvent &event )
             if( r >= 0 && r < SAMPLERENGINE_NUMLAYERS )
             {
                // Move to Layer
-               for( SamplerEngine::Sample *pSample : m_SelectedSamples )
+               for( SamplerEngine::Sample *pS : m_SelectedSamples )
                {
-                  pSample->setLayer( r );
+                  pS->setLayer( r );
                }
                m_pPageZones->setCurrentLayer( r );
                repaint();
@@ -748,16 +748,16 @@ void UISectionSamplerKeyboard::mouseDown( const MouseEvent &event )
 
                // Move to Part
                int nPart = r - SAMPLERENGINE_NUMLAYERS;
-               for( SamplerEngine::Sample *pSample : m_SelectedSamples )
+               for( SamplerEngine::Sample *pS : m_SelectedSamples )
                {
-                  SamplerEngine::Part *pPart = pEngine->findPart( pSample );
+                  SamplerEngine::Part *pPart = pEngine->findPart( pS );
                   if( pPart )
                   {
-                     pPart->removeSample( pSample );
+                     pPart->removeSample( pS );
                   }
 
                   pPart = pEngine->getPart( nPart );
-                  pPart->addSample( pSample );
+                  pPart->addSample( pS );
                }
                m_pPageZones->editor()->activatePart( nPart );
             } else
@@ -906,7 +906,6 @@ void UISectionSamplerKeyboard::selectLayer( int nLayer )
 {
    m_SelectedSamples.clear();
 
-   int curLayer = m_pPageZones->getCurrentLayer();
    for( SamplerEngine::Sample *pSample : constSamples() )
    {
       if( nLayer < 0 || pSample->getLayer() == nLayer )

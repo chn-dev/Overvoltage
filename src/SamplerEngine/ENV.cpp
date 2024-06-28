@@ -164,7 +164,7 @@ Process the envelope.
 \param bpm The current song speed in bpm
 */
 /*----------------------------------------------------------------------------*/
-void ENV::step( double s, double bpm )
+void ENV::step( double s, double /*bpm*/ )
 {
    if( m_State == StateAttack )
    {

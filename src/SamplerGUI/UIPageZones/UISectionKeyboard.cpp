@@ -448,7 +448,7 @@ void UISectionKeyboard::mouseDrag( const MouseEvent &event )
             int velocity = 127;
             m_Notes[m_pPageZones->editor()->currentPart()][note] = velocity;
             m_CurrentNote = note;
-            noteOn( (int)m_pPageZones->editor()->currentPart() + 1, m_CurrentNote, (double)velocity / 127.0 );
+            noteOn( (int)m_pPageZones->editor()->currentPart() + 1, m_CurrentNote, (float)velocity / 127.0f );
          }
 
          repaint();
@@ -514,7 +514,7 @@ void UISectionKeyboard::mouseDown( const MouseEvent &event )
          int velocity = 127;
          m_Notes[m_pPageZones->editor()->currentPart()][note] = velocity;
          m_CurrentNote = note;
-         noteOn( (int)m_pPageZones->editor()->currentPart() + 1, note, (double)velocity / 127.0 );
+         noteOn( (int)m_pPageZones->editor()->currentPart() + 1, note, (float)velocity / 127.0f );
          repaint();
       }
    }

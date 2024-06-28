@@ -112,9 +112,9 @@ void UISectionLFO::StepEditor::update()
    SamplerEngine::LFO *pLFO = m_pSectionLFO->getLFO();
    if( pLFO )
    {
-      m_pcNumSteps->setCurrentItemByValue( pLFO->getCustomRef().size() );
+      m_pcNumSteps->setCurrentItemByValue( (double)pLFO->getCustomRef().size() );
       m_pbQuantize->setToggleState( pLFO->getCustomQuantizeEnabled(), dontSendNotification );
-      m_pcQuantize->setCurrentItemByValue( pLFO->getCustomQuantize() );
+      m_pcQuantize->setCurrentItemByValue( (double)pLFO->getCustomQuantize() );
    }
 
    repaint();
@@ -145,7 +145,7 @@ void UISectionLFO::StepEditor::buttonClicked( Button *pButton )
 Callback function from juce::Button::Listener
 */
 /*----------------------------------------------------------------------------*/
-void UISectionLFO::StepEditor::buttonStateChanged( Button *pButton )
+void UISectionLFO::StepEditor::buttonStateChanged( Button */*pButton*/ )
 {
 }
 
@@ -208,13 +208,11 @@ void UISectionLFO::StepEditor::paint( juce::Graphics &g )
    {
       double v = pLFO->getCustomValue( i );
 
-      int x = ( (double)( i * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5;
+      int x = (int)( ( (double)( i * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5 );
       int y = getDiagramHeight() / 2;
-      int x2 = ( (double)( ( i + 1 ) * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5;
+      int x2 = (int)( ( (double)( ( i + 1 ) * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5 );
       int w = x2 - x;
-      int h = -v * getDiagramHeight() / 2;
-
-      int yy = y + h;
+      int h = (int)( - v * getDiagramHeight() / 2.0 );
 
       if( h < 0 )
       {
@@ -226,7 +224,7 @@ void UISectionLFO::StepEditor::paint( juce::Graphics &g )
       g.fillRect( x + getDiagramXPos(), y + getDiagramYPos(), w, h );
 
       g.setColour( juce::Colour::fromRGB( 48, 48, 48 ) );
-      g.drawVerticalLine( x + getDiagramXPos(), getDiagramYPos(), getDiagramYPos() + getDiagramHeight() - 1 );
+      g.drawVerticalLine( x + getDiagramXPos(), (float)getDiagramYPos(), (float)( getDiagramYPos() + getDiagramHeight() - 1 ) );
    }
 
    if( pLFO->getCustomQuantizeEnabled() )
@@ -235,9 +233,9 @@ void UISectionLFO::StepEditor::paint( juce::Graphics &g )
       for( size_t i = 1; i <= pLFO->getCustomQuantize(); i++ )
       {
          int ybase = getDiagramHeight() / 2;
-         int yofs = ( i * getDiagramHeight() ) / ( 2 * pLFO->getCustomQuantize() );
-         g.drawHorizontalLine( ybase + yofs, getDiagramXPos(), getDiagramXPos() + getDiagramWidth() );
-         g.drawHorizontalLine( ybase - yofs, getDiagramXPos(), getDiagramXPos() + getDiagramWidth() );
+         int yofs = (int)( ( i * getDiagramHeight() ) / ( 2 * pLFO->getCustomQuantize() ) );
+         g.drawHorizontalLine( ybase + yofs, (float)getDiagramXPos(), (float)( getDiagramXPos() + getDiagramWidth() ) );
+         g.drawHorizontalLine( ybase - yofs, (float)getDiagramXPos(), (float)( getDiagramXPos() + getDiagramWidth() ) );
       }
    }
 
@@ -245,16 +243,16 @@ void UISectionLFO::StepEditor::paint( juce::Graphics &g )
    {
       double v = pLFO->getCustomValue( i );;
 
-      int x = ( (double)( i * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5;
+      int x = (int)( ( (double)( i * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5 );
       int y = getDiagramHeight() / 2;
-      int x2 = ( (double)( ( i + 1 ) * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5;
+      int x2 = (int)( ( (double)( ( i + 1 ) * getDiagramWidth() ) / (double)pLFO->getNumCustomValues() ) + 0.5 );
       int w = x2 - x;
-      int h = -v * getDiagramHeight() / 2;
+      int h = (int)( - v * getDiagramHeight() / 2.0 );
 
       int yy = y + h;
 
       g.setColour( juce::Colour::fromRGB( 255, 32, 32 ) );
-      g.drawHorizontalLine( yy + getDiagramYPos(), x + getDiagramXPos(), x + w + getDiagramXPos() );
+      g.drawHorizontalLine( yy + getDiagramYPos(), (float)( x + getDiagramXPos() ), (float)( x + w + getDiagramXPos() ) );
    }
 
    g.setColour( juce::Colour::fromRGB( 128, 128, 128 ) );
@@ -267,7 +265,7 @@ void UISectionLFO::StepEditor::paint( juce::Graphics &g )
 Callback function from juce::Component
 */
 /*----------------------------------------------------------------------------*/
-void UISectionLFO::StepEditor::mouseMove( const MouseEvent &event)
+void UISectionLFO::StepEditor::mouseMove( const MouseEvent &/*event*/ )
 {
 }
 
@@ -303,7 +301,7 @@ void UISectionLFO::StepEditor::mouseDown( const MouseEvent &event )
 Callback function from juce::Component
 */
 /*----------------------------------------------------------------------------*/
-void UISectionLFO::StepEditor::mouseUp( const MouseEvent &event )
+void UISectionLFO::StepEditor::mouseUp( const MouseEvent &/*event*/ )
 {
 }
 
@@ -323,7 +321,7 @@ void UISectionLFO::StepEditor::changeStepValue( int x, int y )
 
    std::vector<double> &steps = pLFO->getCustomRef();
 
-   int nStep = ( ( x - getDiagramXPos() ) * steps.size() ) / getDiagramWidth();
+   int nStep = ( ( x - getDiagramXPos() ) * (int)steps.size() ) / getDiagramWidth();
    double v = ( ( (double)( y - getDiagramYPos() ) / (double)( getDiagramHeight() - 1 ) ) * 2.0 ) - 1.0;
    v = -v;
    if( nStep < 0 || nStep >= steps.size() ||
@@ -366,7 +364,7 @@ UISectionLFO::UISectionLFO( UIPage *pUIPage, std::string label ) :
       pB->setClickingTogglesState( true );
       pB->setColour( juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGB( 192, 64, 64 ) );
       pB->addListener( this );
-      pB->setBounds( 2 + 18 * i, 1, 16, 16 );
+      pB->setBounds( 2 + 18 * (int)i, 1, 16, 16 );
       addAndMakeVisible( pB );
       m_SelButtons.push_back( pB );
    }

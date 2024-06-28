@@ -800,9 +800,9 @@ LFO *LFO::fromXml( const juce::XmlElement *pe )
                util::trim(
                   pChild->getChildElement( 0 )->getText().toStdString() ), ",", false );
          std::vector<double> dVals;
-         for( size_t i = 0; i < sVals.size(); i++ )
+         for( size_t j = 0; j < sVals.size(); j++ )
          {
-            dVals.push_back( std::stod( sVals[i] ) );
+            dVals.push_back( std::stod( sVals[j] ) );
          }
          pLFO->m_Custom = dVals;
       }

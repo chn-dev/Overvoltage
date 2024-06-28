@@ -296,7 +296,7 @@ void Filter::process( float *pLSamples, float *pRSamples,
    {
       for( size_t i = 0; i < n; i++ )
       {
-         float result =
+         double result =
             + ( samples[nChan][i] * a1 )
             +       ( X[nChan][0] * a2 )
             +       ( X[nChan][1] * a3 )
@@ -306,7 +306,7 @@ void Filter::process( float *pLSamples, float *pRSamples,
          Y[nChan][0] = result;
          X[nChan][1] = X[nChan][0];
          X[nChan][0] = samples[nChan][i];
-         samples[nChan][i] = result;
+         samples[nChan][i] = (float)result;
       }
    }
 }

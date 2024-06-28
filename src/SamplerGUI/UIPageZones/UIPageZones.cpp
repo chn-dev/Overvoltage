@@ -32,7 +32,7 @@ UIPageZones::UIPageZones( PluginEditor *pEditor ) :
    int editorSectionHeight = 640 - 32 - yStart;
    int margin = 2;
 
-   for( size_t i = 0; i < SAMPLERENGINE_NUMLAYERS; i++ )
+   for( int i = 0; i < SAMPLERENGINE_NUMLAYERS; i++ )
    {
       char tmp[32];
       sprintf( tmp, "%c", 'A' + i );
@@ -212,7 +212,7 @@ void UIPageZones::buttonClicked( Button *pButton )
    } else
    if( pButton == m_pbSolo )
    {
-      bool bSolo = m_pbSolo->getToggleState();
+      //bool bSolo = m_pbSolo->getToggleState();
    } else
    if( nLayerButton >= 0 )
    {
@@ -266,7 +266,7 @@ Callback function from juce::Button::Listener
 \param pButton The button whose state has changed
 */
 /*----------------------------------------------------------------------------*/
-void UIPageZones::buttonStateChanged( Button *pButton )
+void UIPageZones::buttonStateChanged( Button */*pButton*/ )
 {
 }
 

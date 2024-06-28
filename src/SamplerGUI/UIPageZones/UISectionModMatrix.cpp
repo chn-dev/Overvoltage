@@ -344,7 +344,7 @@ void UISectionModMatrix::samplesUpdated()
    {
       for( size_t i = 0; i < pSample->getModMatrix()->numSlots(); i++ )
       {
-         UIModSlot *pUIModSlot = new UIModSlot( this, pSample->getModMatrix()->getSlot( i ), i, 6, 28 + ( 18 * i ) );
+         UIModSlot *pUIModSlot = new UIModSlot( this, pSample->getModMatrix()->getSlot( i ), (int)i, 6, 28 + ( 18 * (int)i ) );
          m_UIModSlots.push_back( pUIModSlot );
       }
    }
