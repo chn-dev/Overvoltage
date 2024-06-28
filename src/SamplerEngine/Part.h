@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file Part.h
+\author Christian Nowak <chnowak@web.de>
+\brief Headerfile for class Part.
+*/
+/*----------------------------------------------------------------------------*/
 #ifndef __PART_H__
 #define __PART_H__
 
@@ -12,6 +19,12 @@ namespace SamplerEngine
    class OutputBus;
    class Engine;
 
+   /*----------------------------------------------------------------------------*/
+   /*!
+   \class Part
+   \date  2024-06-10
+   */
+   /*----------------------------------------------------------------------------*/
    class Part
    {
    public:
@@ -61,3 +74,4 @@ namespace SamplerEngine
 }
 
 #endif
+

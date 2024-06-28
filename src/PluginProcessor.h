@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file PluginProcessor.h
+\author Christian Nowak <chnowak@web.de>
+\brief Headerfile for class PluginProcessor.
+*/
+/*----------------------------------------------------------------------------*/
 #ifndef __PLUGINPROCESSOR_H__
 #define __PLUGINPROCESSOR_H__
 
@@ -11,7 +18,12 @@
 
 #include <SamplerGUI/UIPageZones/UISectionSamplerKeyboard.h>
 
-//==============================================================================
+/*----------------------------------------------------------------------------*/
+/*!
+\class PluginProcessor
+\date  2024-06-10
+*/
+/*----------------------------------------------------------------------------*/
 class PluginProcessor : public juce::AudioProcessor,
                         public juce::MidiKeyboardStateListener,
                         public juce::MidiKeyboardState,

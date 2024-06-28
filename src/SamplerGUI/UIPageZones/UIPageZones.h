@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UIPageZones.h
+\author Christian Nowak <chnowak@web.de>
+\brief Headerfile for class UIPageZones.
+*/
+/*----------------------------------------------------------------------------*/
 #ifndef __UIPAGEZONES_H__
 #define __UIPAGEZONES_H__
 
@@ -18,6 +25,12 @@ class PluginEditor;
 
 namespace SamplerGUI
 {
+   /*----------------------------------------------------------------------------*/
+   /*!
+   \class UIPageZones
+   \date  2024-06-10
+   */
+   /*----------------------------------------------------------------------------*/
    class UIPageZones : public UIPage,
                        public juce::Button::Listener
    {

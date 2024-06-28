@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISection.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements the sampler keyboard UI section
+*/
+/*----------------------------------------------------------------------------*/
 #include <filesystem>
 
 #include <SamplerEngine/WaveFile.h>
@@ -9,6 +16,12 @@
 
 using namespace SamplerGUI;
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionSamplerKeyboard::UISectionSamplerKeyboard( UIPageZones *pPageZones ) :
    UISectionKeyboard( pPageZones ),
    m_pCurrentSample( nullptr ),
@@ -24,16 +37,32 @@ UISectionSamplerKeyboard::UISectionSamplerKeyboard( UIPageZones *pPageZones ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionSamplerKeyboard::~UISectionSamplerKeyboard()
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Called when the user has (de-)selected any samples
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::samplesUpdated()
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Add a new listener
+\param pListener The listener
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::addSamplerKeyboardListener( UISectionSamplerKeyboardListener *pListener )
 {
    if( pListener )
@@ -43,12 +72,22 @@ void UISectionSamplerKeyboard::addSamplerKeyboardListener( UISectionSamplerKeybo
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::KeyListener
+*/
+/*----------------------------------------------------------------------------*/
 bool UISectionSamplerKeyboard::keyPressed( const KeyPress &/*key*/ )
 {
    return( false );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Delete all currently selected samples
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::deleteSelectedSamples()
 {
    for( SamplerEngine::Sample *pSample : m_SelectedSamples )
@@ -63,6 +102,11 @@ void UISectionSamplerKeyboard::deleteSelectedSamples()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::KeyListener
+*/
+/*----------------------------------------------------------------------------*/
 bool UISectionSamplerKeyboard::keyPressed( const KeyPress &key, Component */*pOriginatingComponent*/ )
 {
    if( key == KeyPress::deleteKey )
@@ -73,18 +117,36 @@ bool UISectionSamplerKeyboard::keyPressed( const KeyPress &key, Component */*pOr
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::KeyListener
+*/
+/*----------------------------------------------------------------------------*/
 bool UISectionSamplerKeyboard::keyStateChanged( bool /*isKeyDown*/ )
 {
    return( false );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::KeyListener
+*/
+/*----------------------------------------------------------------------------*/
 bool UISectionSamplerKeyboard::keyStateChanged( bool /*isKeyDown*/, Component */*pOriginatingComponent*/ )
 {
    return( true );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Retrieve the sample at a position
+\param x
+\param y
+\return The sample at the specified position or nullptr if none
+*/
+/*----------------------------------------------------------------------------*/
 SamplerEngine::Sample *UISectionSamplerKeyboard::getSampleAt( int x, int y ) const
 {
    int curLayer = m_pPageZones->getCurrentLayer();
@@ -102,6 +164,13 @@ SamplerEngine::Sample *UISectionSamplerKeyboard::getSampleAt( int x, int y ) con
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Draw the sample.
+\param g
+\param pSample
+*/
+/*----------------------------------------------------------------------------*/
 bool UISectionSamplerKeyboard::drawSample( juce::Graphics &g, SamplerEngine::Sample *const pSample ) const
 {
    bool highlighted = false;
@@ -144,6 +213,10 @@ bool UISectionSamplerKeyboard::drawSample( juce::Graphics &g, SamplerEngine::Sam
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::paint( juce::Graphics &g )
 {
    UISectionKeyboard::paint( g );
@@ -187,6 +260,11 @@ void UISectionSamplerKeyboard::paint( juce::Graphics &g )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Used for drawing
+*/
+/*----------------------------------------------------------------------------*/
 juce::Rectangle<int> UISectionSamplerKeyboard::getNoteRect( SamplerEngine::Sample *const pSample ) const
 {
    int minNote = pSample->getMinNote();
@@ -205,6 +283,11 @@ juce::Rectangle<int> UISectionSamplerKeyboard::getNoteRect( SamplerEngine::Sampl
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Used for drawing
+*/
+/*----------------------------------------------------------------------------*/
 juce::Rectangle<int> UISectionSamplerKeyboard::getNoteRect( int minNote, int maxNote, int minVel, int maxVel ) const
 {
    int y = getBounds().getHeight() - ( ( ( maxNote - m_NoteOffset + 1 ) * m_KeyHeight ) / 2 );
@@ -218,26 +301,39 @@ juce::Rectangle<int> UISectionSamplerKeyboard::getNoteRect( int minNote, int max
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::FileDragAndDropTarget
+*/
+/*----------------------------------------------------------------------------*/
 bool UISectionSamplerKeyboard::isInterestedInFileDrag( const StringArray &files )
 {
-   for( String f : files )
+/*   for( String f : files )
    {
       if( !juce::String( util::toLower( f.toStdString() ) ).endsWith( ".wav" ) )
       {
          return( false );
       }
    }
-
+*/
    return( true );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 int UISectionSamplerKeyboard::dragDropNote( int y ) const
 {
    return( ( ( getBounds().getHeight() - y ) / ( m_KeyHeight / 2 ) ) + m_NoteOffset );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 int UISectionSamplerKeyboard::dragDropVelocity( int x ) const
 {
    x -= m_Width;
@@ -251,6 +347,11 @@ int UISectionSamplerKeyboard::dragDropVelocity( int x ) const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::FileDragAndDropTarget
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::fileDragEnter( const StringArray &/*files*/, int /*x*/, int y )
 {
    m_DragDropNote = dragDropNote( y );
@@ -258,6 +359,11 @@ void UISectionSamplerKeyboard::fileDragEnter( const StringArray &/*files*/, int 
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::FileDragAndDropTarget
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::fileDragMove( const StringArray &/*files*/, int /*x*/, int y )
 {
    m_DragDropNote = dragDropNote( y );
@@ -265,6 +371,11 @@ void UISectionSamplerKeyboard::fileDragMove( const StringArray &/*files*/, int /
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::FileDragAndDropTarget
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::fileDragExit( const StringArray &/*files*/ )
 {
    m_DragDropNote = -1;
@@ -272,6 +383,11 @@ void UISectionSamplerKeyboard::fileDragExit( const StringArray &/*files*/ )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::FileDragAndDropTarget
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::filesDropped( const StringArray &files, int /*x*/, int /*y*/ )
 {
    int n = 0;
@@ -291,6 +407,11 @@ void UISectionSamplerKeyboard::filesDropped( const StringArray &files, int /*x*/
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Set a mouse cursor appropriate to the current mouse position.
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::updateCursor( const MouseEvent &event )
 {
    int x = event.getPosition().getX();
@@ -356,6 +477,11 @@ void UISectionSamplerKeyboard::updateCursor( const MouseEvent &event )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::mouseMove( const MouseEvent &event)
 {
    UISectionKeyboard::mouseMove( event );
@@ -371,6 +497,11 @@ void UISectionSamplerKeyboard::mouseMove( const MouseEvent &event)
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::mouseDrag( const MouseEvent &event )
 {
    UISectionKeyboard::mouseDrag( event );
@@ -514,18 +645,33 @@ void UISectionSamplerKeyboard::mouseDrag( const MouseEvent &event )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::mouseEnter( const MouseEvent &event )
 {
    UISectionKeyboard::mouseEnter( event );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::mouseExit( const MouseEvent &event )
 {
    UISectionKeyboard::mouseExit( event );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::mouseDown( const MouseEvent &event )
 {
    UISectionKeyboard::mouseDown( event );
@@ -645,6 +791,11 @@ void UISectionSamplerKeyboard::mouseDown( const MouseEvent &event )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::mouseUp( const MouseEvent &event )
 {
    UISectionKeyboard::mouseUp( event );
@@ -682,18 +833,33 @@ void UISectionSamplerKeyboard::mouseUp( const MouseEvent &event )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::MidiKeyboardStateListener
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
 {
    UISectionKeyboard::handleNoteOn( pSource, midiChannel, midiNoteNumber, velocity );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::MidiKeyboardStateListener
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
 {
    UISectionKeyboard::handleNoteOff( pSource, midiChannel, midiNoteNumber, velocity );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The set of all currently selected samples
+*/
+/*----------------------------------------------------------------------------*/
 std::set<SamplerEngine::Sample *> UISectionSamplerKeyboard::selectedSamples() const
 {
    std::set<SamplerEngine::Sample *> result = m_SelectedSamples;
@@ -705,6 +871,11 @@ std::set<SamplerEngine::Sample *> UISectionSamplerKeyboard::selectedSamples() co
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Deselect all samples
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::clearSelectedSamples()
 {
    m_SelectedSamples.clear();
@@ -714,12 +885,23 @@ void UISectionSamplerKeyboard::clearSelectedSamples()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Select all samples of the currently selected layer
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::selectAll()
 {
    selectLayer();
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Select a layer
+\param nLayer The number of the layer to be selected (0..SAMPLERENGINE_NUMLAYERS-1)
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::selectLayer( int nLayer )
 {
    m_SelectedSamples.clear();
@@ -738,6 +920,11 @@ void UISectionSamplerKeyboard::selectLayer( int nLayer )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Call onSampleSelectionUpdated() on all listeners
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::emitSampleSelectionUpdated()
 {
    for( UISectionSamplerKeyboardListener *pListener : m_Listeners )
@@ -747,6 +934,11 @@ void UISectionSamplerKeyboard::emitSampleSelectionUpdated()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Call onDeleteSample() on all listeners
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSamplerKeyboard::emitDeleteSample( size_t nPart, SamplerEngine::Sample *pSample )
 {
    for( UISectionSamplerKeyboardListener *pListener : m_Listeners )
@@ -754,3 +946,4 @@ void UISectionSamplerKeyboard::emitDeleteSample( size_t nPart, SamplerEngine::Sa
       pListener->onDeleteSample( nPart, pSample );
    }
 }
+

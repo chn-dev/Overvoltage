@@ -1,4 +1,12 @@
-#pragma once
+/*----------------------------------------------------------------------------*/
+/*!
+\file WaveFile.h
+\author Christian Nowak <chnowak@web.de>
+\brief Headerfile for class WaveFile.
+*/
+/*----------------------------------------------------------------------------*/
+#ifndef __WAVEFILE_H__
+#define __WAVEFILE_H__
 
 #include <string>
 #include <iostream>
@@ -11,6 +19,12 @@
 //==============================================================================
 namespace SamplerEngine
 {
+   /*----------------------------------------------------------------------------*/
+   /*!
+   \class WaveFile
+   \date  2024-06-10
+   */
+   /*----------------------------------------------------------------------------*/
    class WaveFile : public DSP::Wave
    {
    public:
@@ -61,3 +75,6 @@ namespace SamplerEngine
       uint8_t *m_pData;
    };
 }
+
+#endif
+

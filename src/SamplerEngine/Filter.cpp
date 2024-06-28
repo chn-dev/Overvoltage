@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file Filter.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements a Filter
+*/
+/*----------------------------------------------------------------------------*/
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <util.h>
@@ -6,6 +13,11 @@
 
 using namespace SamplerEngine;
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 Filter::Filter( const Filter &d )
 {
    m_Cutoff = d.m_Cutoff;
@@ -25,6 +37,11 @@ Filter::Filter( const Filter &d )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 Filter::Filter() :
    m_Type( TYPE_NONE ),
    m_CutoffMod( 0.0 ),
@@ -43,11 +60,22 @@ Filter::Filter() :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 Filter::~Filter()
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+Copy filter settings from another Filter object.
+\param d
+*/
+/*----------------------------------------------------------------------------*/
 void Filter::getSettings( const Filter &d )
 {
    m_Type = d.m_Type;
@@ -56,30 +84,55 @@ void Filter::getSettings( const Filter &d )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+\param type The new filter type
+*/
+/*----------------------------------------------------------------------------*/
 void Filter::setType( Filter::Type type )
 {
    m_Type = type;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+\return The filter type
+*/
+/*----------------------------------------------------------------------------*/
 Filter::Type Filter::getType() const
 {
    return( m_Type );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+\return The cutoff frequency (0..1)
+*/
+/*----------------------------------------------------------------------------*/
 double Filter::getCutoff() const
 {
    return( m_Cutoff );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+\return The resonance (0..1)
+*/
+/*----------------------------------------------------------------------------*/
 double Filter::getResonance() const
 {
    return( m_Resonance );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+\param v The new cutoff frequency (0..1)
+*/
+/*----------------------------------------------------------------------------*/
 void Filter::setCutoff( double v )
 {
    if( v > 1.0 )
@@ -92,6 +145,11 @@ void Filter::setCutoff( double v )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+\param v The new resonance (0..1)
+*/
+/*----------------------------------------------------------------------------*/
 void Filter::setResonance( double v )
 {
    if( v > 1.0 )
@@ -104,6 +162,13 @@ void Filter::setResonance( double v )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+Recreate the Filter from an XmlElement
+\param pe Pointer to the XmlElement
+\return The new Filter object
+*/
+/*----------------------------------------------------------------------------*/
 Filter *Filter::fromXml( const juce::XmlElement *pe )
 {
    if( pe->getTagName() != "filter" )
@@ -134,6 +199,12 @@ Filter *Filter::fromXml( const juce::XmlElement *pe )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+Create an XmlElement from the Filter settings
+\return Pointer to the XmlElement
+*/
+/*----------------------------------------------------------------------------*/
 juce::XmlElement *Filter::toXml() const
 {
    juce::XmlElement *pe = new juce::XmlElement( "filter" );
@@ -154,7 +225,22 @@ juce::XmlElement *Filter::toXml() const
 }
 
 
-void Filter::process( float *pLSamples, float *pRSamples, const uint32_t n, double sampleRate, Type type, double cutoff, double resonance, double *pXL, double *pXR, double *pYL, double *pYR )
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+Apply the filter to audio data.
+\param pLSamples Left audio channel
+\param lRSamples Right audio channel
+\param n Number of samples
+\param sampleRate Sample rate in Hz
+\param type Filter type
+\param cutoff Cutoff frequency (0..1)
+\param resonance Resonance (0..1)
+*/
+/*----------------------------------------------------------------------------*/
+void Filter::process( float *pLSamples, float *pRSamples,
+                      const uint32_t n, double sampleRate,
+                      Type type, double cutoff, double resonance,
+                      double *pXL, double *pXR, double *pYL, double *pYR )
 {
    std::vector<float *> samples( { pLSamples, pRSamples } );
    std::vector<double *> X( { pXL, pXR } );
@@ -226,6 +312,15 @@ void Filter::process( float *pLSamples, float *pRSamples, const uint32_t n, doub
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+Apply the filter to audio data.
+\param pLSamples Left audio channel
+\param pRSamples Right audio channel
+\param n Number of samples
+\param sampleRate Sample rate
+*/
+/*----------------------------------------------------------------------------*/
 void Filter::process( float *pLSamples, float *pRSamples, const uint32_t n, double sampleRate )
 {
    process(
@@ -237,6 +332,13 @@ void Filter::process( float *pLSamples, float *pRSamples, const uint32_t n, doub
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+Convert a filter type enum value to a string
+\param type Filter type
+\return A textual representation of the filter type
+*/
+/*----------------------------------------------------------------------------*/
 std::string Filter::toString( Filter::Type type )
 {
    if( type == TYPE_HIGHPASS )
@@ -253,6 +355,13 @@ std::string Filter::toString( Filter::Type type )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+Convert the textual representation of a filter type to the corresponding enum value.
+\param str The string
+\return The enum value
+*/
+/*----------------------------------------------------------------------------*/
 Filter::Type Filter::fromString( const std::string &str )
 {
    if( util::trim( util::toLower( str ) ) == "highpass" )
@@ -269,31 +378,57 @@ Filter::Type Filter::fromString( const std::string &str )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+\return A list with all available filter types
+*/
+/*----------------------------------------------------------------------------*/
 std::set<Filter::Type> Filter::allTypes()
 {
    return( std::set<Filter::Type>( { TYPE_HIGHPASS, TYPE_LOWPASS, TYPE_NONE } ) );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+\param v A mod value for the cutoff frequency
+*/
+/*----------------------------------------------------------------------------*/
 void Filter::setCutoffMod( double v )
 {
    m_CutoffMod = v;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+\return The mod value for the cutoff frequency
+*/
+/*----------------------------------------------------------------------------*/
 double Filter::getCutoffMod() const
 {
    return( m_CutoffMod );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+\param v A mod value for the resonance
+*/
+/*----------------------------------------------------------------------------*/
 void Filter::setResonanceMod( double v )
 {
    m_ResonanceMod = v;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-11
+\return The mod value for the resonance
+*/
+/*----------------------------------------------------------------------------*/
 double Filter::getResonanceMod() const
 {
    return( m_ResonanceMod );
 }
+

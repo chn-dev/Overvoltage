@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file WaveFile.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements a representation of a wave file
+*/
+/*----------------------------------------------------------------------------*/
 #include <math.h>
 #include <string>
 
@@ -8,6 +15,12 @@
 
 using namespace SamplerEngine;
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 WaveFile::WaveFile() :
    m_Format( (decltype( m_Format ))-1 ),
    m_nChannels( (decltype( m_nChannels ))-1 ),
@@ -22,6 +35,11 @@ WaveFile::WaveFile() :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 WaveFile::~WaveFile()
 {
    if( m_pData )
@@ -31,6 +49,12 @@ WaveFile::~WaveFile()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Create an XML element from the WaveFile.
+\return Pointer to the new XML element
+*/
+/*----------------------------------------------------------------------------*/
 juce::XmlElement *WaveFile::toXml() const
 {
    juce::XmlElement *pe = new juce::XmlElement( "wave" );
@@ -72,6 +96,13 @@ juce::XmlElement *WaveFile::toXml() const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Reconstruct a Wavefile object from a previously generated XML element (see toXml()).
+\param pe The XML element
+\return Pointer to the WaveFile object or nullptr on error
+*/
+/*----------------------------------------------------------------------------*/
 WaveFile *WaveFile::fromXml( const juce::XmlElement *pe )
 {
    if( pe->getTagName() != "wave" )
@@ -160,24 +191,44 @@ WaveFile *WaveFile::fromXml( const juce::XmlElement *pe )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return Size in bytes of the WaveFile
+*/
+/*----------------------------------------------------------------------------*/
 uint32_t WaveFile::size() const
 {
    return( m_nSamples * m_nChannels * ( m_nBits / 8 ) );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return Sample number of the loop start
+*/
+/*----------------------------------------------------------------------------*/
 uint32_t WaveFile::loopStart() const
 {
    return( m_LoopStart );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return Sample number of the loop end
+*/
+/*----------------------------------------------------------------------------*/
 uint32_t WaveFile::loopEnd() const
 {
    return( m_LoopEnd );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param v Sample number of the loop start
+*/
+/*----------------------------------------------------------------------------*/
 void WaveFile::setLoopStart( uint32_t v )
 {
    m_LoopStart = v;
@@ -189,6 +240,11 @@ void WaveFile::setLoopStart( uint32_t v )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param v Sample number of the loop end
+*/
+/*----------------------------------------------------------------------------*/
 void WaveFile::setLoopEnd( uint32_t v )
 {
    m_LoopEnd = v;
@@ -200,42 +256,80 @@ void WaveFile::setLoopEnd( uint32_t v )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return true if the sample ought to be looped
+*/
+/*----------------------------------------------------------------------------*/
 bool WaveFile::isLooped() const
 {
    return( m_IsLooped );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return Number of channels
+*/
+/*----------------------------------------------------------------------------*/
 int WaveFile::numChannels() const
 {
    return( m_nChannels );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return Sample rate in Hz
+*/
+/*----------------------------------------------------------------------------*/
 uint32_t WaveFile::sampleRate() const
 {
    return( m_SampleRate );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return Number of bits per sample
+*/
+/*----------------------------------------------------------------------------*/
 int WaveFile::numBits() const
 {
    return( m_nBits );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return 16bit pointer to the data
+*/
+/*----------------------------------------------------------------------------*/
 uint16_t *WaveFile::data16() const
 {
    return( (uint16_t *)m_pData );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return 8bit pointer to the data
+*/
+/*----------------------------------------------------------------------------*/
 uint8_t *WaveFile::data8() const
 {
    return( (uint8_t *)m_pData );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Retrieve a single sample as a floating point value.
+\param nChannel Channel number
+\param nSample The sample number
+\return The floating point number or NAN on error
+*/
+/*----------------------------------------------------------------------------*/
 float WaveFile::floatValue( int nChannel, uint32_t nSample ) const
 {
    if( (uint32_t)nChannel >= m_nChannels )
@@ -260,6 +354,10 @@ float WaveFile::floatValue( int nChannel, uint32_t nSample ) const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 std::string WaveFile::readTagName( std::ifstream &file )
 {
    char tmp[5];
@@ -272,6 +370,13 @@ std::string WaveFile::readTagName( std::ifstream &file )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Read the next four bytes from a file and return the appropriate 32bit value.
+\param file The input file
+\return The 32bit value
+*/
+/*----------------------------------------------------------------------------*/
 uint32_t WaveFile::readDWord( std::ifstream &file )
 {
    unsigned char tmpDW[4];
@@ -284,18 +389,37 @@ uint32_t WaveFile::readDWord( std::ifstream &file )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param pD Pointer to some memory
+\return A 16bit value retrieved from the first 2 8bit-values of the memory
+*/
+/*----------------------------------------------------------------------------*/
 uint16_t WaveFile::getWord( const unsigned char *pD )
 {
    return( pD[0] | pD[1] << 8 );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param pD Pointer to some memory
+\return A 32bit value retrieved from the first 4 8bit-values of the memory
+*/
+/*----------------------------------------------------------------------------*/
 uint32_t WaveFile::getDWord( const unsigned char *pD )
 {
    return( ( (uint32_t)pD[0] ) | ( (uint32_t)pD[1] << 8 ) | ( (uint32_t)pD[2] << 16 ) | ( (uint32_t)pD[3] << 24 ) );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Load a wave from a file.
+\param fname The file name
+\return Pointer to the new WaveFile or nullptr on error
+*/
+/*----------------------------------------------------------------------------*/
 WaveFile *WaveFile::load( std::string fname )
 {
    std::ifstream file;
@@ -412,12 +536,21 @@ WaveFile *WaveFile::load( std::string fname )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The number of samples
+*/
+/*----------------------------------------------------------------------------*/
 uint32_t WaveFile::numSamples() const
 {
    return( m_nSamples );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void WaveFile::dft() const
 {
    std::vector<DSP::Complex> d;
@@ -433,3 +566,4 @@ void WaveFile::dft() const
       db.push_back( 10.0 * log10( sqrt( d[i].getA() * d[i].getA() + d[i].getB() * d[i].getB() ) ) );
    }
 }
+

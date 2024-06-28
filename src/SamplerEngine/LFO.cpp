@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file LFO.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements an LFO
+*/
+/*----------------------------------------------------------------------------*/
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <util.h>
@@ -6,6 +13,12 @@
 
 using namespace SamplerEngine;
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-16
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 LFO::LFO() :
    m_Value( 0.0 ),
    m_Period( 0.0 ),
@@ -31,6 +44,12 @@ LFO::LFO() :
 }
 
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-16
+Copy constructor
+*/
+/*----------------------------------------------------------------------------*/
 LFO::LFO( const LFO &d ) :
    m_Value( 0.0 ),
    m_Period( 0.0 ),
@@ -56,11 +75,22 @@ LFO::LFO( const LFO &d ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-16
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 LFO::~LFO()
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-16
+Copy LFO settings from another LFO object.
+\param d
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::getSettings( const LFO &d )
 {
    m_Waveform = d.m_Waveform;
@@ -81,198 +111,364 @@ void LFO::getSettings( const LFO &d )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-16
+\return The current LFO valus
+*/
+/*----------------------------------------------------------------------------*/
 double LFO::getValue() const
 {
    return( m_Value );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-16
+\return The waveform
+*/
+/*----------------------------------------------------------------------------*/
 LFO::Waveform LFO::getWaveform() const
 {
    return( m_Waveform );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-16
+Set the waveform
+\param wf
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::setWaveform( LFO::Waveform wf )
 {
    m_Waveform = wf;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-16
+\param e true if the start delay time of the LFO shall be synced to the tempo
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::setDelaySyncEnabled( bool e )
 {
    m_DelaySyncEnabled = e;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-16
+\return true if the start delay time of the LFO is synced to the tempo
+*/
+/*----------------------------------------------------------------------------*/
 bool LFO::getDelaySyncEnabled() const
 {
    return( m_DelaySyncEnabled );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-16
+\param beats Length of the start delay in beats
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::setDelayBeats( double beats )
 {
    m_DelayBeats = beats;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-16
+\return Length of the start delay in beats
+*/
+/*----------------------------------------------------------------------------*/
 double LFO::getDelayBeats() const
 {
    return( m_DelayBeats );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-16
+\param s Length of the start delay in seconds
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::setDelaySecs( double s )
 {
    m_DelaySecs = s;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-16
+\return Length of the start delay in seconds
+*/
+/*----------------------------------------------------------------------------*/
 double LFO::getDelaySecs() const
 {
    return( m_DelaySecs );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-16
+\param e true if the fade in time shall be synced to the tempo
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::setFadeInSyncEnabled( bool e )
 {
    m_FadeInSyncEnabled = e;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-16
+\return true if the fade in time is synced to the tempo
+*/
+/*----------------------------------------------------------------------------*/
 bool LFO::getFadeInSyncEnabled() const
 {
    return( m_FadeInSyncEnabled );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param beats The number of beats the LFO uses to fade in
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::setFadeInBeats( double beats )
 {
    m_FadeInBeats = beats;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The number of beats the LFO uses to fade in
+*/
+/*----------------------------------------------------------------------------*/
 double LFO::getFadeInBeats() const
 {
    return( m_FadeInBeats );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param s The number of seconds the LFO uses to fade in
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::setFadeInSecs( double s )
 {
    m_FadeInSecs = s;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The number of seconds the LFO uses to fade in
+*/
+/*----------------------------------------------------------------------------*/
 double LFO::getFadeInSecs() const
 {
    return( m_FadeInSecs );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The LFO frequency in Hz
+*/
+/*----------------------------------------------------------------------------*/
 double LFO::getFrequency() const
 {
    return( m_Frequency );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param f The LFO frequency in Hz
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::setFrequency( double f )
 {
    m_Frequency = f;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param e true if the LFO rate shall be synced to the host's tempo
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::setSyncEnabled( bool e )
 {
    m_SyncEnabled = e;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return true if the LFO rate is synced to the host's tempo
+*/
+/*----------------------------------------------------------------------------*/
 bool LFO::getSyncEnabled() const
 {
    return( m_SyncEnabled );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param beats The LFO rate in beats
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::setSyncBeats( double beats )
 {
    m_SyncBeats = beats;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The LFO rate in beats
+*/
+/*----------------------------------------------------------------------------*/
 double LFO::getSyncBeats() const
 {
    return( m_SyncBeats );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param e true if the LFO shall cycle only once
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::setOnceEnabled( bool e )
 {
    m_OnceEnabled = e;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return true if the LFO cycles only once
+*/
+/*----------------------------------------------------------------------------*/
 bool LFO::getOnceEnabled() const
 {
    return( m_OnceEnabled );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param e true if the LFO start phase shall be randomized
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::setRandomPhaseEnabled( bool e )
 {
    m_RandomPhaseEnabled = e;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return true if the LFO start phase is randomized
+*/
+/*----------------------------------------------------------------------------*/
 bool LFO::getRandomPhaseEnabled() const
 {
    return( m_RandomPhaseEnabled );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The custom waveform
+*/
+/*----------------------------------------------------------------------------*/
 std::vector<double> LFO::getCustom() const
 {
    return( m_Custom );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return Reference to the custom waveform
+*/
+/*----------------------------------------------------------------------------*/
 std::vector<double> &LFO::getCustomRef()
 {
    return( m_Custom );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param e true if the custum waveform shall be quantized
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::setCustomQuantizeEnabled( bool e )
 {
    m_CustomQuantizeEnabled = e;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return true if the custum waveform is quantized
+*/
+/*----------------------------------------------------------------------------*/
 bool LFO::getCustomQuantizeEnabled() const
 {
    return( m_CustomQuantizeEnabled );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param q The number of values the custom waveform shall be quantized to
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::setCustomQuantize( size_t q )
 {
    m_CustomQuantize = q;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The number of values the custom waveform is being quantized to
+*/
+/*----------------------------------------------------------------------------*/
 size_t LFO::getCustomQuantize() const
 {
    return( m_CustomQuantize );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param v The custom waveform
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::setCustom( std::vector<double> v )
 {
    m_Custom = v;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Called when the LFO is to be started.
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::noteOn()
 {
    if( m_RandomPhaseEnabled )
@@ -289,11 +485,21 @@ void LFO::noteOn()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Called when the LFO is to be stopped.
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::noteOff()
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return A set of of all possible LFO waveforms
+*/
+/*----------------------------------------------------------------------------*/
 std::set<LFO::Waveform> LFO::allWaveforms()
 {
    return( std::set<Waveform>( {
@@ -307,6 +513,12 @@ std::set<LFO::Waveform> LFO::allWaveforms()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param An LFO waveform type
+\return The string representation of the waveform type
+*/
+/*----------------------------------------------------------------------------*/
 std::string LFO::toString( Waveform wf )
 {
    switch( wf )
@@ -333,6 +545,12 @@ std::string LFO::toString( Waveform wf )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param wf The string representation of an LFO waveform type
+\return The waveform type
+*/
+/*----------------------------------------------------------------------------*/
 LFO::Waveform LFO::waveformFromString( const std::string &wf )
 {
    if( util::toLower( util::trim( wf ) ) == "sine" )
@@ -360,6 +578,13 @@ LFO::Waveform LFO::waveformFromString( const std::string &wf )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Retrieve a value of the custom waveform.
+\param i The index of the value to be retrieved
+\return The value
+*/
+/*----------------------------------------------------------------------------*/
 double LFO::getCustomValue( size_t i ) const
 {
    if( i >= m_Custom.size() )
@@ -377,6 +602,11 @@ double LFO::getCustomValue( size_t i ) const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The number of values of the custom waveform
+*/
+/*----------------------------------------------------------------------------*/
 size_t LFO::getNumCustomValues() const
 {
    return( m_Custom.size() );
@@ -384,6 +614,13 @@ size_t LFO::getNumCustomValues() const
 
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+This is called on a regular basis to calculate the next output value of the LFO.
+\param s The number of seconds since the last cycle
+\param bpm The host's tempo in bpm
+*/
+/*----------------------------------------------------------------------------*/
 void LFO::step( double s, double bpm )
 {
    double delaySecs = getDelaySecs();
@@ -479,6 +716,13 @@ void LFO::step( double s, double bpm )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Reconstruct an LFO object from a previously generated XML element (see toXml()).
+\param pe The XML element
+\return Pointer to the LFO object or nullptr on error
+*/
+/*----------------------------------------------------------------------------*/
 LFO *LFO::fromXml( const juce::XmlElement *pe )
 {
    if( pe->getTagName() != "lfo" )
@@ -568,6 +812,12 @@ LFO *LFO::fromXml( const juce::XmlElement *pe )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Create an XML element from the LFO settings.
+\return Pointer to the new XML element
+*/
+/*----------------------------------------------------------------------------*/
 juce::XmlElement *LFO::toXml() const
 {
    juce::XmlElement *pe = new juce::XmlElement( "lfo" );
@@ -633,3 +883,4 @@ juce::XmlElement *LFO::toXml() const
 
    return( pe );
 }
+

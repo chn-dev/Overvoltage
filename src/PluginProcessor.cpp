@@ -1,7 +1,19 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file PluginProcessor.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements the plugin's processor
+*/
+/*----------------------------------------------------------------------------*/
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-//==============================================================================
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 PluginProcessor::PluginProcessor()
    : AudioProcessor( BusesProperties()
       .withOutput( "Output 1", juce::AudioChannelSet::stereo(), true )
@@ -18,19 +30,33 @@ PluginProcessor::PluginProcessor()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 PluginProcessor::~PluginProcessor()
 {
    delete m_pEngine;
 }
 
 
-//==============================================================================
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\return The plugin name
+*/
+/*----------------------------------------------------------------------------*/
 const juce::String PluginProcessor::getName() const
 {
    return JucePlugin_Name;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\return true if the plugin accepts MIDI input
+*/
+/*----------------------------------------------------------------------------*/
 bool PluginProcessor::acceptsMidi() const
 {
 #if JucePlugin_WantsMidiInput
@@ -41,6 +67,11 @@ bool PluginProcessor::acceptsMidi() const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\return true if the plugin generates MIDI output
+*/
+/*----------------------------------------------------------------------------*/
 bool PluginProcessor::producesMidi() const
 {
 #if JucePlugin_ProducesMidiOutput
@@ -51,6 +82,11 @@ bool PluginProcessor::producesMidi() const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\return true if the plugin is a MIDI processor
+*/
+/*----------------------------------------------------------------------------*/
 bool PluginProcessor::isMidiEffect() const
 {
 #if JucePlugin_IsMidiEffect
@@ -61,12 +97,21 @@ bool PluginProcessor::isMidiEffect() const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+*/
+/*----------------------------------------------------------------------------*/
 double PluginProcessor::getTailLengthSeconds() const
 {
    return( 0.0 );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\return The number of available programs
+*/
+/*----------------------------------------------------------------------------*/
 int PluginProcessor::getNumPrograms()
 {
    return( 1 ); // NB: some hosts don't cope very well if you tell them there are 0 programs,
@@ -74,18 +119,35 @@ int PluginProcessor::getNumPrograms()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\return The current progrm number
+*/
+/*----------------------------------------------------------------------------*/
 int PluginProcessor::getCurrentProgram()
 {
    return( 0 );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+Change the current program.
+\param index The number of the new program
+*/
+/*----------------------------------------------------------------------------*/
 void PluginProcessor::setCurrentProgram( int index )
 {
    juce::ignoreUnused( index );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\param index The program number
+\return The specified program's name
+*/
+/*----------------------------------------------------------------------------*/
 const juce::String PluginProcessor::getProgramName( int index )
 {
    juce::ignoreUnused( index );
@@ -93,13 +155,24 @@ const juce::String PluginProcessor::getProgramName( int index )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\param index The program number
+\param newName The new name for the specified program
+*/
+/*----------------------------------------------------------------------------*/
 void PluginProcessor::changeProgramName( int index, const juce::String &newName )
 {
    juce::ignoreUnused( index, newName );
 }
 
 
-//==============================================================================
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\param sampleRate
+\param samplesPerBlock
+*/
+/*----------------------------------------------------------------------------*/
 void PluginProcessor::prepareToPlay( double sampleRate, int samplesPerBlock )
 {
    m_sampleRate = sampleRate;
@@ -107,6 +180,10 @@ void PluginProcessor::prepareToPlay( double sampleRate, int samplesPerBlock )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+*/
+/*----------------------------------------------------------------------------*/
 void PluginProcessor::releaseResources()
 {
    // When playback stops, you can use this as an opportunity to free up any
@@ -114,6 +191,10 @@ void PluginProcessor::releaseResources()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+*/
+/*----------------------------------------------------------------------------*/
 bool PluginProcessor::isBusesLayoutSupported( const BusesLayout& layouts ) const
 {
    // This is the place where you check if the layout is supported.
@@ -127,18 +208,38 @@ bool PluginProcessor::isBusesLayoutSupported( const BusesLayout& layouts ) const
    return( true );
 }
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\return A list of all samples in the currently selected part
+*/
+/*----------------------------------------------------------------------------*/
 std::list<SamplerEngine::Sample *> &PluginProcessor::samples()
 {
    return( m_pEngine->samples( m_pEditor->currentPart() ) );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\return A list of all samples in the currently selected part
+*/
+/*----------------------------------------------------------------------------*/
 const std::list<SamplerEngine::Sample *> &PluginProcessor::constSamples() const
 {
    return( m_pEngine->constSamples( m_pEditor->currentPart() ) );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+Callback function to register MIDI note on events (from juce::MidiKeyboardStateListener)
+\param pSource
+\param midiChannel
+\param midiNoteNumber
+\param velocity
+*/
+/*----------------------------------------------------------------------------*/
 void PluginProcessor::handleNoteOn( MidiKeyboardState */*pSource*/, int midiChannel, int midiNoteNumber, float velocity )
 {
    int vel = (int)( 127 * velocity );
@@ -146,6 +247,15 @@ void PluginProcessor::handleNoteOn( MidiKeyboardState */*pSource*/, int midiChan
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+Callback function to register MIDI note off events (from juce::MidiKeyboardStateListener)
+\param pSource
+\param midiChannel
+\param midiNoteNumber
+\param velocity
+*/
+/*----------------------------------------------------------------------------*/
 void PluginProcessor::handleNoteOff( MidiKeyboardState */*pSource*/, int midiChannel, int midiNoteNumber, float velocity )
 {
    int vel = (int)( 127 * velocity );
@@ -153,18 +263,39 @@ void PluginProcessor::handleNoteOff( MidiKeyboardState */*pSource*/, int midiCha
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+This function gets called when the MIDI keyboard's pitch wheel position has changed.
+
+\param midiChannel The midi channel (1..16)
+\param v The pitch wheel position (-1..1)
+*/
+/*----------------------------------------------------------------------------*/
 void PluginProcessor::handlePitchbend( int midiChannel, double v )
 {
    m_pEngine->pitchbend( (size_t)( midiChannel - 1 ), v );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+This function gets called when a MIDI controller has changed.
+
+\param midiChannel The midi channel (1..16)
+\param ccNum The controller's number (0..255)
+\param v The controller's value (-1..1)
+*/
+/*----------------------------------------------------------------------------*/
 void PluginProcessor::handleControllerChange( int midiChannel, int ccNum, double v )
 {
    m_pEngine->controllerChange( (size_t)( midiChannel - 1 ), ccNum, v );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+*/
+/*----------------------------------------------------------------------------*/
 bool PluginProcessor::outputBusReady( juce::AudioBuffer<float>& buffer, int n ) const
 {
    if( n >= getBusCount( false ) )
@@ -188,6 +319,13 @@ bool PluginProcessor::outputBusReady( juce::AudioBuffer<float>& buffer, int n ) 
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+This function gets called by the host when new audio shall be generated.
+\param buffer
+\param midiMessages
+*/
+/*----------------------------------------------------------------------------*/
 void PluginProcessor::processBlock( juce::AudioBuffer<float>& buffer,
                                               juce::MidiBuffer& midiMessages )
 {
@@ -288,13 +426,23 @@ void PluginProcessor::processBlock( juce::AudioBuffer<float>& buffer,
 }
 
 
-//==============================================================================
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\return true if the plugin has an editor
+*/
+/*----------------------------------------------------------------------------*/
+
 bool PluginProcessor::hasEditor() const
 {
    return( true ); // (change this to false if you choose to not supply an editor)
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\return Pointer to the plugin editor
+*/
+/*----------------------------------------------------------------------------*/
 juce::AudioProcessorEditor *PluginProcessor::createEditor()
 {
    m_pEditor = new PluginEditor( *this );
@@ -302,7 +450,13 @@ juce::AudioProcessorEditor *PluginProcessor::createEditor()
 }
 
 
-//==============================================================================
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+This function gets called when by the host retrieve the plugin state.
+\param destData That's where the state is saved.
+*/
+/*----------------------------------------------------------------------------*/
+
 void PluginProcessor::getStateInformation( juce::MemoryBlock& destData )
 {
    // You should use this method to store your parameters in the memory block.
@@ -314,6 +468,13 @@ void PluginProcessor::getStateInformation( juce::MemoryBlock& destData )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+This function gets by the host to restore a previously saved plugin state.
+\param data Pointer to the data
+\param sizeInBytes Data size in bytes
+*/
+/*----------------------------------------------------------------------------*/
 void PluginProcessor::setStateInformation( const void* data, int sizeInBytes )
 {
    // You should use this method to restore your parameters from this memory block,
@@ -332,20 +493,38 @@ void PluginProcessor::setStateInformation( const void* data, int sizeInBytes )
 }
 
 
-//==============================================================================
-// This creates new instances of the plugin..
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\return A new instance of the plugin
+*/
+/*----------------------------------------------------------------------------*/
 juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter()
 {
    return( new PluginProcessor() );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+This callback function get called when a specific sample shall be deleted.
+(from SamplerGUI::UISectionSamplerKeyboardListener)
+\param part The part number (0..15)
+\param pSample Pointer to the sample to be deleted
+*/
+/*----------------------------------------------------------------------------*/
 void PluginProcessor::onDeleteSample( size_t part, SamplerEngine::Sample *pSample )
 {
    m_pEngine->deleteSample( part, pSample );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+This callback function get called when a the selection of samples has changed.
+(from SamplerGUI::UISectionSamplerKeyboardListener)
+\param pKeyboard
+*/
+/*----------------------------------------------------------------------------*/
 void PluginProcessor::onSampleSelectionUpdated( SamplerGUI::UISectionSamplerKeyboard *pKeyboard )
 {
    if( m_pEditor )
@@ -355,18 +534,32 @@ void PluginProcessor::onSampleSelectionUpdated( SamplerGUI::UISectionSamplerKeyb
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\return The Engine
+*/
+/*----------------------------------------------------------------------------*/
 SamplerEngine::Engine *PluginProcessor::samplerEngine() const
 {
    return( m_pEngine );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\return The PluginEditor
+*/
+/*----------------------------------------------------------------------------*/
 PluginEditor *PluginProcessor::pluginEditor() const
 {
    return( m_pEditor );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+*/
+/*----------------------------------------------------------------------------*/
 void PluginProcessor::importMulti( juce::XmlElement *pXmlMulti )
 {
    SamplerEngine::Engine *pEngine = SamplerEngine::Engine::fromXml( pXmlMulti );
@@ -376,3 +569,4 @@ void PluginProcessor::importMulti( juce::XmlElement *pXmlMulti )
       m_pEngine = pEngine;
    }
 }
+

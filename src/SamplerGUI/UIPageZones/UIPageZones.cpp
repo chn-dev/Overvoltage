@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UIPageZones.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements the "zones" UI page. This is actually the main page.
+*/
+/*----------------------------------------------------------------------------*/
 #include <util.h>
 
 #include "UIPageZones.h"
@@ -6,6 +13,12 @@
 
 using namespace SamplerGUI;
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 UIPageZones::UIPageZones( PluginEditor *pEditor ) :
    UIPage( pEditor )
 {
@@ -141,6 +154,11 @@ UIPageZones::UIPageZones( PluginEditor *pEditor ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 UIPageZones::~UIPageZones()
 {
    delete m_pUISectionKeyboard;
@@ -166,6 +184,12 @@ UIPageZones::~UIPageZones()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Button::Listener
+\param pButton The button that has been clicked
+*/
+/*----------------------------------------------------------------------------*/
 void UIPageZones::buttonClicked( Button *pButton )
 {
    int nLayerButton = -1;
@@ -197,6 +221,12 @@ void UIPageZones::buttonClicked( Button *pButton )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Set the current layer.
+\param nLayer The layer number (0..SAMPLERENGINE_NUMLAYERS-1)
+*/
+/*----------------------------------------------------------------------------*/
 void UIPageZones::setCurrentLayer( int nLayer )
 {
    if( nLayer < 0 || nLayer >= m_LayerButtons.size() )
@@ -213,6 +243,11 @@ void UIPageZones::setCurrentLayer( int nLayer )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\retrn The currently selected layer number (0..SAMPLERENGINE_NUMLAYERS-1)
+*/
+/*----------------------------------------------------------------------------*/
 int UIPageZones::getCurrentLayer() const
 {
    for( int i = 0; i < m_LayerButtons.size(); i++ )
@@ -225,24 +260,45 @@ int UIPageZones::getCurrentLayer() const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Button::Listener
+\param pButton The button whose state has changed
+*/
+/*----------------------------------------------------------------------------*/
 void UIPageZones::buttonStateChanged( Button *pButton )
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UIPageZones::currentPartChanged( size_t /*nPart*/ )
 {
 //   m_pUISectionKeyboard->clearSelectedSamples();
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The sampler keyboard
+*/
+/*----------------------------------------------------------------------------*/
 SamplerGUI::UISectionSamplerKeyboard *UIPageZones::getSamplerKeyboard() const
 {
    return( m_pUISectionKeyboard );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return true if the solo mode is enabled
+*/
+/*----------------------------------------------------------------------------*/
 bool UIPageZones::isSoloEnabled() const
 {
    return( m_pbSolo->getToggleState() );
 }
+

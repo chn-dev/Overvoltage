@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISectionAEG.h
+\author Christian Nowak <chnowak@web.de>
+\brief Headerfile for class UISectionAEG.
+*/
+/*----------------------------------------------------------------------------*/
 #ifndef __UISECTIONAEG_H__
 #define __UISECTIONAEG_H__
 
@@ -10,6 +17,12 @@ class PluginEditor;
 //==============================================================================
 namespace SamplerGUI
 {
+   /*----------------------------------------------------------------------------*/
+   /*!
+   \class UISectionAEG
+   \date  2024-06-10
+   */
+   /*----------------------------------------------------------------------------*/
    class UISectionAEG : public UISectionEG
    {
    public:

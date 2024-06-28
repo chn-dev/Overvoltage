@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISectionFilter.h
+\author Christian Nowak <chnowak@web.de>
+\brief Headerfile for class UISectionFilter.
+*/
+/*----------------------------------------------------------------------------*/
 #ifndef __UISECTIONFILTER_H__
 #define __UISECTIONFILTER_H__
 
@@ -10,6 +17,12 @@ class PluginEditor;
 //==============================================================================
 namespace SamplerGUI
 {
+   /*----------------------------------------------------------------------------*/
+   /*!
+   \class UISectionFilter
+   \date  2024-06-10
+   */
+   /*----------------------------------------------------------------------------*/
    class UISectionFilter : public UISection,
                            public juce::Slider::Listener,
                            public juce::ComboBox::Listener

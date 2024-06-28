@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISection.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements a UI section within a UI page
+*/
+/*----------------------------------------------------------------------------*/
 #include <util.h>
 
 #include "UISection.h"
@@ -6,6 +13,12 @@
 
 using namespace SamplerGUI;
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 UISection::UISection( UIPage *pUIPage, std::string label ) :
    m_pUIPage( pUIPage ),
    m_pLabel( nullptr )
@@ -26,6 +39,11 @@ UISection::UISection( UIPage *pUIPage, std::string label ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 UISection::~UISection()
 {
    m_pUIPage->removeUISection( this );
@@ -37,12 +55,22 @@ UISection::~UISection()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The UI page this section belongs to
+*/
+/*----------------------------------------------------------------------------*/
 UIPage *UISection::uiPage() const
 {
    return( m_pUIPage );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 UISection::CycleComponent::CycleComponent() :
    m_MinVal( 0.0 ),
    m_MaxVal( 1.0 ),
@@ -54,6 +82,11 @@ UISection::CycleComponent::CycleComponent() :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 UISection::CycleComponent::CycleComponent( std::vector<std::string> items ) :
    m_MinVal( 0.0 ),
    m_MaxVal( items.size() - 1.0 ),
@@ -66,29 +99,67 @@ UISection::CycleComponent::CycleComponent( std::vector<std::string> items ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 UISection::CycleComponent::~CycleComponent()
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The minimum value
+*/
+/*----------------------------------------------------------------------------*/
 double UISection::CycleComponent::getMinVal() const
 {
    return( m_MinVal );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The maximum value
+*/
+/*----------------------------------------------------------------------------*/
 double UISection::CycleComponent::getMaxVal() const
 {
    return( m_MaxVal );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return Value step
+*/
+/*----------------------------------------------------------------------------*/
 double UISection::CycleComponent::getStep() const
 {
    return( m_Step );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Set items according to numeric specifcation.
+For example, with minVal=0, maxVal=2, step=0.5, format="{:.0f}" and unit="Hz" the 
+following items would be generated:
+0.0Hz
+0.5Hz
+1.0Hz
+1.5Hz
+2.0Hz
+
+\param minVal The minimum value
+\param maxVal The maximum value
+\param step Value step
+\param format The format string to be used with std::vformat
+\param unit The unit
+*/
+/*----------------------------------------------------------------------------*/
 void UISection::CycleComponent::setItems( double minVal, double maxVal, double step, std::string format, std::string unit )
 {
    m_MinVal = minVal;
@@ -108,19 +179,34 @@ void UISection::CycleComponent::setItems( double minVal, double maxVal, double s
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The currently selected item's value
+*/
+/*----------------------------------------------------------------------------*/
 double UISection::CycleComponent::getCurrentItemValue() const
 {
    return( ( getCurrentItem() * getStep() ) + getMinVal() );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Select the item associated with the specified value.
+\param value The value of the item to be selected
+*/
+/*----------------------------------------------------------------------------*/
 void UISection::CycleComponent::setCurrentItemByValue( double value )
 {
    setCurrentItem( (int)( ( ( value - getMinVal() ) / getStep() ) + 0.5 ) );
 }
 
 
-
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param item The index of the item to be selected
+*/
+/*----------------------------------------------------------------------------*/
 void UISection::CycleComponent::setCurrentItem( int item )
 {
    if( item < 0 || item >= (int)m_Items.size() )
@@ -135,12 +221,22 @@ void UISection::CycleComponent::setCurrentItem( int item )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The index of the currently selected item
+*/
+/*----------------------------------------------------------------------------*/
 int UISection::CycleComponent::getCurrentItem() const
 {
    return( m_CurrentItem );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISection::CycleComponent::mouseDrag( const MouseEvent &event )
 {
    if( !isEnabled() )
@@ -173,6 +269,12 @@ void UISection::CycleComponent::mouseDrag( const MouseEvent &event )
 }
 
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISection::CycleComponent::mouseDown( const MouseEvent &/*event*/ )
 {
    if( !isEnabled() )
@@ -187,6 +289,11 @@ void UISection::CycleComponent::mouseDown( const MouseEvent &/*event*/ )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISection::CycleComponent::mouseUp( const MouseEvent &/*event*/ )
 {
    if( !isEnabled() )
@@ -197,6 +304,10 @@ void UISection::CycleComponent::mouseUp( const MouseEvent &/*event*/ )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISection::SliderLookAndFeel::drawLinearSlider(
    Graphics &g,
    int x, int y, int width, int height,
@@ -307,11 +418,19 @@ void UISection::SliderLookAndFeel::drawLinearSlider(
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISection::paint( juce::Graphics &/*g*/ )
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISection::resized()
 {
    if( m_pLabel )
@@ -321,6 +440,12 @@ void UISection::resized()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function called when the user (de-)selects samples.
+\param pSamplerKeyboard
+*/
+/*----------------------------------------------------------------------------*/
 void UISection::onSampleSelectionUpdated( UISectionSamplerKeyboard *pSamplerKeyboard )
 {
    m_Samples = pSamplerKeyboard->selectedSamples();
@@ -328,11 +453,22 @@ void UISection::onSampleSelectionUpdated( UISectionSamplerKeyboard *pSamplerKeyb
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The selected samples
+*/
+/*----------------------------------------------------------------------------*/
 const std::set<SamplerEngine::Sample *> &UISection::samples() const
 {
    return( m_Samples );
 }
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return A selected sample
+*/
+/*----------------------------------------------------------------------------*/
 SamplerEngine::Sample *UISection::sample() const
 {
    if( m_Samples.size() <= 0 )
@@ -340,3 +476,4 @@ SamplerEngine::Sample *UISection::sample() const
    else
       return( *m_Samples.begin() );
 }
+

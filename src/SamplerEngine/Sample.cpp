@@ -1,9 +1,22 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file Sample.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements a Sample
+*/
+/*----------------------------------------------------------------------------*/
 #include "Sample.h"
 
 #include "util.h"
 
 using namespace SamplerEngine;
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote, int nLayer ) :
    m_Name( name ),
    m_OutputBus( 0 ),
@@ -38,6 +51,11 @@ Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote, int
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 Sample::Sample() :
    m_Name( "" ),
    m_OutputBus( 0 ),
@@ -63,6 +81,11 @@ Sample::Sample() :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 Sample::~Sample()
 {
    delete m_pWave;
@@ -79,6 +102,12 @@ Sample::~Sample()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Create an XML element from the Sample settings.
+\return Pointer to the new XML element
+*/
+/*----------------------------------------------------------------------------*/
 juce::XmlElement *Sample::toXml() const
 {
    juce::XmlElement *peSample = new juce::XmlElement( "sample" );
@@ -171,6 +200,13 @@ juce::XmlElement *Sample::toXml() const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Reconstruct a Sample object from a previously generated XML element (see toXml()).
+\param pe The XML element
+\return Pointer to the Sample object or nullptr on error
+*/
+/*----------------------------------------------------------------------------*/
 Sample *Sample::fromXml( const juce::XmlElement *pe )
 {
    if( !pe )
@@ -405,18 +441,34 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The amplitude envelope generator
+*/
+/*----------------------------------------------------------------------------*/
 ENV *Sample::getAEG() const
 {
    return( m_pAEG );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return Envelope generator #2
+*/
+/*----------------------------------------------------------------------------*/
 ENV *Sample::getEG2() const
 {
    return( m_pEG2 );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param n The index of the LFO
+\return Pointer to LFO
+*/
+/*----------------------------------------------------------------------------*/
 LFO *Sample::getLFO( size_t n ) const
 {
    if( n >= m_LFOs.size() )
@@ -426,54 +478,100 @@ LFO *Sample::getLFO( size_t n ) const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The number of available LFOs (should be NUM_LFO)
+*/
+/*----------------------------------------------------------------------------*/
 size_t Sample::getNumLFOs() const
 {
    return( m_LFOs.size() );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return Pointer to the filter
+*/
+/*----------------------------------------------------------------------------*/
 Filter *Sample::getFilter() const
 {
    return( m_pFilter );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return Pointer to the modulation matrix
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix *Sample::getModMatrix() const
 {
    return( m_pModMatrix );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param name The sample's new name
+*/
+/*----------------------------------------------------------------------------*/
 void Sample::setName( std::string name )
 {
    m_Name = name;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return true if the sample is to be played in reverse
+*/
+/*----------------------------------------------------------------------------*/
 bool Sample::getReverse() const
 {
    return( m_Reverse );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param r true if the sample shall be played in reverse
+*/
+/*----------------------------------------------------------------------------*/
 void Sample::setReverse( bool r )
 {
    m_Reverse = r;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param pm The playmode
+*/
+/*----------------------------------------------------------------------------*/
 void Sample::setPlayMode( Sample::PlayMode pm )
 {
    m_PlayMode = pm;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The playmode
+*/
+/*----------------------------------------------------------------------------*/
 Sample::PlayMode Sample::getPlayMode() const
 {
    return( m_PlayMode );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param mode The playmode type
+\return A string representation of the playmode type
+*/
+/*----------------------------------------------------------------------------*/
 std::string Sample::toString( Sample::PlayMode mode )
 {
    switch( mode )
@@ -497,6 +595,12 @@ std::string Sample::toString( Sample::PlayMode mode )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param mode The playmode type
+\return The string representation of the specified playmode type
+*/
+/*----------------------------------------------------------------------------*/
 Sample::PlayMode Sample::fromString( std::string mode )
 {
    if( mode == "Standard" )
@@ -521,18 +625,35 @@ Sample::PlayMode Sample::fromString( std::string mode )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param note A MIDI note number
+\return true if the sample matches the given note number
+*/
+/*----------------------------------------------------------------------------*/
 bool Sample::matchesMidiNote( int note ) const
 {
    return( ( m_MinNote <= note ) && ( note <= m_MaxNote ) );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param vel A MIDI velocity
+\return true if the sample matches the given velocity
+*/
+/*----------------------------------------------------------------------------*/
 bool Sample::matchesVelocity( int vel ) const
 {
    return( ( m_MinVelocity <= vel ) && ( vel <= m_MaxVelocity ) );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return A set of all possible play modes
+*/
+/*----------------------------------------------------------------------------*/
 std::set<Sample::PlayMode> Sample::allPlayModes()
 {
    static std::set<Sample::PlayMode> m;
@@ -549,78 +670,143 @@ std::set<Sample::PlayMode> Sample::allPlayModes()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The sample name
+*/
+/*----------------------------------------------------------------------------*/
 std::string Sample::getName() const
 {
    return( m_Name );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The wave data
+*/
+/*----------------------------------------------------------------------------*/
 WaveFile *Sample::getWave() const
 {
    return( m_pWave );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The base MIDI note number (0..255)
+*/
+/*----------------------------------------------------------------------------*/
 int Sample::getBaseNote() const
 {
    return( m_BaseNote );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param note The new base MIDI note number (0..255)
+*/
+/*----------------------------------------------------------------------------*/
 void Sample::setBaseNote( int note )
 {
    m_BaseNote = note;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The minimum MIDI note number (0..255)
+*/
+/*----------------------------------------------------------------------------*/
 int Sample::getMinNote() const
 {
    return( m_MinNote );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The maximum MIDI note number (0..255)
+*/
+/*----------------------------------------------------------------------------*/
 int Sample::getMaxNote() const
 {
    return( m_MaxNote );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param note The new minimum MIDI note number (0..255)
+*/
+/*----------------------------------------------------------------------------*/
 void Sample::setMinNote( int note )
 {
    m_MinNote = note;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param note The new maximum MIDI note number (0..255)
+*/
+/*----------------------------------------------------------------------------*/
 void Sample::setMaxNote( int note )
 {
    m_MaxNote = note;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The minimum velocity (0..127)
+*/
+/*----------------------------------------------------------------------------*/
 int Sample::getMinVelocity() const
 {
    return( m_MinVelocity );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param v The new minimum velocity (0..127)
+*/
+/*----------------------------------------------------------------------------*/
 void Sample::setMinVelocity( int v )
 {
    m_MinVelocity = v;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The maximum velocity (0..127)
+*/
+/*----------------------------------------------------------------------------*/
 int Sample::getMaxVelocity() const
 {
    return( m_MaxVelocity );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param v The new maximum velocity (0..127)
+*/
+/*----------------------------------------------------------------------------*/
 void Sample::setMaxVelocity( int v )
 {
    m_MaxVelocity = v;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Make sure that m_MinNote <= m_MaxNote
+*/
+/*----------------------------------------------------------------------------*/
 void Sample::correctMinMaxNote()
 {
    if( m_MinNote > m_MaxNote )
@@ -632,84 +818,156 @@ void Sample::correctMinMaxNote()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The detune value in cents (1/100th of a half-tone)
+*/
+/*----------------------------------------------------------------------------*/
 float Sample::getDetune() const
 {
    return( m_DetuneCents );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param d The new detune value in cents (1/100th of a half-tone)
+*/
+/*----------------------------------------------------------------------------*/
 void Sample::setDetune( float d )
 {
    m_DetuneCents = d;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The panning value (-1..1)
+*/
+/*----------------------------------------------------------------------------*/
 float Sample::getPan() const
 {
    return( m_Pan );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param pan The new panning value (-1..1)
+*/
+/*----------------------------------------------------------------------------*/
 void Sample::setPan( float pan )
 {
    m_Pan = pan;
 }
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The gain value
+*/
+/*----------------------------------------------------------------------------*/
 float Sample::getGain() const
 {
    return( m_Gain );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param gain The new gain value
+*/
+/*----------------------------------------------------------------------------*/
 void Sample::setGain( float gain )
 {
    m_Gain = gain;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The keytrack value in percent
+*/
+/*----------------------------------------------------------------------------*/
 float Sample::getKeytrack() const
 {
    return( m_Keytrack );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param kt The new keytrack value in percent
+*/
+/*----------------------------------------------------------------------------*/
 void Sample::setKeytrack( float kt )
 {
    m_Keytrack = kt;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The pitchbend range in halftones
+*/
+/*----------------------------------------------------------------------------*/
 float Sample::getPitchbendRange() const
 {
    return( m_PitchbendRange );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param pb The new pitchbend range in halftones
+*/
+/*----------------------------------------------------------------------------*/
 void Sample::setPitchbendRange( float pb )
 {
    m_PitchbendRange = pb;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The output bus
+*/
+/*----------------------------------------------------------------------------*/
 int Sample::getOutputBus() const
 {
    return( m_OutputBus );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param n The new output bus
+*/
+/*----------------------------------------------------------------------------*/
 void Sample::setOutputBus( int n )
 {
    m_OutputBus = n;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param nLayer The layer of this sample (0..SAMPLERENGINE_NUMLAYERS-1)
+*/
+/*----------------------------------------------------------------------------*/
 void Sample::setLayer( int nLayer )
 {
    m_NLayer = nLayer;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The layer of this sample (0..SAMPLERENGINE_NUMLAYERS-1)
+*/
+/*----------------------------------------------------------------------------*/
 int Sample::getLayer() const
 {
    return( m_NLayer );
 }
+

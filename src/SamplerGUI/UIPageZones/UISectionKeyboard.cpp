@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISection.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements a Keyboard UI section
+*/
+/*----------------------------------------------------------------------------*/
 #include "UISectionKeyboard.h"
 #include "PluginEditor.h"
 #include <SamplerGUI/UIPageZones/UIPageZones.h>
@@ -6,6 +13,12 @@
 
 using namespace SamplerGUI;
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionKeyboard::UISectionKeyboard( UIPageZones *pPageZones ) :
    UISection( pPageZones ),
    m_pPageZones( pPageZones ),
@@ -25,23 +38,45 @@ UISectionKeyboard::UISectionKeyboard( UIPageZones *pPageZones ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionKeyboard::~UISectionKeyboard()
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return A list of all samples
+*/
+/*----------------------------------------------------------------------------*/
 std::list<SamplerEngine::Sample *> &UISectionKeyboard::samples()
 {
    return( m_pPageZones->editor()->processor().samples() );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return A list of all samples
+*/
+/*----------------------------------------------------------------------------*/
 const std::list<SamplerEngine::Sample *> &UISectionKeyboard::constSamples() const
 {
    return( m_pPageZones->editor()->processor().constSamples() );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Convert a MIDI note numer to a string like "C#3" or "F-2".
+\param note The MIDI note number
+\return The note string
+*/
+/*----------------------------------------------------------------------------*/
 juce::String UISectionKeyboard::noteNameWithOctave( int note )
 {
    std::string name = noteName( note ).toStdString();
@@ -60,6 +95,13 @@ juce::String UISectionKeyboard::noteNameWithOctave( int note )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Convert a MIDI note number to a note name without octave.
+\param note The MIDI note number
+\return The note string
+*/
+/*----------------------------------------------------------------------------*/
 juce::String UISectionKeyboard::noteName( int note )
 {
    note %= 12;
@@ -96,6 +138,11 @@ juce::String UISectionKeyboard::noteName( int note )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Used for painting the keyboard
+*/
+/*----------------------------------------------------------------------------*/
 int UISectionKeyboard::keyOfs( int note )
 {
    static int ko[12] = { 0, 2, 3, 6, 7, 10, 12, 13, 16, 17, 20, 21 };
@@ -103,12 +150,22 @@ int UISectionKeyboard::keyOfs( int note )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Used for painting the keyboard
+*/
+/*----------------------------------------------------------------------------*/
 int UISectionKeyboard::maxKeyOfs()
 {
    return( 24 );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Used for painting the keyboard
+*/
+/*----------------------------------------------------------------------------*/
 int UISectionKeyboard::keySize( int note )
 {
    static int ks[12] = { 3, 2, 4, 2, 3, 3, 2, 4, 2, 4, 2, 3 };
@@ -116,6 +173,15 @@ int UISectionKeyboard::keySize( int note )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function for handing the note on event.
+\param pSource
+\param midiChannel
+\param midiNoteNumber
+\param velocity
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionKeyboard::handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
 {
    juce::ignoreUnused( pSource, midiChannel );
@@ -131,6 +197,15 @@ void UISectionKeyboard::handleNoteOn( MidiKeyboardState *pSource, int midiChanne
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function for handling the note off event.
+\param pSource
+\param midiChannel
+\param midiNoteNumber
+\param velocity
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionKeyboard::handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
 {
    juce::ignoreUnused( pSource, midiChannel );
@@ -146,6 +221,11 @@ void UISectionKeyboard::handleNoteOff( MidiKeyboardState *pSource, int midiChann
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Used for painting the keyboard
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionKeyboard::getNoteShape( int note, juce::Colour &c, juce::Rectangle<int> &r )
 {
    int x = 0;
@@ -168,6 +248,12 @@ void UISectionKeyboard::getNoteShape( int note, juce::Colour &c, juce::Rectangle
    r = juce::Rectangle<int>( x, y, w, h );
 }
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Used for painting the keyboard
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionKeyboard::drawNote( juce::Graphics &g, int note )
 {
    juce::Colour c;
@@ -196,6 +282,10 @@ void UISectionKeyboard::drawNote( juce::Graphics &g, int note )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionKeyboard::paint( juce::Graphics &g )
 {
    g.setColour( juce::Colour::fromRGB( 16, 32, 16 ) );
@@ -222,6 +312,10 @@ void UISectionKeyboard::paint( juce::Graphics &g )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionKeyboard::resized()
 {
    m_MaxNoteOffset = getMaxNoteOffset();
@@ -232,6 +326,10 @@ void UISectionKeyboard::resized()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionKeyboard::setWidth( int w )
 {
    if( m_Width != w )
@@ -242,6 +340,11 @@ void UISectionKeyboard::setWidth( int w )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Used for painting the keyboard
+*/
+/*----------------------------------------------------------------------------*/
 int UISectionKeyboard::getMaxNoteOffset() const
 {
    for( int noteStart = 0; noteStart <= 128; noteStart++ )
@@ -256,6 +359,11 @@ int UISectionKeyboard::getMaxNoteOffset() const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Used for painting the keyboard
+*/
+/*----------------------------------------------------------------------------*/
 int UISectionKeyboard::getKeyboardHeight( int noteStart, int noteEnd ) const
 {
    int ko = keyOfs( noteStart ) - keyOfs( m_NoteOffset );
@@ -270,6 +378,14 @@ int UISectionKeyboard::getKeyboardHeight( int noteStart, int noteEnd ) const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Retrieve the MIDI note number from a mouse position.
+\param x
+\param y
+\return The MIDI note number
+*/
+/*----------------------------------------------------------------------------*/
 int UISectionKeyboard::getNoteNumberAt( int x, int y )
 {
    juce::Colour c;
@@ -305,6 +421,12 @@ int UISectionKeyboard::getNoteNumberAt( int x, int y )
    return( -1 );
 }
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionKeyboard::mouseDrag( const MouseEvent &event )
 {
    int x = event.getPosition().getX();
@@ -334,6 +456,12 @@ void UISectionKeyboard::mouseDrag( const MouseEvent &event )
    }
 }
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionKeyboard::mouseMove( const MouseEvent &event )
 {
    int x = event.getPosition().getX();
@@ -345,18 +473,33 @@ void UISectionKeyboard::mouseMove( const MouseEvent &event )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionKeyboard::mouseEnter( const MouseEvent &event )
 {
    juce::ignoreUnused( event );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionKeyboard::mouseExit( const MouseEvent &event )
 {
    juce::ignoreUnused( event );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionKeyboard::mouseDown( const MouseEvent &event )
 {
    int x = event.getMouseDownPosition().getX();
@@ -378,6 +521,11 @@ void UISectionKeyboard::mouseDown( const MouseEvent &event )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionKeyboard::mouseUp( const MouseEvent &event )
 {
    int x = event.getPosition().getX();
@@ -395,6 +543,11 @@ void UISectionKeyboard::mouseUp( const MouseEvent &event )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionKeyboard::mouseWheelMove( const MouseEvent &event, const MouseWheelDetails &wheel )
 {
    juce::ignoreUnused( event );
@@ -424,3 +577,4 @@ void UISectionKeyboard::mouseWheelMove( const MouseEvent &event, const MouseWhee
 
    repaint();
 }
+

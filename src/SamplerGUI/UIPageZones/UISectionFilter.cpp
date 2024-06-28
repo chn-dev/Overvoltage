@@ -1,8 +1,21 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISection.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements the filter UI section
+*/
+/*----------------------------------------------------------------------------*/
 #include "PluginEditor.h"
 #include "UISectionFilter.h"
 
 using namespace SamplerGUI;
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionFilter::UISectionFilter( UIPage *pUIPage ) :
    UISection( pUIPage, "Filter" )
 {
@@ -38,6 +51,11 @@ UISectionFilter::UISectionFilter( UIPage *pUIPage ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionFilter::~UISectionFilter()
 {
    delete m_psCutoff;
@@ -48,6 +66,10 @@ UISectionFilter::~UISectionFilter()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionFilter::paint( juce::Graphics &g )
 {
    UISection::paint( g );
@@ -57,6 +79,10 @@ void UISectionFilter::paint( juce::Graphics &g )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionFilter::resized()
 {
    UISection::resized();
@@ -71,6 +97,13 @@ void UISectionFilter::resized()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Gets called when the filter settings have changed. Updates the UI components 
+accordingly.
+\param pFilter The filter
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionFilter::filterUpdated( SamplerEngine::Filter *pFilter )
 {
    m_psCutoff->setValue( pFilter->getCutoff(), dontSendNotification );
@@ -79,6 +112,10 @@ void UISectionFilter::filterUpdated( SamplerEngine::Filter *pFilter )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionFilter::samplesUpdated()
 {
    const SamplerEngine::Sample *pSample = sample();
@@ -95,6 +132,12 @@ void UISectionFilter::samplesUpdated()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::ComboBox::Listener
+\param pComboBox The ComboBox which has changed
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionFilter::comboBoxChanged( ComboBox *pComboBox )
 {
    if( pComboBox == m_pcbType )
@@ -107,6 +150,12 @@ void UISectionFilter::comboBoxChanged( ComboBox *pComboBox )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Slider::listener
+\param pSlider The Slider which has changed
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionFilter::sliderValueChanged( Slider *pSlider )
 {
    if( samples().size() <= 0 )
@@ -127,3 +176,4 @@ void UISectionFilter::sliderValueChanged( Slider *pSlider )
       }
    }
 }
+

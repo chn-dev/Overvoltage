@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISectionEG.h
+\author Christian Nowak <chnowak@web.de>
+\brief Headerfile for class UISectionEG.
+*/
+/*----------------------------------------------------------------------------*/
 #ifndef __UISECTIONEG_H__
 #define __UISECTIONEG_H__
 
@@ -10,6 +17,12 @@ class PluginEditor;
 //==============================================================================
 namespace SamplerGUI
 {
+   /*----------------------------------------------------------------------------*/
+   /*!
+   \class UISectionEG
+   \date  2024-06-10
+   */
+   /*----------------------------------------------------------------------------*/
    class UISectionEG : public UISection,
                        public juce::Slider::Listener
    {

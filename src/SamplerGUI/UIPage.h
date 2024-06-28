@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UIPage.h
+\author Christian Nowak <chnowak@web.de>
+\brief Headerfile for class UIPage.
+*/
+/*----------------------------------------------------------------------------*/
 #ifndef __UIPAGE_H__
 #define __UIPAGE_H__
 
@@ -10,6 +17,12 @@ namespace SamplerGUI
    class UISection;
    class UISectionSamplerKeyboard;
 
+   /*----------------------------------------------------------------------------*/
+   /*!
+   \class UIPage
+   \date  2024-06-10
+   */
+   /*----------------------------------------------------------------------------*/
    class UIPage : public juce::Component
    {
    public:

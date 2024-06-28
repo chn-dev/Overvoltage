@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISection.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements the WaveView UI section
+*/
+/*----------------------------------------------------------------------------*/
 #include "PluginEditor.h"
 #include "UISectionWaveView.h"
 
@@ -5,6 +12,12 @@
 
 using namespace SamplerGUI;
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionWaveView::UISectionWaveView( UIPage *pUIPage ) :
    UISection( pUIPage ),
    m_IsDraggingLoopStart( false ),
@@ -37,6 +50,11 @@ UISectionWaveView::UISectionWaveView( UIPage *pUIPage ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionWaveView::~UISectionWaveView()
 {
    delete m_pbZoom;
@@ -47,6 +65,10 @@ UISectionWaveView::~UISectionWaveView()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionWaveView::paint( juce::Graphics &g )
 {
    UISection::paint( g );
@@ -172,6 +194,10 @@ void UISectionWaveView::paint( juce::Graphics &g )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionWaveView::resized()
 {
    UISection::resized();
@@ -208,6 +234,11 @@ void UISectionWaveView::resized()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Called when the user has (de-)selected any samples
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionWaveView::samplesUpdated()
 {
    m_IsSelecting = false;
@@ -232,6 +263,11 @@ void UISectionWaveView::samplesUpdated()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionWaveView::mouseMove( const MouseEvent &event )
 {
    m_IsDraggingLoopStart = false;
@@ -264,6 +300,11 @@ void UISectionWaveView::mouseMove( const MouseEvent &event )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionWaveView::mouseDown( const MouseEvent &event )
 {
    if( !sample() )
@@ -288,6 +329,13 @@ void UISectionWaveView::mouseDown( const MouseEvent &event )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Convert an x position within the component to the appropriate sample number
+\param xPos The x position
+\return The appropriate sample number
+*/
+/*----------------------------------------------------------------------------*/
 uint32_t UISectionWaveView::getSampleNumFromXPos( int xPos ) const
 {
    uint32_t numSamples = getSampleViewEnd() - getSampleViewStart() + 1;
@@ -298,6 +346,13 @@ uint32_t UISectionWaveView::getSampleNumFromXPos( int xPos ) const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Convert a sample number to the appropriate x position within the compoinent
+\param sampleNum The sample number
+\return The appropriate x position within the component 
+*/
+/*----------------------------------------------------------------------------*/
 int UISectionWaveView::getXPosFromSampleNum( uint32_t sampleNum ) const
 {
    uint32_t numSamples = getSampleViewEnd() - getSampleViewStart() + 1;
@@ -306,6 +361,10 @@ int UISectionWaveView::getXPosFromSampleNum( uint32_t sampleNum ) const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 uint32_t UISectionWaveView::getSampleViewStart() const
 {
    if( ( m_SampleViewStart == ~(decltype( m_SampleViewStart ))0 ) || ( m_SampleViewEnd == ~(decltype( m_SampleViewEnd ))0 ) )
@@ -320,6 +379,10 @@ uint32_t UISectionWaveView::getSampleViewStart() const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 uint32_t UISectionWaveView::getSampleViewEnd() const
 {
    if( ( m_SampleViewStart == ~(decltype( m_SampleViewStart ))0 ) || ( m_SampleViewEnd == ~(decltype( m_SampleViewEnd ))0 ) )
@@ -335,6 +398,11 @@ uint32_t UISectionWaveView::getSampleViewEnd() const
 
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionWaveView::mouseDrag( const MouseEvent &event )
 {
    if( !sample() )
@@ -374,6 +442,11 @@ void UISectionWaveView::mouseDrag( const MouseEvent &event )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionWaveView::mouseUp( const MouseEvent &/*event*/ )
 {
    m_IsSelecting = false;
@@ -387,6 +460,12 @@ void UISectionWaveView::mouseUp( const MouseEvent &/*event*/ )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Button::Listener
+\param pButton The Button that has been clicked
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionWaveView::buttonClicked( Button *pButton )
 {
    if( pButton == m_pbZoomIn )
@@ -449,11 +528,23 @@ void UISectionWaveView::buttonClicked( Button *pButton )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Button::Listener
+\param pButton The Button whose state has changed
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionWaveView::buttonStateChanged( Button */*pButton*/ )
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Scrollbar::Listener
+\param pScrollBar The ScrollBar that has changed
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionWaveView::scrollBarMoved( ScrollBar *pScrollBar, double /*newRangeStart*/ )
 {
    if( pScrollBar == m_psScrollBar )
@@ -465,3 +556,4 @@ void UISectionWaveView::scrollBarMoved( ScrollBar *pScrollBar, double /*newRange
       repaint();
    }
 }
+

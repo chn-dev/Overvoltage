@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file PluginEditor.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements the plugin's GUI
+*/
+/*----------------------------------------------------------------------------*/
 #include <iostream>
 #include <fstream>
 
@@ -8,14 +15,21 @@
 
 #include "util.h"
 
-//==============================================================================
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 PluginEditor::PluginEditor( PluginProcessor& p )
    : AudioProcessorEditor( &p ), processorRef( p )
 {
    juce::ignoreUnused (processorRef);
    // Make sure that before the constructor has finished, you've set the
    // editor's size to whatever you need it to be.
+   setResizable( false, false );
    setSize( 1024, 640 );
+   setResizeLimits( 1024, 640, 1024, 640 );
 
    m_UIPages.push_back( new SamplerGUI::UIPageZones( this ) );
    for( SamplerGUI::UIPage *pPage : m_UIPages )
@@ -76,6 +90,11 @@ PluginEditor::PluginEditor( PluginProcessor& p )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 PluginEditor::~PluginEditor()
 {
    for( SamplerGUI::UIPage *pPage : m_UIPages )
@@ -98,6 +117,11 @@ PluginEditor::~PluginEditor()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\return The UIPageZones object
+*/
+/*----------------------------------------------------------------------------*/
 SamplerGUI::UIPageZones *PluginEditor::getUIPageZones() const
 {
    for( size_t i = 0; i < m_UIPages.size(); i++ )
@@ -113,24 +137,45 @@ SamplerGUI::UIPageZones *PluginEditor::getUIPageZones() const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\return All selected samples
+*/
+/*----------------------------------------------------------------------------*/
 std::set<SamplerEngine::Sample *> PluginEditor::getSelectedSamples() const
 {
    return( getUIPageZones()->getSamplerKeyboard()->selectedSamples() );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\return true if the solo mode is enabled
+*/
+/*----------------------------------------------------------------------------*/
 bool PluginEditor::isSoloEnabled() const
 {
    return( getUIPageZones()->isSoloEnabled() );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\return The number of the currently selected part (0..15)
+*/
+/*----------------------------------------------------------------------------*/
 size_t PluginEditor::currentPart() const
 {
    return( m_CurrentPart );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+Activate a specific part.
+\param nPart The number of the part to be activated (0..15)
+*/
+/*----------------------------------------------------------------------------*/
 void PluginEditor::activatePart( size_t nPart )
 {
    if( nPart >= m_PartButtons.size() )
@@ -149,6 +194,12 @@ void PluginEditor::activatePart( size_t nPart )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+Callback function to register button clicks (from juce::Button::Listener)
+\param pButton Pointer to the button that has been clicked
+*/
+/*----------------------------------------------------------------------------*/
 void PluginEditor::buttonClicked( Button *pButton )
 {
    auto partIter = std::find( m_PartButtons.begin(), m_PartButtons.end(), pButton );
@@ -255,30 +306,63 @@ void PluginEditor::buttonClicked( Button *pButton )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+Callback function to register button state changed (from juce::Button::Listener)
+\param pButton Pointer to the button
+*/
+/*----------------------------------------------------------------------------*/
 void PluginEditor::buttonStateChanged( Button */*pButton*/ )
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+\return Reference to the PluginProcessor
+*/
+/*----------------------------------------------------------------------------*/
 PluginProcessor &PluginEditor::processor() const
 {
    return( processorRef );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+Callback function to register MIDI note on events (from juce::MidiKeyboardStateListener)
+\param pSource
+\param midiChannel
+\param midiNoteNumber
+\param velocity
+*/
+/*----------------------------------------------------------------------------*/
 void PluginEditor::handleNoteOn( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
 {
    juce::ignoreUnused( pSource, midiChannel, midiNoteNumber, velocity );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+Callback function to register MIDI note off events (from juce::MidiKeyboardStateListener)
+\param pSource
+\param midiChannel
+\param midiNoteNumber
+\param velocity
+*/
+/*----------------------------------------------------------------------------*/
 void PluginEditor::handleNoteOff( MidiKeyboardState *pSource, int midiChannel, int midiNoteNumber, float velocity )
 {
    juce::ignoreUnused( pSource, midiChannel, midiNoteNumber, velocity );
 }
 
 
-//==============================================================================
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+The paint event
+*/
+/*----------------------------------------------------------------------------*/
 void PluginEditor::paint( juce::Graphics& g )
 {
    juce::ignoreUnused( g );
@@ -287,6 +371,12 @@ void PluginEditor::paint( juce::Graphics& g )
    g.fillAll();
 }
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+The resized event
+*/
+/*----------------------------------------------------------------------------*/
 void PluginEditor::resized()
 {
    // This is generally where you'll want to lay out the positions of any
@@ -294,6 +384,14 @@ void PluginEditor::resized()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-10
+This function gets called by PluginProcessor when the selection of samples has 
+been updated.
+
+\param pSamplerKeyboard
+*/
+/*----------------------------------------------------------------------------*/
 void PluginEditor::onSampleSelectionUpdated( SamplerGUI::UISectionSamplerKeyboard *pSamplerKeyboard )
 {
    for( SamplerGUI::UIPage *pPage : m_UIPages )
@@ -301,3 +399,4 @@ void PluginEditor::onSampleSelectionUpdated( SamplerGUI::UISectionSamplerKeyboar
       pPage->onSampleSelectionUpdated( pSamplerKeyboard );
    }
 }
+

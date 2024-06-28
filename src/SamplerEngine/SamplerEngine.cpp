@@ -1,9 +1,22 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file SamplerEngine.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements the sampler engine
+*/
+/*----------------------------------------------------------------------------*/
 #include <PluginProcessor.h>
 #include <PluginEditor.h>
 #include "SamplerEngine.h"
 
 using namespace SamplerEngine;
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 Engine::Engine( PluginProcessor *pProcessor ) :
    m_pProcessor( pProcessor )
 {
@@ -14,6 +27,11 @@ Engine::Engine( PluginProcessor *pProcessor ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 Engine::~Engine()
 {
    for( size_t i = 0; i < m_Parts.size(); i++ )
@@ -24,6 +42,15 @@ Engine::~Engine()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Process the engine.
+\param buses A vector of all output buses
+\param sampleRate The sample rate in Hz
+\param bpm The host's tempo in bpm
+\return true If there has been an update
+*/
+/*----------------------------------------------------------------------------*/
 bool Engine::process( std::vector<OutputBus> &buses, double sampleRate, double bpm )
 {
    bool update = false;
@@ -36,18 +63,37 @@ bool Engine::process( std::vector<OutputBus> &buses, double sampleRate, double b
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Delete a specific sample from a specific part
+\param part The part number (0..15)
+\param pSample The sample
+*/
+/*----------------------------------------------------------------------------*/
 void Engine::deleteSample( size_t part, Sample *pSample )
 {
    m_Parts[part]->deleteSample( pSample );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Retrieve all samples from a specific part
+\param nPart The part number (0..15)
+\return A list of all samples of the part
+*/
+/*----------------------------------------------------------------------------*/
 std::list<Sample *> Engine::samples( size_t nPart ) const
 {
    return( m_Parts[nPart]->samples() );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return true if the solo function is enabled
+*/
+/*----------------------------------------------------------------------------*/
 bool Engine::isSoloEnabled() const
 {
    bool bSolo = false;
@@ -64,6 +110,11 @@ bool Engine::isSoloEnabled() const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return A set of all samples selected by the user
+*/
+/*----------------------------------------------------------------------------*/
 std::set<SamplerEngine::Sample *> Engine::getSelectedSamples() const
 {
    std::set<SamplerEngine::Sample *> selSamples;
@@ -80,6 +131,14 @@ std::set<SamplerEngine::Sample *> Engine::getSelectedSamples() const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Trigger note on.
+\param nPart The part number (0..15)
+\param note The MIDI note number (0..255)
+\param vel The velocity (0..127)
+*/
+/*----------------------------------------------------------------------------*/
 void Engine::noteOn( size_t nPart, int note, int vel )
 {
    if( nPart >= m_Parts.size() )
@@ -89,6 +148,14 @@ void Engine::noteOn( size_t nPart, int note, int vel )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Trigger note off.
+\param nPart The part number (0..15)
+\param note The MIDI note number (0..255)
+\param vel The velocity (0..127)
+*/
+/*----------------------------------------------------------------------------*/
 void Engine::noteOff( size_t nPart, int note, int vel )
 {
    if( nPart >= m_Parts.size() )
@@ -98,6 +165,13 @@ void Engine::noteOff( size_t nPart, int note, int vel )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Set the pitchbend value of a specific part.
+\param nPart The part number (0..15)
+\param v The pitchbend value (-1..1)
+*/
+/*----------------------------------------------------------------------------*/
 void Engine::pitchbend( size_t nPart, double v )
 {
    if( nPart >= m_Parts.size() )
@@ -107,6 +181,14 @@ void Engine::pitchbend( size_t nPart, double v )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Set a MIDI controller value
+\param nPart The part number (0..15)
+\param ccNum The controller number (0..255)
+\param v The value
+*/
+/*----------------------------------------------------------------------------*/
 void Engine::controllerChange( size_t nPart, int ccNum, double v )
 {
    if( nPart >= m_Parts.size() )
@@ -116,12 +198,24 @@ void Engine::controllerChange( size_t nPart, int ccNum, double v )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param pProcessor
+*/
+/*----------------------------------------------------------------------------*/
 void Engine::setProcessor( PluginProcessor *pProcessor )
 {
    m_pProcessor = pProcessor;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Import a part from XML data.
+\param nPart The part number
+\param pXmlPart The XML data
+*/
+/*----------------------------------------------------------------------------*/
 void Engine::importPart( size_t nPart, juce::XmlElement *pXmlPart )
 {
    if( nPart >= SAMPLERENGINE_NUMPARTS )
@@ -137,6 +231,13 @@ void Engine::importPart( size_t nPart, juce::XmlElement *pXmlPart )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Reconstruct a sample engine object from a previously generated XML element (see toXml()).
+\param pe The XML element
+\return Pointer to the Engine object or nullptr on error
+*/
+/*----------------------------------------------------------------------------*/
 Engine *Engine::fromXml( const juce::XmlElement *peOvervoltage )
 {
    if( peOvervoltage->getTagName() == "overvoltage" )
@@ -175,6 +276,12 @@ Engine *Engine::fromXml( const juce::XmlElement *peOvervoltage )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Create an XML element from the Engine settings.
+\return Pointer to the new XML element
+*/
+/*----------------------------------------------------------------------------*/
 juce::XmlElement *Engine::toXml() const
 {
    juce::XmlElement *pVt = new juce::XmlElement( "overvoltage" );
@@ -192,18 +299,37 @@ juce::XmlElement *Engine::toXml() const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param nPart The part number (0..15)
+\return A list of all samples of the specified part
+*/
+/*----------------------------------------------------------------------------*/
 std::list<Sample *> &Engine::samples( size_t nPart )
 {
    return( m_Parts[nPart]->samples() );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param nPart The part number (0..15)
+\return A list of all samples of the specified part
+*/
+/*----------------------------------------------------------------------------*/
 const std::list<Sample *> &Engine::constSamples( size_t nPart ) const
 {
    return( m_Parts[nPart]->samples() );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param nPart The part number (0..15)
+\param pSample A sample
+\return true if the specified part is playing the specified sample
+*/
+/*----------------------------------------------------------------------------*/
 bool Engine::isPlaying( size_t nPart, const Sample *pSample ) const
 {
    if( nPart >= m_Parts.size() )
@@ -213,6 +339,12 @@ bool Engine::isPlaying( size_t nPart, const Sample *pSample ) const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param nPart The part number (0..15)
+\return The part
+*/
+/*----------------------------------------------------------------------------*/
 Part *Engine::getPart( size_t nPart )
 {
    if( nPart >= m_Parts.size() )
@@ -222,6 +354,12 @@ Part *Engine::getPart( size_t nPart )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param pSample A sample
+\return The part containing the specified sample or nullptr if not found
+*/
+/*----------------------------------------------------------------------------*/
 Part *Engine::findPart( const Sample *pSample )
 {
    for( size_t i = 0; i < m_Parts.size(); i++ )
@@ -234,6 +372,11 @@ Part *Engine::findPart( const Sample *pSample )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Contructor
+*/
+/*----------------------------------------------------------------------------*/
 OutputBus::OutputBus() :
    m_Valid( false ),
    m_NumSamples( ~(decltype( m_NumSamples ))0 ),
@@ -242,6 +385,11 @@ OutputBus::OutputBus() :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 OutputBus::OutputBus( size_t numSamples, std::vector<float *> writePointers ) :
    m_Valid( true ),
    m_NumSamples( numSamples ),
@@ -250,24 +398,45 @@ OutputBus::OutputBus( size_t numSamples, std::vector<float *> writePointers ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 OutputBus::~OutputBus()
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The number of samples within the output bus
+*/
+/*----------------------------------------------------------------------------*/
 size_t OutputBus::getNumSamples() const
 {
    return( m_NumSamples );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The write pointers for the output bus (there should be 2)
+*/
+/*----------------------------------------------------------------------------*/
 std::vector<float *> &OutputBus::getWritePointers()
 {
    return( m_WritePointers );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return true if the output bus is valid
+*/
+/*----------------------------------------------------------------------------*/
 bool OutputBus::isValid() const
 {
    return( m_Valid );
 }
+

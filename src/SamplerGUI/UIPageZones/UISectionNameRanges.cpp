@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISectionNameRanges.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements the names&ranges UI section
+*/
+/*----------------------------------------------------------------------------*/
 #include "PluginEditor.h"
 #include "UISectionNameRanges.h"
 
@@ -5,6 +12,12 @@
 
 using namespace SamplerGUI;
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionNameRanges::UISectionNameRanges( UIPage *pUIPage ) :
    UISection( pUIPage, "Name & Ranges" )
 {
@@ -114,6 +127,11 @@ UISectionNameRanges::UISectionNameRanges( UIPage *pUIPage ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionNameRanges::~UISectionNameRanges()
 {
    delete m_pcMinNote;
@@ -136,6 +154,12 @@ UISectionNameRanges::~UISectionNameRanges()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Label::Listener
+\param pLabel The Label that has changed
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionNameRanges::labelTextChanged( Label *pLabel )
 {
    if( samples().size() != 1 )
@@ -200,6 +224,10 @@ void UISectionNameRanges::labelTextChanged( Label *pLabel )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionNameRanges::paint( juce::Graphics &g )
 {
    UISection::paint( g );
@@ -209,12 +237,21 @@ void UISectionNameRanges::paint( juce::Graphics &g )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionNameRanges::resized()
 {
    UISection::resized();
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Called when the user has (de-)selected any samples
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionNameRanges::samplesUpdated()
 {
    bool ok = samples().size() == 1;
@@ -249,3 +286,4 @@ void UISectionNameRanges::samplesUpdated()
       m_pcPitchbendRange->setCurrentItem( (int)( ( ( sample()->getPitchbendRange() + 12.0 ) / 0.1 ) + 0.5 ) );
    }
 }
+

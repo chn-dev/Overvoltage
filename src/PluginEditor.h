@@ -1,10 +1,22 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file PluginEditor.h
+\author Christian Nowak <chnowak@web.de>
+\brief Headerfile for class PluginEditor.
+*/
+/*----------------------------------------------------------------------------*/
 #ifndef __PLUGINEDITOR_H__
 #define __PLUGINEDITOR_H__
 
 #include <SamplerGUI/SamplerGUI.h>
 #include "PluginProcessor.h"
 
-//==============================================================================
+/*----------------------------------------------------------------------------*/
+/*!
+\class PluginEditor
+\date  2024-06-10
+*/
+/*----------------------------------------------------------------------------*/
 class PluginEditor : public juce::AudioProcessorEditor,
                      public juce::Button::Listener,
                      public juce::MidiKeyboardStateListener
@@ -13,7 +25,6 @@ public:
    explicit PluginEditor( PluginProcessor & );
    ~PluginEditor() override;
 
-   //==============================================================================
    void paint( juce::Graphics& ) override;
    void resized() override;
 

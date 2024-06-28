@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file ModMatrix.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements a modulation matrix
+*/
+/*----------------------------------------------------------------------------*/
 #include <string>
 
 #include "ModMatrix.h"
@@ -7,6 +14,11 @@
 using namespace SamplerEngine;
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::ModDestInfo::ModDestInfo( ModDest md ) :
    m_Type( md ),
    m_Min( infoMap()[md].getMin() ),
@@ -19,6 +31,11 @@ ModMatrix::ModDestInfo::ModDestInfo( ModDest md ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::ModDestInfo::ModDestInfo(
    ModDest md,
    double minVal, double maxVal, double step, double defaultVal,
@@ -31,17 +48,32 @@ ModMatrix::ModDestInfo::ModDestInfo(
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::ModDestInfo::ModDestInfo() :
    m_Type( ModDest_None )
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::ModDestInfo::~ModDestInfo()
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return A map with information about all possible modulation destinations
+*/
+/*----------------------------------------------------------------------------*/
 std::map<ModMatrix::ModDest, ModMatrix::ModDestInfo> &ModMatrix::ModDestInfo::infoMap()
 {
    static std::map<ModDest, ModDestInfo> theMap =
@@ -60,49 +92,94 @@ std::map<ModMatrix::ModDest, ModMatrix::ModDestInfo> &ModMatrix::ModDestInfo::in
 
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The minimum value
+*/
+/*----------------------------------------------------------------------------*/
 double ModMatrix::ModDestInfo::getMin() const
 {
    return( m_Min );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The maximum value
+*/
+/*----------------------------------------------------------------------------*/
 double ModMatrix::ModDestInfo::getMax() const
 {
    return( m_Max );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return Value step width
+*/
+/*----------------------------------------------------------------------------*/
 double ModMatrix::ModDestInfo::getStep() const
 {
    return( m_Step );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The format string for displaying the value on-screen, for use with std::format
+*/
+/*----------------------------------------------------------------------------*/
 std::string ModMatrix::ModDestInfo::getFormat() const
 {
    return( m_Format );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The default/neutral value
+*/
+/*----------------------------------------------------------------------------*/
 double ModMatrix::ModDestInfo::getDefaultValue() const
 {
    return( m_Default );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The type enum value
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::ModDest ModMatrix::ModDestInfo::getType() const
 {
    return( m_Type );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+The unix of the modulation destination
+*/
+/*----------------------------------------------------------------------------*/
 std::string ModMatrix::ModDestInfo::getUnit() const
 {
    return( m_Unit );
 }
 
 
-ModMatrix::ModSlot::ModSlot( ModMatrix::ModSrc src, ModMatrix::ModSrc mod, ModMatrix::ModDest dest, ModMatrix::MathFunc func, double amt, bool enabled ) :
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
+ModMatrix::ModSlot::ModSlot( ModMatrix::ModSrc src,
+                             ModMatrix::ModSrc mod,
+                             ModMatrix::ModDest dest,
+                             ModMatrix::MathFunc func,
+                             double amt,
+                             bool enabled ) :
    m_Enabled( enabled ),
    m_Src( src ),
    m_Mod( mod ),
@@ -113,6 +190,11 @@ ModMatrix::ModSlot::ModSlot( ModMatrix::ModSrc src, ModMatrix::ModSrc mod, ModMa
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Copy constructor
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::ModSlot::ModSlot( const ModSlot &d ) :
    m_Enabled( d.m_Enabled ),
    m_Src( d.m_Src ),
@@ -124,6 +206,11 @@ ModMatrix::ModSlot::ModSlot( const ModSlot &d ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Default constructor
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::ModSlot::ModSlot() :
    m_Enabled( false ),
    m_Src( ModMatrix::ModSrc_None ),
@@ -135,83 +222,155 @@ ModMatrix::ModSlot::ModSlot() :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::ModSlot::~ModSlot()
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param dest The modulation destination
+*/
+/*----------------------------------------------------------------------------*/
 void ModMatrix::ModSlot::setDest( ModDest dest )
 {
    m_Dest = dest;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The modulation source
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::ModSrc ModMatrix::ModSlot::getSrc() const
 {
    return( m_Src );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param The modulation source
+*/
+/*----------------------------------------------------------------------------*/
 void ModMatrix::ModSlot::setSrc( ModSrc src )
 {
    m_Src = src;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The math function
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::MathFunc ModMatrix::ModSlot::getMathFunc() const
 {
    return( m_Func );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param f The math function
+*/
+/*----------------------------------------------------------------------------*/
 void ModMatrix::ModSlot::setMathFunc( MathFunc f )
 {
    m_Func = f;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The modulation source
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::ModSrc ModMatrix::ModSlot::getMod() const
 {
    return( m_Mod );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param mod The modulation source
+*/
+/*----------------------------------------------------------------------------*/
 void ModMatrix::ModSlot::setMod( ModSrc mod )
 {
    m_Mod = mod;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The modulation destination
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::ModDest ModMatrix::ModSlot::getDest() const
 {
    return( m_Dest );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The modulatio amount
+*/
+/*----------------------------------------------------------------------------*/
 double ModMatrix::ModSlot::getAmount() const
 {
    return( m_Amt );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param amound The modulation amount
+*/
+/*----------------------------------------------------------------------------*/
 void ModMatrix::ModSlot::setAmount( double amount )
 {
    m_Amt = amount;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\true If this modulation slot is enabled
+*/
+/*----------------------------------------------------------------------------*/
 bool ModMatrix::ModSlot::isEnabled() const
 {
    return( m_Enabled );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param e Indicates whether this modulation slot shall be enabled
+*/
+/*----------------------------------------------------------------------------*/
 void ModMatrix::ModSlot::setEnabled( bool e )
 {
    m_Enabled = e;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Reconstruct an ModSlot object from a previously generated XML element (see toXml()).
+\param pe The XML element
+\return Pointer to the ModSlot object or nullptr on error
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::ModSlot *ModMatrix::ModSlot::fromXml( const juce::XmlElement *pe )
 {
    if( pe->getTagName() != "modslot" )
@@ -254,6 +413,12 @@ ModMatrix::ModSlot *ModMatrix::ModSlot::fromXml( const juce::XmlElement *pe )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Create an XML element from the ModSlot settings.
+\return Pointer to the new XML element
+*/
+/*----------------------------------------------------------------------------*/
 juce::XmlElement *ModMatrix::ModSlot::toXml() const
 {
    juce::XmlElement *pe = new juce::XmlElement( "modslot" );
@@ -286,11 +451,21 @@ juce::XmlElement *ModMatrix::ModSlot::toXml() const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::ModMatrix()
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::~ModMatrix()
 {
    for( size_t i = 0; i < m_ModSlots.size(); i++ )
@@ -301,6 +476,13 @@ ModMatrix::~ModMatrix()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Reconstruct an ModMatrix object from a previously generated XML element (see toXml()).
+\param pe The XML element
+\return Pointer to the ModMatrix object or nullptr on error
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix *ModMatrix::fromXml( const juce::XmlElement *pe )
 {
    if( pe->getTagName() != "modmatrix" )
@@ -334,6 +516,12 @@ ModMatrix *ModMatrix::fromXml( const juce::XmlElement *pe )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Create an XML element from the ModMatrix settings.
+\return Pointer to the new XML element
+*/
+/*----------------------------------------------------------------------------*/
 juce::XmlElement *ModMatrix::toXml() const
 {
    juce::XmlElement *pe = new juce::XmlElement( "modmatrix" );
@@ -348,6 +536,11 @@ juce::XmlElement *ModMatrix::toXml() const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return A set of all possible modulation sources
+*/
+/*----------------------------------------------------------------------------*/
 std::set<ModMatrix::ModSrc> ModMatrix::allModSrc()
 {
    return( std::set<ModSrc> ( {
@@ -369,6 +562,11 @@ std::set<ModMatrix::ModSrc> ModMatrix::allModSrc()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return A set of all possible modulation destinations
+*/
+/*----------------------------------------------------------------------------*/
 std::set<ModMatrix::ModDest> ModMatrix::allModDest()
 {
    return( std::set<ModDest>( {
@@ -382,6 +580,14 @@ std::set<ModMatrix::ModDest> ModMatrix::allModDest()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Apply a mathematical function to a value.
+\param f The mathematical function which shall be applied to a value
+\param v The value the mathematical function shall be applied to
+\return The result
+*/
+/*----------------------------------------------------------------------------*/
 double ModMatrix::calc( MathFunc f, double v )
 {
    if( f == ModMatrix::MathFunc_OneMinusX )
@@ -409,6 +615,12 @@ double ModMatrix::calc( MathFunc f, double v )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param v A methematical function
+\return A string representation of the mathematical function
+*/
+/*----------------------------------------------------------------------------*/
 std::string ModMatrix::toString( MathFunc v )
 {
    switch( v )
@@ -436,6 +648,12 @@ std::string ModMatrix::toString( MathFunc v )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param s The string representation of a mathematical function
+\return The mathematical function
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::MathFunc ModMatrix::mathFuncFromString( const std::string &s )
 {
    if( util::trim( util::toLower( s ) ) == "x" )
@@ -466,6 +684,11 @@ ModMatrix::MathFunc ModMatrix::mathFuncFromString( const std::string &s )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return A set of all possible mathematical functions
+*/
+/*----------------------------------------------------------------------------*/
 std::set<ModMatrix::MathFunc> ModMatrix::allMathFunc()
 {
    return( std::set<MathFunc>( {
@@ -481,6 +704,12 @@ std::set<ModMatrix::MathFunc> ModMatrix::allMathFunc()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param v A modulation source
+\return The string representation of the modulation source
+*/
+/*----------------------------------------------------------------------------*/
 std::string ModMatrix::toString( ModSrc v )
 {
    switch( v )
@@ -519,6 +748,12 @@ std::string ModMatrix::toString( ModSrc v )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param v A modulation destination
+\return The string representation of the modulation destination
+*/
+/*----------------------------------------------------------------------------*/
 std::string ModMatrix::toString( ModDest v )
 {
    switch( v )
@@ -541,6 +776,12 @@ std::string ModMatrix::toString( ModDest v )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param s The string representation of a modulation destination
+\return The modulation destination
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::ModDest ModMatrix::modDestFromString( const std::string &s )
 {
    if( util::trim( util::toLower( s ) ) == "filtercutoff" )
@@ -562,6 +803,12 @@ ModMatrix::ModDest ModMatrix::modDestFromString( const std::string &s )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param s The string representation of a modulation source
+\return The modulation source
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::ModSrc ModMatrix::modSrcFromString( const std::string &s )
 {
    if( util::trim( util::toLower( s ) ) == "aeg" )
@@ -606,15 +853,28 @@ ModMatrix::ModSrc ModMatrix::modSrcFromString( const std::string &s )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The number of slots in the modulation matrix
+*/
+/*----------------------------------------------------------------------------*/
 size_t ModMatrix::numSlots() const
 {
    return( m_ModSlots.size() );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Retrieve a modulation slot from the modulation matrix.
+\param n The slot number
+\return The appropriate modulation slot
+*/
+/*----------------------------------------------------------------------------*/
 ModMatrix::ModSlot *ModMatrix::getSlot( size_t n ) const
 {
    if( n >= numSlots() )
       return( nullptr );
    return( m_ModSlots[n] );
 }
+

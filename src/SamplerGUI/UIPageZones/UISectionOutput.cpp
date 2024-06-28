@@ -1,8 +1,21 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISection.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements the output UI section
+*/
+/*----------------------------------------------------------------------------*/
 #include "PluginEditor.h"
 #include "UISectionOutput.h"
 
 using namespace SamplerGUI;
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionOutput::UISectionOutput( UIPage *pUIPage ) :
    UISection( pUIPage, "Output" )
 {
@@ -44,6 +57,11 @@ UISectionOutput::UISectionOutput( UIPage *pUIPage ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionOutput::~UISectionOutput()
 {
    delete m_plPan;
@@ -54,6 +72,12 @@ UISectionOutput::~UISectionOutput()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::ComboBox::Listener
+\param pComboBox The ComboBox that has changed
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionOutput::comboBoxChanged( ComboBox *pComboBox )
 {
    if( samples().size() > 0 )
@@ -69,6 +93,12 @@ void UISectionOutput::comboBoxChanged( ComboBox *pComboBox )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Slider::Listener
+\param pSlider The Slider that has changed
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionOutput::sliderValueChanged( Slider *pSlider )
 {
    if( samples().size() > 0 )
@@ -91,6 +121,10 @@ void UISectionOutput::sliderValueChanged( Slider *pSlider )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionOutput::paint( juce::Graphics &g )
 {
    UISection::paint( g );
@@ -100,6 +134,10 @@ void UISectionOutput::paint( juce::Graphics &g )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionOutput::resized()
 {
    UISection::resized();
@@ -114,6 +152,11 @@ void UISectionOutput::resized()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Called when the user has (de-)selected any samples
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionOutput::samplesUpdated()
 {
    m_plPan->setVisible( sample() != nullptr );
@@ -133,6 +176,12 @@ void UISectionOutput::samplesUpdated()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback frunction from juce::Label::Listener
+\param pLabel The Label that has changed
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionOutput::labelTextChanged( Label */*pLabel*/ )
 {
 }

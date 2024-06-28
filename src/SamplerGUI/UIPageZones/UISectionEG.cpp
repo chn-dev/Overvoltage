@@ -1,7 +1,20 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISection.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements a general EG UI section
+*/
+/*----------------------------------------------------------------------------*/
 #include "UISectionEG.h"
 
 using namespace SamplerGUI;
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionEG::UISectionEG( UIPage *pUIPage, std::string label ) :
    UISection( pUIPage, label )
 {
@@ -47,6 +60,11 @@ UISectionEG::UISectionEG( UIPage *pUIPage, std::string label ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionEG::~UISectionEG()
 {
    delete m_psAttack;
@@ -60,6 +78,10 @@ UISectionEG::~UISectionEG()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionEG::paint( juce::Graphics &g )
 {
    g.setColour( juce::Colour::fromRGB( 32, 64, 64 ) );
@@ -67,6 +89,10 @@ void UISectionEG::paint( juce::Graphics &g )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionEG::resized()
 {
    UISection::resized();
@@ -85,6 +111,13 @@ void UISectionEG::resized()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Called when the envelope generator's settings have changed. Adjusts the UI 
+components accordingly.
+\param *pENV The ENV whose settings have changed
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionEG::egUpdated( SamplerEngine::ENV *pENV )
 {
    if( !pENV )
@@ -97,6 +130,11 @@ void UISectionEG::egUpdated( SamplerEngine::ENV *pENV )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Called when the user has (de-)selected any samples.
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionEG::samplesUpdated()
 {
    if( sample() )
@@ -115,6 +153,12 @@ void UISectionEG::samplesUpdated()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Slider::Listener
+\param pSlider The Slider which has changed
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionEG::sliderValueChanged( Slider *pSlider )
 {
    if( samples().size() <= 0 )
@@ -149,3 +193,4 @@ void UISectionEG::sliderValueChanged( Slider *pSlider )
       }
    }
 }
+

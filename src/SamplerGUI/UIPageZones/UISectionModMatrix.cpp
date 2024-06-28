@@ -1,9 +1,22 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISectionModMatrix.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements the modulation matrix UI section
+*/
+/*----------------------------------------------------------------------------*/
 #include "UISectionModMatrix.h"
 
 #include <util.h>
 
 using namespace SamplerGUI;
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionModMatrix::UIModSlot::UIModSlot() :
    m_pSectionModMatrix( nullptr ),
    m_pcbSrc( nullptr ),
@@ -20,6 +33,11 @@ UISectionModMatrix::UIModSlot::UIModSlot() :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionModMatrix::UIModSlot::UIModSlot( UISectionModMatrix *pSectionModMatrix, SamplerEngine::ModMatrix::ModSlot *pModSlot, int index, int xp, int yp ) :
    m_pSectionModMatrix( pSectionModMatrix ),
    m_pModSlot( pModSlot ),
@@ -110,6 +128,11 @@ UISectionModMatrix::UIModSlot::UIModSlot( UISectionModMatrix *pSectionModMatrix,
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionModMatrix::UIModSlot::~UIModSlot()
 {
    if( m_pbEnabled )
@@ -144,12 +167,23 @@ UISectionModMatrix::UIModSlot::~UIModSlot()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The modulation slot
+*/
+/*----------------------------------------------------------------------------*/
 SamplerEngine::ModMatrix::ModSlot *UISectionModMatrix::UIModSlot::getModSlot() const
 {
    return( m_pModSlot );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Button::Listener
+\param pButton The button that has been clicked
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionModMatrix::UIModSlot::buttonClicked( Button *pButton )
 {
    if( m_pbEnabled == pButton )
@@ -164,10 +198,23 @@ void UISectionModMatrix::UIModSlot::buttonClicked( Button *pButton )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Button::Listener
+\param pButton The button whose state has changed
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionModMatrix::UIModSlot::buttonStateChanged( Button */*pButton*/ )
 {
 }
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Label::Listener
+\param pLabel The label that has changed
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionModMatrix::UIModSlot::labelTextChanged( Label *pLabel )
 {
    if( m_pccAmount == pLabel )
@@ -178,6 +225,12 @@ void UISectionModMatrix::UIModSlot::labelTextChanged( Label *pLabel )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::ComboBox::Listener
+\param pComboBox The ComboBox that has changed
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionModMatrix::UIModSlot::comboBoxChanged( ComboBox *pComboBox )
 {
    if( pComboBox == m_pcbSrc )
@@ -225,12 +278,22 @@ void UISectionModMatrix::UIModSlot::comboBoxChanged( ComboBox *pComboBox )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionModMatrix::UISectionModMatrix( UIPage *pUIPage ) :
    UISection( pUIPage, "Modulation Matrix" )
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionModMatrix::~UISectionModMatrix()
 {
    for( size_t i = 0; i < m_UIModSlots.size(); i++ )
@@ -241,6 +304,10 @@ UISectionModMatrix::~UISectionModMatrix()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionModMatrix::paint( juce::Graphics &g )
 {
    g.setColour( juce::Colour::fromRGB( 32, 64, 64 ) );
@@ -248,12 +315,21 @@ void UISectionModMatrix::paint( juce::Graphics &g )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionModMatrix::resized()
 {
    UISection::resized();
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Called when the user has (de-)selected any samples
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionModMatrix::samplesUpdated()
 {
    const SamplerEngine::Sample *pSample = sample();
@@ -273,3 +349,4 @@ void UISectionModMatrix::samplesUpdated()
       }
    }
 }
+

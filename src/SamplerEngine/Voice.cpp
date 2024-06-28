@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file Voice.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements a Voice.
+*/
+/*----------------------------------------------------------------------------*/
 #include <math.h>
 #include <util.h>
 #include "Voice.h"
@@ -5,6 +12,12 @@
 
 using namespace SamplerEngine;
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 Voice::Voice( const Part *pPart, const Sample *pSample, int note, int velocity ) :
    m_pPart( pPart ),
    m_pSample( pSample ),
@@ -50,6 +63,11 @@ Voice::Voice( const Part *pPart, const Sample *pSample, int note, int velocity )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 Voice::~Voice()
 {
    delete m_pAEG;
@@ -67,6 +85,11 @@ Voice::~Voice()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Trigger note off.
+*/
+/*----------------------------------------------------------------------------*/
 void Voice::noteOff()
 {
    if( !m_NoteIsOn )
@@ -86,18 +109,33 @@ void Voice::noteOff()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The MIDI note number
+*/
+/*----------------------------------------------------------------------------*/
 int Voice::midiNote() const
 {
    return( m_Note );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The sample being played
+*/
+/*----------------------------------------------------------------------------*/
 const Sample *Voice::sample() const
 {
    return( m_pSample );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Handle the sample loop
+*/
+/*----------------------------------------------------------------------------*/
 bool Voice::handleLoop()
 {
    const WaveFile *pWav = m_pSample->getWave();
@@ -140,6 +178,14 @@ bool Voice::handleLoop()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Retrieve the modulation source's value
+\param modSrc The modulation souce
+\param defaultValue The default value in case the modulation sources value cannot be determined
+\return The modulation source value
+*/
+/*----------------------------------------------------------------------------*/
 double Voice::getModValue( ModMatrix::ModSrc modSrc, double defaultValue ) const
 {
    if( modSrc == ModMatrix::ModSrc_AEG )
@@ -190,6 +236,13 @@ double Voice::getModValue( ModMatrix::ModSrc modSrc, double defaultValue ) const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Handle the modulations
+\param sampleRate The sample rate in Hz
+\param bpm The host's tempo in bpm
+*/
+/*----------------------------------------------------------------------------*/
 void Voice::handleModulations( double sampleRate, double bpm )
 {
    if( m_nSample % MODSTEP_SAMPLES == 0 )
@@ -256,12 +309,27 @@ void Voice::handleModulations( double sampleRate, double bpm )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The panning value (-1..1)
+*/
+/*----------------------------------------------------------------------------*/
 double Voice::getPanning() const
 {
    return( util::clamp( -1.0, 1.0, m_pSample->getPan() + ( ( 2.0 * m_PanMod ) / 100.0 ) ) );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Process the voice.
+\param pL Pointer to the left channel's sample data
+\param pR Pointer to the right channel's sample data
+\param sampleRate The sample rate in Hz
+\param bpm The host's tempo in bpm
+\return true on success
+*/
+/*----------------------------------------------------------------------------*/
 bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate, double bpm )
 {
    std::vector<float> left;
@@ -448,6 +516,13 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate, d
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Convert a panning value to a gain value for the left channel
+\param pan The panning value
+\return Left channel's gain value
+*/
+/*----------------------------------------------------------------------------*/
 float Voice::getLeftAmp( float pan )
 {
    if( pan < -1.0f )
@@ -468,6 +543,13 @@ float Voice::getLeftAmp( float pan )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Convert a panning value to a gain value for the right channel
+\param pan The panning value
+\return Right channel's gain value
+*/
+/*----------------------------------------------------------------------------*/
 float Voice::getRightAmp( float pan )
 {
    if( pan < -1.0f )
@@ -486,3 +568,4 @@ float Voice::getRightAmp( float pan )
 
    return( amp );
 }
+

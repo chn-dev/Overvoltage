@@ -1,8 +1,21 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISectionSample.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements the sample UI
+*/
+/*----------------------------------------------------------------------------*/
 #include "PluginEditor.h"
 #include "UISectionSample.h"
 
 using namespace SamplerGUI;
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionSample::UISectionSample( UIPage *pUIPage ) :
    UISection( pUIPage, "Sample" )
 {
@@ -37,6 +50,11 @@ UISectionSample::UISectionSample( UIPage *pUIPage ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionSample::~UISectionSample()
 {
    delete m_plDetune;
@@ -46,6 +64,10 @@ UISectionSample::~UISectionSample()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSample::paint( juce::Graphics &g )
 {
    UISection::paint( g );
@@ -55,6 +77,10 @@ void UISectionSample::paint( juce::Graphics &g )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSample::resized()
 {
    UISection::resized();
@@ -66,6 +92,12 @@ void UISectionSample::resized()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Button::Listener
+\param pButton The Button that has been clicked
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSample::buttonClicked( Button *pButton )
 {
    if( pButton == m_pbReverse )
@@ -78,11 +110,23 @@ void UISectionSample::buttonClicked( Button *pButton )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Button::Listener
+\param pButton The Button whose state has changed
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSample::buttonStateChanged( Button */*pButton*/ )
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::ComboBox::Listener
+\param pComboBox The ComboBox that has changed
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSample::comboBoxChanged( ComboBox *pComboBox )
 {
    if( m_pcbPlayMode == pComboBox )
@@ -94,6 +138,12 @@ void UISectionSample::comboBoxChanged( ComboBox *pComboBox )
    }
 }
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Called when the user has (de-)selected any samples
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSample::samplesUpdated()
 {
    const SamplerEngine::Sample *pSample = sample();
@@ -112,6 +162,12 @@ void UISectionSample::samplesUpdated()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Slider::Listener
+\param pSlider The Slider that has changed
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionSample::sliderValueChanged( Slider *pSlider )
 {
    if( ( m_psDetune == pSlider ) && ( samples().size() > 0 ) )
@@ -122,3 +178,4 @@ void UISectionSample::sliderValueChanged( Slider *pSlider )
       }
    }
 }
+

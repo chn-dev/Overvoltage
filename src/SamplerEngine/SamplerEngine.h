@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file SamplerEngine.h
+\author Christian Nowak <chnowak@web.de>
+\brief Headerfile for class Engine.
+*/
+/*----------------------------------------------------------------------------*/
 #ifndef __SAMPLERENGINE_H__
 #define __SAMPLERENGINE_H__
 
@@ -11,6 +18,12 @@ class PluginProcessor;
 
 namespace SamplerEngine
 {
+   /*----------------------------------------------------------------------------*/
+   /*!
+   \class OutputBus
+   \date  2024-06-10
+   */
+   /*----------------------------------------------------------------------------*/
    class OutputBus
    {
    public:
@@ -28,6 +41,12 @@ namespace SamplerEngine
       std::vector<float *> m_WritePointers;
    };
 
+   /*----------------------------------------------------------------------------*/
+   /*!
+   \class Engine
+   \date  2024-06-10
+   */
+   /*----------------------------------------------------------------------------*/
    class Engine
    {
    public:

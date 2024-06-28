@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISectionKeyboard.h
+\author Christian Nowak <chnowak@web.de>
+\brief Headerfile for class UISectionKeyboard.
+*/
+/*----------------------------------------------------------------------------*/
 #ifndef __UISECTIONKEYBOARD_H__
 #define __UISECTIONKEYBOARD_H__
 
@@ -13,6 +20,12 @@ namespace SamplerGUI
 {
    class UIPageZones;
 
+   /*----------------------------------------------------------------------------*/
+   /*!
+   \class UISectionKeyboard
+   \date  2024-06-10
+   */
+   /*----------------------------------------------------------------------------*/
    class UISectionKeyboard  : public UISection,
                                public juce::MidiKeyboardState,
                                public juce::MidiKeyboardStateListener

@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file Part.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements a MIDI Part of the sampler engine
+*/
+/*----------------------------------------------------------------------------*/
 #include <string>
 
 #include "SamplerEngine.h"
@@ -5,6 +12,11 @@
 
 using namespace SamplerEngine;
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 Part::Part( size_t partNum, Engine *pEngine ) :
    m_PartNum( partNum ),
    m_pEngine( pEngine ),
@@ -13,6 +25,11 @@ Part::Part( size_t partNum, Engine *pEngine ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 Part::~Part()
 {
    stopAllVoices();
@@ -25,6 +42,15 @@ Part::~Part()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Called on a regular bases to process the part and produce new audio data.
+\param buses The output buses to store new audio data in
+\param sampleRate The sample rate in Hz
+\param bpm The host's tempo in bom
+\return true if voices have been stopped
+*/
+/*----------------------------------------------------------------------------*/
 bool Part::process( std::vector<OutputBus> &buses, double sampleRate, double bpm )
 {
    std::set<Voice *> stoppedVoices;
@@ -74,6 +100,11 @@ bool Part::process( std::vector<OutputBus> &buses, double sampleRate, double bpm
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Stop all voices.
+*/
+/*----------------------------------------------------------------------------*/
 void Part::stopAllVoices()
 {
    for( auto v : m_Voices )
@@ -84,6 +115,12 @@ void Part::stopAllVoices()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Stop a specific voice.
+\param pVoice The voice to be stopped
+*/
+/*----------------------------------------------------------------------------*/
 void Part::stopVoice( const Voice *pVoice )
 {
    for( auto v = m_Voices.begin(); v != m_Voices.end(); v++ )
@@ -98,6 +135,12 @@ void Part::stopVoice( const Voice *pVoice )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Create an XML element from the Part settings.
+\return Pointer to the new XML element
+*/
+/*----------------------------------------------------------------------------*/
 juce::XmlElement *Part::toXml() const
 {
    juce::XmlElement *pePart = new juce::XmlElement( "part" );
@@ -116,6 +159,13 @@ juce::XmlElement *Part::toXml() const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Reconstruct a Part object from a previously generated XML element (see toXml()).
+\param pe The XML element
+\return Pointer to the Part object or nullptr on error
+*/
+/*----------------------------------------------------------------------------*/
 Part *Part::fromXml( const juce::XmlElement *pe )
 {
    if( pe->getTagName() != "part" )
@@ -149,30 +199,54 @@ Part *Part::fromXml( const juce::XmlElement *pe )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return This part's number (0..15)
+*/
+/*----------------------------------------------------------------------------*/
 size_t Part::getPartNum() const
 {
    return( m_PartNum );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void Part::setPartNum( size_t n )
 {
    m_PartNum = n;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return A list of all samples within this part
+*/
+/*----------------------------------------------------------------------------*/
 std::list<Sample *> &Part::samples()
 {
    return( m_Samples );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return A list of all samples within this part
+*/
+/*----------------------------------------------------------------------------*/
 const std::list<Sample *> &Part::constSamples() const
 {
    return( m_Samples );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param pSample A sample to be added to this part
+*/
+/*----------------------------------------------------------------------------*/
 void Part::addSample( Sample *pSample )
 {
    if( containsSample( pSample ) )
@@ -182,6 +256,13 @@ void Part::addSample( Sample *pSample )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param pSample The sample to be removed from this part. All currently playing 
+voices containing the sample will be stopped. The sample itself will not  be 
+deleted from memory.
+*/
+/*----------------------------------------------------------------------------*/
 void Part::removeSample( Sample *pSample )
 {
    std::vector<Voice *> voicesToStop;
@@ -205,6 +286,13 @@ void Part::removeSample( Sample *pSample )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param pSample The sample to be removed from this part. All currently playing 
+voices containing the sample will be stopped. The sample itself will  be 
+deleted from memory.
+*/
+/*----------------------------------------------------------------------------*/
 void Part::deleteSample( Sample *pSample )
 {
    std::vector<Voice *> voicesToStop;
@@ -229,6 +317,15 @@ void Part::deleteSample( Sample *pSample )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Retrieve all samples matching a specific MIDI note number and velocity.
+\param note The MIDI note number
+\param vel the MIDI velocity
+\return A list of all matching samples
+
+*/
+/*----------------------------------------------------------------------------*/
 std::list<Sample *> Part::getSamplesByMidiNoteAndVelocity( int note, int vel ) const
 {
    std::list<Sample *> result;
@@ -245,6 +342,12 @@ std::list<Sample *> Part::getSamplesByMidiNoteAndVelocity( int note, int vel ) c
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param pSample The sample
+\return true if the specified sample is currently being played
+*/
+/*----------------------------------------------------------------------------*/
 bool Part::isPlaying( const Sample *pSample ) const
 {
    for( auto v : m_Voices )
@@ -259,6 +362,13 @@ bool Part::isPlaying( const Sample *pSample ) const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Trigger a note on event.
+\param note The MIDI note number
+\param vel The MIDI velocity
+*/
+/*----------------------------------------------------------------------------*/
 void Part::noteOn( int note, int vel )
 {
    std::list<Sample *> s = getSamplesByMidiNoteAndVelocity( note, vel );
@@ -285,6 +395,13 @@ void Part::noteOn( int note, int vel )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Trigger a note off event.
+\param note The MIDI note number
+\param vel The MIDI velocity
+*/
+/*----------------------------------------------------------------------------*/
 void Part::noteOff( int note, int /*vel*/ )
 {
    if( m_Voices.count( note ) > 0 )
@@ -299,24 +416,48 @@ void Part::noteOff( int note, int /*vel*/ )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param v The pitchbend value (-1..0)
+*/
+/*----------------------------------------------------------------------------*/
 void Part::setPitchbend( double v )
 {
    m_Pitchbend = v;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The current pitchbend value (-1..0)
+*/
+/*----------------------------------------------------------------------------*/
 double Part::getPitchbend() const
 {
    return( m_Pitchbend );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Set controller value.
+\param ccNum The controller's number (0..255)
+\param v The controller's value (0..1)
+*/
+/*----------------------------------------------------------------------------*/
 void Part::setController( int ccNum, double v )
 {
    m_ControllerValues[ccNum] = v;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Get controller value
+\param ccNum The controller's number (0..255)
+\return The controller's value
+*/
+/*----------------------------------------------------------------------------*/
 double Part::getController( int ccNum ) const
 {
    if( m_ControllerValues.find( ccNum ) == m_ControllerValues.end() )
@@ -329,13 +470,25 @@ double Part::getController( int ccNum ) const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param pEngine The sampler engine
+*/
+/*----------------------------------------------------------------------------*/
 void Part::setEngine( Engine *pEngine )
 {
    m_pEngine = pEngine;
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\param pSample A sample
+\return true if this part contains the given sample
+*/
+/*----------------------------------------------------------------------------*/
 bool Part::containsSample( const Sample *pSample ) const
 {
    return( std::find( m_Samples.begin(), m_Samples.end(), pSample ) != m_Samples.end() );
 }
+

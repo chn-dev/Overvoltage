@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISection.h
+\author Christian Nowak <chnowak@web.de>
+\brief Headerfile for class UISection.
+*/
+/*----------------------------------------------------------------------------*/
 #ifndef __UISECTION_H__
 #define __UISECTION_H__
 
@@ -13,6 +20,12 @@ namespace SamplerGUI
    class UIPage;
    class UISectionSamplerKeyboard;
 
+   /* ----------------------------------------------------------------------------*/
+  /*!
+   \class UISection
+   \date  2024-06-10
+   */
+   /*----------------------------------------------------------------------------*/
    class UISection : public juce::Component
    {
    public:

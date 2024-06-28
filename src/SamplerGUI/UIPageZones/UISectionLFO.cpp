@@ -1,8 +1,21 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISectionLFO.cpp
+\author Christian Nowak <chnowak@web.de>
+\brief This class implements the LFO UI section
+*/
+/*----------------------------------------------------------------------------*/
 #include <util.h>
 #include "UISectionLFO.h"
 
 using namespace SamplerGUI;
 
+
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionLFO::StepEditor::StepEditor( UISectionLFO *pSectionLFO ) :
    m_pSectionLFO( pSectionLFO )
 {
@@ -36,6 +49,11 @@ UISectionLFO::StepEditor::StepEditor( UISectionLFO *pSectionLFO ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionLFO::StepEditor::~StepEditor()
 {
    delete m_plNumSteps;
@@ -45,30 +63,50 @@ UISectionLFO::StepEditor::~StepEditor()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 int UISectionLFO::StepEditor::getDiagramXPos() const
 {
    return( 0 );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 int UISectionLFO::StepEditor::getDiagramYPos() const
 {
    return( 0 );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 int UISectionLFO::StepEditor::getDiagramWidth() const
 {
    return( getBounds().getWidth() );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 int UISectionLFO::StepEditor::getDiagramHeight() const
 {
    return( getBounds().getHeight() - 20 );
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::StepEditor::update()
 {
    SamplerEngine::LFO *pLFO = m_pSectionLFO->getLFO();
@@ -83,6 +121,11 @@ void UISectionLFO::StepEditor::update()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Button::Listener
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::StepEditor::buttonClicked( Button *pButton )
 {
    if( m_pbQuantize == pButton )
@@ -97,11 +140,21 @@ void UISectionLFO::StepEditor::buttonClicked( Button *pButton )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Button::Listener
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::StepEditor::buttonStateChanged( Button *pButton )
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Label::Listener
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::StepEditor::labelTextChanged( Label *pLabel )
 {
    if( pLabel == m_pcNumSteps )
@@ -133,6 +186,10 @@ void UISectionLFO::StepEditor::labelTextChanged( Label *pLabel )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::StepEditor::paint( juce::Graphics &g )
 {
    g.setColour( juce::Colour::fromRGB( 32, 64, 64 ) );
@@ -205,11 +262,21 @@ void UISectionLFO::StepEditor::paint( juce::Graphics &g )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::StepEditor::mouseMove( const MouseEvent &event)
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::StepEditor::mouseDrag( const MouseEvent &event )
 {
    int x = event.getPosition().getX();
@@ -218,6 +285,11 @@ void UISectionLFO::StepEditor::mouseDrag( const MouseEvent &event )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::StepEditor::mouseDown( const MouseEvent &event )
 {
    int x = event.getMouseDownPosition().getX();
@@ -226,11 +298,23 @@ void UISectionLFO::StepEditor::mouseDown( const MouseEvent &event )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Component
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::StepEditor::mouseUp( const MouseEvent &event )
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Change one step value of the custom waveform
+\param x
+\param y
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::StepEditor::changeStepValue( int x, int y )
 {
    SamplerEngine::LFO *pLFO = m_pSectionLFO->getLFO();
@@ -251,6 +335,11 @@ void UISectionLFO::StepEditor::changeStepValue( int x, int y )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The LFO
+*/
+/*----------------------------------------------------------------------------*/
 SamplerEngine::LFO *UISectionLFO::getLFO() const
 {
    if( !sample() )
@@ -262,6 +351,11 @@ SamplerEngine::LFO *UISectionLFO::getLFO() const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Constructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionLFO::UISectionLFO( UIPage *pUIPage, std::string label ) :
    UISection( pUIPage, label )
 {
@@ -379,6 +473,11 @@ UISectionLFO::UISectionLFO( UIPage *pUIPage, std::string label ) :
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Destructor
+*/
+/*----------------------------------------------------------------------------*/
 UISectionLFO::~UISectionLFO()
 {
    for( size_t i = 0; i < m_SelButtons.size(); i++ )
@@ -404,6 +503,11 @@ UISectionLFO::~UISectionLFO()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Label::Listener
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::labelTextChanged( Label *pLabel )
 {
    if( m_pcRate == pLabel )
@@ -466,6 +570,10 @@ void UISectionLFO::labelTextChanged( Label *pLabel )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::updateInfo()
 {
    SamplerEngine::Sample *pSample = sample();
@@ -516,6 +624,12 @@ void UISectionLFO::updateInfo()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Button::Listener
+\param pButton The button that has been clicked
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::buttonClicked( Button *pButton )
 {
    size_t nLFO = (size_t)-1;
@@ -587,11 +701,21 @@ void UISectionLFO::buttonClicked( Button *pButton )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::Button::Listener
+\param pButton The button whose state has changed
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::buttonStateChanged( Button */*pButton*/ )
 {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::paint( juce::Graphics &g )
 {
    g.setColour( juce::Colour::fromRGB( 32, 64, 64 ) );
@@ -599,12 +723,21 @@ void UISectionLFO::paint( juce::Graphics &g )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::resized()
 {
    UISection::resized();
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+The user has (de-)selected some samples
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::samplesUpdated()
 {
    const SamplerEngine::Sample *pSample = sample();
@@ -635,6 +768,12 @@ void UISectionLFO::samplesUpdated()
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Set the current LFO
+\param n The number of the LFO to be selected (0..NUM_LFO-1)
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::setCurrentLFO( size_t n )
 {
    if( n >= m_SelButtons.size() )
@@ -649,6 +788,11 @@ void UISectionLFO::setCurrentLFO( size_t n )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+\return The number of the currently selected LFO (0..NUM_LFO-1)
+*/
+/*----------------------------------------------------------------------------*/
 size_t UISectionLFO::getCurrentLFO() const
 {
    for( size_t i = 0; i < m_SelButtons.size(); i++ )
@@ -661,6 +805,12 @@ size_t UISectionLFO::getCurrentLFO() const
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-06-28
+Callback function from juce::ComboBox::Listener
+\param pComboBox The ComboBox that has changed
+*/
+/*----------------------------------------------------------------------------*/
 void UISectionLFO::comboBoxChanged( ComboBox *pComboBox )
 {
    if( m_pcbWaveform == pComboBox )

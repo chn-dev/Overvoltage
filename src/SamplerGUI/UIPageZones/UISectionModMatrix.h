@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISectionModMatrix.h
+\author Christian Nowak <chnowak@web.de>
+\brief Headerfile for class UISectionModMatrix.
+*/
+/*----------------------------------------------------------------------------*/
 #ifndef __UISECTIONMODMATRIX_H__
 #define __UISECTIONMODMATRIX_H__
 
@@ -10,6 +17,12 @@ class PluginEditor;
 //==============================================================================
 namespace SamplerGUI
 {
+   /*----------------------------------------------------------------------------*/
+   /*!
+   \class UISectionModMatrix
+   \date  2024-06-10
+   */
+   /*----------------------------------------------------------------------------*/
    class UISectionModMatrix : public UISection
    {
    public:
@@ -56,3 +69,4 @@ namespace SamplerGUI
    };
 }
 #endif
+

@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISectionNameRanges.h
+\author Christian Nowak <chnowak@web.de>
+\brief Headerfile for class UISectionNameRanges.
+*/
+/*----------------------------------------------------------------------------*/
 #ifndef __UISECTIONNAMERANGES_H__
 #define __UISECTIONNAMERANGES_H__
 
@@ -10,6 +17,12 @@ class AudioPluginAudioProcessorEditor;
 //==============================================================================
 namespace SamplerGUI
 {
+   /*----------------------------------------------------------------------------*/
+   /*!
+   \class UISectionNameRanges
+   \date  2024-06-10
+   */
+   /*----------------------------------------------------------------------------*/
    class UISectionNameRanges : public UISection,
                                public juce::Label::Listener
    {

@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISectionLFO.h
+\author Christian Nowak <chnowak@web.de>
+\brief Headerfile for class UISectionLFO.
+*/
+/*----------------------------------------------------------------------------*/
 #ifndef __UISECTIONLFO_H__
 #define __UISECTIONLFO_H__
 
@@ -10,6 +17,12 @@ class PluginEditor;
 //==============================================================================
 namespace SamplerGUI
 {
+   /*----------------------------------------------------------------------------*/
+   /*!
+   \class UISectionLFO
+   \date  2024-06-10
+   */
+   /*----------------------------------------------------------------------------*/
    class UISectionLFO : public UISection,
                         public juce::Button::Listener,
                         public juce::ComboBox::Listener,

@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISectionSamplerKeyboard.h
+\author Christian Nowak <chnowak@web.de>
+\brief Headerfile for class UISectionSamplerKeyboard.
+*/
+/*----------------------------------------------------------------------------*/
 #ifndef __UISECTIONSAMPLERKEYBOARD_H__
 #define __UISECTIONSAMPLERKEYBOARD_H__
 
@@ -15,6 +22,12 @@ namespace SamplerGUI
    class UISectionKeyboard;
    class UIPage;
 
+   /*----------------------------------------------------------------------------*/
+   /*!
+   \class UISectionSamplerKeyboardListener
+   \date  2024-06-10
+   */
+   /*----------------------------------------------------------------------------*/
    class UISectionSamplerKeyboardListener
    {
    public:
@@ -22,7 +35,13 @@ namespace SamplerGUI
       virtual void onSampleSelectionUpdated( UISectionSamplerKeyboard *pKeyboard ) = 0;
    };
 
-   //==============================================================================
+
+   /*----------------------------------------------------------------------------*/
+   /*!
+   \class UISectionSamplerKeyboard
+   \date  2024-06-10
+   */
+   /*----------------------------------------------------------------------------*/
    class UISectionSamplerKeyboard : public UISectionKeyboard,
                                     public juce::FileDragAndDropTarget,
                                     public juce::KeyListener

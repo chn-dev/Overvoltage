@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISectionWaveView.h
+\author Christian Nowak <chnowak@web.de>
+\brief Headerfile for class UISectionWaveView.
+*/
+/*----------------------------------------------------------------------------*/
 #ifndef __UISECTIONWAVEVIEW_H__
 #define __UISECTIONWAVEVIEW_H__
 
@@ -11,6 +18,12 @@ class PluginEditor;
 //==============================================================================
 namespace SamplerGUI
 {
+   /*----------------------------------------------------------------------------*/
+   /*!
+   \class UISectionWaveView
+   \date  2024-06-10
+   */
+   /*----------------------------------------------------------------------------*/
    class UISectionWaveView : public UISection,
                              public juce::Button::Listener,
                              public juce::ScrollBar::Listener
@@ -62,3 +75,4 @@ namespace SamplerGUI
    };
 }
 #endif
+

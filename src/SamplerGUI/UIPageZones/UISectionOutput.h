@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/*!
+\file UISectionOutput.h
+\author Christian Nowak <chnowak@web.de>
+\brief Headerfile for class UISectionOutput.
+*/
+/*----------------------------------------------------------------------------*/
 #ifndef __UISECTIONOUTPUT_H__
 #define __UISECTIONOUTPUT_H__
 
@@ -10,6 +17,12 @@ class PluginEditor;
 //==============================================================================
 namespace SamplerGUI
 {
+   /*----------------------------------------------------------------------------*/
+   /*!
+   \class UISectionOutput
+   \date  2024-06-10
+   */
+   /*----------------------------------------------------------------------------*/
    class UISectionOutput : public UISection,
                            public juce::Label::Listener,
                            public juce::Slider::Listener,
