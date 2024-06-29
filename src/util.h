@@ -12,13 +12,19 @@
 #include <string>
 
 #ifdef __GNUC__
-#include <fmt/core.h>
-#define stdformat fmt::format
-#define stdvformat(f, ...) fmt::format( f, __VA_ARGS__ )
+   #if __cplusplus >= 202002L
+      #include <format>
+      #define stdformat std::format
+      #define stdvformat(f, ...) std::vformat( std::string_view( f ), std::make_format_args( __VA_ARGS__ ) )
+   #else
+      #include <fmt/core.h>
+      #define stdformat fmt::format
+      #define stdvformat(f, ...) fmt::format( f, __VA_ARGS__ )
+   #endif
 #else
-#include <format>
-#define stdformat std::format
-#define stdvformat(fmt, ...) std::vformat( std::string_view( fmt ), std::make_format_args( ##__VA_ARGS__ ) )
+   #include <format>
+   #define stdformat std::format
+   #define stdvformat(fmt, ...) std::vformat( std::string_view( fmt ), std::make_format_args( ##__VA_ARGS__ ) )
 #endif
 
 namespace util
