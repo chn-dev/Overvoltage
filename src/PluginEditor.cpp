@@ -225,7 +225,7 @@ void PluginEditor::buttonClicked( Button *pButton )
             char *pTmp = new char[fsize];
             file.read( pTmp, (std::streamsize)fsize );
             std::string xml = std::string( pTmp );
-            delete pTmp;
+            delete[] pTmp;
             file.close();
 
             std::unique_ptr<juce::XmlElement> pXml = parseXML( xml );
@@ -272,7 +272,7 @@ void PluginEditor::buttonClicked( Button *pButton )
             char *pTmp = new char[fsize];
             file.read( pTmp, (std::streamsize)fsize );
             std::string xml = std::string( pTmp );
-            delete pTmp;
+            delete[] pTmp;
             file.close();
 
             std::unique_ptr<juce::XmlElement> pXml = parseXML( xml );

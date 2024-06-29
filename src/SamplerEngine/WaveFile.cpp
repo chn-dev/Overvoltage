@@ -469,7 +469,7 @@ WaveFile *WaveFile::load( std::string fname )
          pWav->m_nChannels = getWord( pFmt + 2 );
          pWav->m_SampleRate = getDWord( pFmt + 4 );
          pWav->m_nBits = getWord( pFmt + 14 );
-         delete pFmt;
+         delete[] pFmt;
 
          if( pWav->m_Format != 1 )
          {
