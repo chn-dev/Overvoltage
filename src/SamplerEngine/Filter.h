@@ -8,7 +8,8 @@
 #ifndef __FILTER_H__
 #define __FILTER_H__
 
-#include "JuceHeader.h"
+#include <set>
+#include <libxml/tree.h>
 
 //==============================================================================
 namespace SamplerEngine
@@ -56,8 +57,8 @@ namespace SamplerEngine
       static Type fromString( const std::string &str );
       static std::set<Type> allTypes();
 
-      static Filter *fromXml( const juce::XmlElement *pe );
-      juce::XmlElement *toXml() const;
+      static Filter *fromXml( xmlNode *pe );
+      xmlNode *toXml() const;
 
    protected:
 

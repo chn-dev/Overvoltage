@@ -10,6 +10,8 @@
 
 #include <list>
 #include <map>
+#include <libxml/tree.h>
+
 #include "Sample.h"
 #include "Voice.h"
 
@@ -53,8 +55,9 @@ namespace SamplerEngine
 
       bool isPlaying( const Sample *pSample ) const;
 
-      static Part *fromXml( const juce::XmlElement *pe );
-      juce::XmlElement *toXml() const;
+
+      static Part *fromXml( xmlNode *pe );
+      xmlNode *toXml() const;
 
       bool process( std::vector<OutputBus> &buses, double sampleRate, double bpm );
 

@@ -8,6 +8,9 @@
 
 #include "util.h"
 
+static const char kEncodeLookup[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+static const char kPadCharacter = '=';
+
 namespace util
 {
    /*----------------------------------------------------------------------------*/
@@ -157,5 +160,122 @@ namespace util
          return( max );
       else
          return( v );
+   }
+
+
+   std::string base64encode( const std::vector<uint8_t> &input )
+   {
+      std::string encoded;
+      encoded.reserve( ( ( input.size() / 3 ) + ( input.size() % 3 > 0 ) ) * 4 );
+
+      std::uint32_t temp{};
+      auto it = input.begin();
+
+      for( std::size_t i = 0; i < input.size() / 3; ++i )
+      {
+         temp  = (uint32_t)(*it++) << 16;
+         temp += (uint32_t)(*it++) << 8;
+         temp += (uint32_t)(*it++);
+         encoded.append( 1, kEncodeLookup[( temp & 0x00FC0000 ) >> 18] );
+         encoded.append( 1, kEncodeLookup[( temp & 0x0003F000 ) >> 12] );
+         encoded.append( 1, kEncodeLookup[( temp & 0x00000FC0 ) >> 6 ] );
+         encoded.append( 1, kEncodeLookup[( temp & 0x0000003F )      ] );
+      }
+
+      switch( input.size() % 3 )
+      {
+         case 1:
+            temp = (uint32_t)(*it++) << 16;
+            encoded.append( 1, kEncodeLookup[( temp & 0x00FC0000 ) >> 18] );
+            encoded.append( 1, kEncodeLookup[( temp & 0x0003F000 ) >> 12] );
+            encoded.append( 2, kPadCharacter );
+            break;
+         case 2:
+            temp  = (uint32_t)(*it++) << 16;
+            temp += (uint32_t)(*it++) << 8;
+            encoded.append( 1, kEncodeLookup[( temp & 0x00FC0000 ) >> 18] );
+            encoded.append( 1, kEncodeLookup[( temp & 0x0003F000 ) >> 12] );
+            encoded.append( 1, kEncodeLookup[( temp & 0x00000FC0 ) >> 6 ] );
+            encoded.append( 1, kPadCharacter );
+            break;
+      }
+
+      return( encoded );
+   }
+
+
+   std::vector<uint8_t> base64decode( const std::string &input )
+   {
+      if( input.length() % 4 )
+         return( std::vector<uint8_t>() );
+
+      std::size_t padding{};
+
+      if( input.length() )
+      {
+         if( input[input.length() - 1] == kPadCharacter )
+            padding++;
+         if( input[input.length() - 2] == kPadCharacter )
+            padding++;
+      }
+
+      std::vector<uint8_t> decoded;
+      decoded.reserve( ( ( input.length() / 4 ) * 3 ) - padding );
+
+      std::uint32_t temp{};
+      auto it = input.begin();
+
+      while( it < input.end() )
+      {
+         for( std::size_t i = 0; i < 4; ++i )
+         {
+            temp <<= 6;
+            if     ( *it >= 0x41 && *it <= 0x5A ) temp |= (uint32_t)(*it) - 0x41;
+            else if( *it >= 0x61 && *it <= 0x7A ) temp |= (uint32_t)(*it) - 0x47;
+            else if( *it >= 0x30 && *it <= 0x39 ) temp |= (uint32_t)(*it) + 0x04;
+            else if( *it == 0x2B )                temp |= 0x3E;
+            else if( *it == 0x2F )                temp |= 0x3F;
+            else if( *it == kPadCharacter )
+            {
+               switch( input.end() - it )
+               {
+                  case 1:
+                     decoded.push_back( ( temp >> 16 ) & 0x000000FF );
+                     decoded.push_back( ( temp >> 8  ) & 0x000000FF );
+                     return( decoded );
+                  case 2:
+                     decoded.push_back( ( temp >> 10 ) & 0x000000FF );
+                     return( decoded );
+                  default:
+                     return( std::vector<uint8_t>() );
+               }
+            } else
+            {
+               return( std::vector<uint8_t>() );
+            }
+
+            ++it;
+         }
+
+         decoded.push_back( ( temp >> 16 ) & 0x000000FF );
+         decoded.push_back( ( temp >> 8  ) & 0x000000FF );
+         decoded.push_back( ( temp       ) & 0x000000FF );
+      }
+
+      return( decoded );
+   }
+
+   std::string toString( xmlNode *pXml )
+   {
+      xmlDoc *pDoc = xmlNewDoc( (xmlChar *)"1.0" );
+      xmlDocSetRootElement( pDoc, pXml );
+      xmlChar *pBuf;
+      int bufSize;
+      xmlDocDumpFormatMemory( pDoc, &pBuf, &bufSize, 1 );
+      std::string str = std::string( (char *)pBuf );
+      xmlFree( pBuf );
+      xmlFreeDoc( pDoc );
+
+      return( str );
    }
 }

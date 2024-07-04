@@ -8,8 +8,8 @@
 #ifndef __ENV_H__
 #define __ENV_H__
 
-#include "JuceHeader.h"
 #include <set>
+#include <libxml/tree.h>
 
 //==============================================================================
 namespace SamplerEngine
@@ -60,8 +60,8 @@ namespace SamplerEngine
 
       void step( double s, double bpm );
 
-      static ENV *fromXml( const juce::XmlElement *pe );
-      juce::XmlElement *toXml() const;
+      static ENV *fromXml( xmlNode *pe );
+      xmlNode *toXml() const;
 
    protected:
 

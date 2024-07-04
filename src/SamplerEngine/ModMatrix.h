@@ -8,7 +8,11 @@
 #ifndef __MODMATRIX_H__
 #define __MODMATRIX_H__
 
-#include "JuceHeader.h"
+#include <map>
+#include <set>
+#include <vector>
+
+#include <libxml/tree.h>
 
 //==============================================================================
 namespace SamplerEngine
@@ -115,8 +119,8 @@ namespace SamplerEngine
          ModSlot();
          ~ModSlot();
 
-         static ModSlot *fromXml( const juce::XmlElement *pe );
-         juce::XmlElement *toXml() const;
+         static ModSlot *fromXml( xmlNode *pe );
+         xmlNode *toXml() const;
 
          ModSrc getSrc() const;
          void setSrc( ModSrc src );
@@ -146,8 +150,8 @@ namespace SamplerEngine
       size_t numSlots() const;
       ModSlot *getSlot( size_t n ) const;
 
-      static ModMatrix *fromXml( const juce::XmlElement *pe );
-      juce::XmlElement *toXml() const;
+      static ModMatrix *fromXml( xmlNode *pe );
+      xmlNode *toXml() const;
 
       static std::string toString( ModSrc v );
       static ModSrc modSrcFromString( const std::string &s );

@@ -7,14 +7,16 @@
 # that the installed CMake will be able to understand the following CMakeLists, and ensures that
 # CMake's behaviour is compatible with the named version. This is a standard CMake command, so more
 # information can be found in the CMake docs.
-
 cmake_minimum_required(VERSION 3.15)
+
 
 # The top-level CMakeLists.txt file for a project must contain a literal, direct call to the
 # `project()` command. `project()` sets up some helpful variables that describe source/binary
 # directories, and the current project version. This is a standard CMake command.
 
 project(OVERVOLTAGE VERSION 0.0.1)
+
+find_package(LibXml2 REQUIRED)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
    find_package(fmt REQUIRED)
@@ -122,10 +124,12 @@ target_link_libraries(Overvoltage
         juce::juce_audio_utils
     PUBLIC
         ${FMTLIB}
+	${LIBXML2_LIBRARIES}
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags)
 
 target_include_directories( Overvoltage
     PUBLIC
+	${LIBXML2_INCLUDE_DIR}
 	"src" )

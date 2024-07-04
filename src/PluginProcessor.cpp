@@ -7,6 +7,10 @@
 /*----------------------------------------------------------------------------*/
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "util.h"
+
+#include <libxml/parser.h>
+#include <libxml/tree.h>
 
 
 /*----------------------------------------------------------------------------*/
@@ -460,9 +464,8 @@ void PluginProcessor::getStateInformation( juce::MemoryBlock& destData )
    // You should use this method to store your parameters in the memory block.
    // You could do that either as raw data, or use the XML or ValueTree classes
    // as intermediaries to make it easy to save and load complex data.
-   juce::XmlElement *pOvervoltage = m_pEngine->toXml();
-   copyXmlToBinary( *pOvervoltage, destData );
-   delete pOvervoltage;
+   std::string xml = util::toString( m_pEngine->toXml() );
+   destData.replaceAll( xml.c_str(), xml.length() );
 }
 
 
@@ -477,16 +480,19 @@ void PluginProcessor::setStateInformation( const void* data, int sizeInBytes )
 {
    // You should use this method to restore your parameters from this memory block,
    // whose contents will have been created by the getStateInformation() call.
-   std::unique_ptr<juce::XmlElement> xmlState( getXmlFromBinary( data, sizeInBytes ) );
-   if( xmlState.get() )
+   xmlDocPtr doc = xmlReadMemory( (const char *)data, sizeInBytes, "noname.xml", nullptr, 0 );
+   if( doc != nullptr )
    {
-      SamplerEngine::Engine *pEngine = SamplerEngine::Engine::fromXml( xmlState.get() );
+      xmlNode *pRoot = xmlDocGetRootElement( doc );
+      SamplerEngine::Engine *pEngine = SamplerEngine::Engine::fromXml( pRoot );
       if( pEngine )
       {
          delete m_pEngine;
          pEngine->setProcessor( this );
          m_pEngine = pEngine;
       }
+
+      xmlFreeDoc( doc );
    }
 }
 
@@ -558,7 +564,7 @@ PluginEditor *PluginProcessor::pluginEditor() const
 /*! 2024-06-10
 */
 /*----------------------------------------------------------------------------*/
-void PluginProcessor::importMulti( juce::XmlElement *pXmlMulti )
+void PluginProcessor::importMulti( xmlNode *pXmlMulti )
 {
    SamplerEngine::Engine *pEngine = SamplerEngine::Engine::fromXml( pXmlMulti );
    if( pEngine )

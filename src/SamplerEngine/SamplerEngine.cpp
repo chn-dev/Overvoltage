@@ -216,7 +216,7 @@ Import a part from XML data.
 \param pXmlPart The XML data
 */
 /*----------------------------------------------------------------------------*/
-void Engine::importPart( size_t nPart, juce::XmlElement *pXmlPart )
+void Engine::importPart( size_t nPart, xmlNode *pXmlPart )
 {
    if( nPart >= SAMPLERENGINE_NUMPARTS )
       return;
@@ -238,31 +238,34 @@ Reconstruct a sample engine object from a previously generated XML element (see 
 \return Pointer to the Engine object or nullptr on error
 */
 /*----------------------------------------------------------------------------*/
-Engine *Engine::fromXml( const juce::XmlElement *peOvervoltage )
+Engine *Engine::fromXml( xmlNode *peOvervoltage )
 {
-   if( peOvervoltage->getTagName() == "overvoltage" )
+   if( std::string( (char*)peOvervoltage->name ) == "overvoltage" )
    {
       Engine *pEngine = new Engine();
-
-      for( int i = 0; peOvervoltage->getChildElement( i ); i++ )
+      for( xmlNode *pNode = peOvervoltage->children; pNode; pNode = pNode->next )
       {
-         if( peOvervoltage->getChildElement( i )->getTagName() == "parts" )
+         if( pNode->type == XML_ELEMENT_NODE )
          {
-            juce::XmlElement *peParts = peOvervoltage->getChildElement( i );
-            for( int nPart = 0; peParts->getChildElement( nPart ); nPart++ )
+            if( std::string( (char*)pNode->name ) == "parts" )
             {
-               if( peParts->getChildElement( nPart )->getTagName() == "part" )
+               for( xmlNode *peParts = pNode->children; peParts; peParts = peParts->next )
                {
-                  juce::XmlElement *pePart = peParts->getChildElement( nPart );
-                  Part *pPart = Part::fromXml( pePart );
-                  if( pPart )
+                  if( peParts->type == XML_ELEMENT_NODE )
                   {
-                     pPart->setEngine( pEngine );
-                     if( pEngine->m_Parts[pPart->getPartNum()] )
+                     if( std::string( (char*)peParts->name ) == "part" )
                      {
-                        delete pEngine->m_Parts[pPart->getPartNum()];
+                        Part *pPart = Part::fromXml( peParts );
+                        if( pPart )
+                        {
+                           pPart->setEngine( pEngine );
+                           if( pEngine->m_Parts[pPart->getPartNum()] )
+                           {
+                              delete pEngine->m_Parts[pPart->getPartNum()];
+                           }
+                           pEngine->m_Parts[pPart->getPartNum()] = pPart;
+                        }
                      }
-                     pEngine->m_Parts[pPart->getPartNum()] = pPart;
                   }
                }
             }
@@ -282,18 +285,18 @@ Create an XML element from the Engine settings.
 \return Pointer to the new XML element
 */
 /*----------------------------------------------------------------------------*/
-juce::XmlElement *Engine::toXml() const
+xmlNode *Engine::toXml() const
 {
-   juce::XmlElement *pVt = new juce::XmlElement( "overvoltage" );
+   xmlNode *pVt = xmlNewNode( nullptr, (xmlChar *)"overvoltage" );
 
-   juce::XmlElement *peParts = new juce::XmlElement( "parts" );
+   xmlNode *peParts = xmlNewNode( nullptr, (xmlChar *)"parts" );
    for( size_t i = 0; i < m_Parts.size(); i++ )
    {
-      juce::XmlElement *pePart = m_Parts[i]->toXml();
-      peParts->addChildElement( pePart );
+      xmlNode *pePart = m_Parts[i]->toXml();
+      xmlAddChild( peParts, pePart );
    }
 
-   pVt->addChildElement( peParts );
+   xmlAddChild( pVt, peParts );
 
    return( pVt );
 }

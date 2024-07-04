@@ -55,42 +55,45 @@ Create an XML element from the WaveFile.
 \return Pointer to the new XML element
 */
 /*----------------------------------------------------------------------------*/
-juce::XmlElement *WaveFile::toXml() const
+xmlNode *WaveFile::toXml() const
 {
-   juce::XmlElement *pe = new juce::XmlElement( "wave" );
+   xmlNode *pe = xmlNewNode( nullptr, (xmlChar *)"wave" );
 
-   juce::XmlElement *peNChannels = new juce::XmlElement( "nchannels" );
-   peNChannels->addTextElement( stdformat( "{}", m_nChannels ) );
-   pe->addChildElement( peNChannels );
+   xmlNode *peNChannels = xmlNewNode( nullptr, (xmlChar *)"nchannels" );
+   xmlAddChild( peNChannels, xmlNewText( (xmlChar * )stdformat( "{}", m_nChannels ).c_str() ) );
+   xmlAddChild( pe, peNChannels );
 
-   juce::XmlElement *peSampleRate = new juce::XmlElement( "samplerate" );
-   peSampleRate->addTextElement( stdformat( "{}", m_SampleRate ) );
-   pe->addChildElement( peSampleRate );
+   xmlNode *peSampleRate = xmlNewNode( nullptr, (xmlChar *)"samplerate" );
+   xmlAddChild( peSampleRate, xmlNewText( (xmlChar *)stdformat( "{}", m_SampleRate ).c_str() ) );
+   xmlAddChild( pe, peSampleRate );
 
-   juce::XmlElement *peNBits = new juce::XmlElement( "nbits" );
-   peNBits->addTextElement( stdformat( "{}", m_nBits ) );
-   pe->addChildElement( peNBits );
+   xmlNode *peNBits = xmlNewNode( nullptr, (xmlChar *)"nbits" );
+   xmlAddChild( peNBits, xmlNewText( (xmlChar * )stdformat( "{}", m_nBits ).c_str() ) );
+   xmlAddChild( pe, peNBits );
 
-   juce::XmlElement *peNSamples = new juce::XmlElement( "nsamples" );
-   peNSamples->addTextElement( stdformat( "{}", m_nSamples ) );
-   pe->addChildElement( peNSamples );
+   xmlNode *peNSamples = xmlNewNode( nullptr, (xmlChar *)"nsamples" );
+   xmlAddChild( peNSamples, xmlNewText( (xmlChar *)stdformat( "{}", m_nSamples ).c_str() ) );
+   xmlAddChild( pe, peNSamples );
 
-   juce::XmlElement *peLoopStart = new juce::XmlElement( "loopstart" );
-   peLoopStart->addTextElement( stdformat( "{}", m_LoopStart ) );
-   pe->addChildElement( peLoopStart );
+   xmlNode *peLoopStart = xmlNewNode( nullptr, (xmlChar *)"loopstart" );
+   xmlAddChild( peLoopStart, xmlNewText( (xmlChar *)stdformat( "{}", m_LoopStart ).c_str() ) );
+   xmlAddChild( pe, peLoopStart );
 
-   juce::XmlElement *peLoopEnd = new juce::XmlElement( "loopend" );
-   peLoopEnd->addTextElement( stdformat( "{}", m_LoopEnd ) );
-   pe->addChildElement( peLoopEnd );
+   xmlNode *peLoopEnd = xmlNewNode( nullptr, (xmlChar *)"loopend" );
+   xmlAddChild( peLoopEnd, xmlNewText( (xmlChar *)stdformat( "{}", m_LoopEnd ).c_str() ) );
+   xmlAddChild( pe, peLoopEnd );
 
-   juce::XmlElement *peIsLooped = new juce::XmlElement( "islooped" );
-   peIsLooped->addTextElement( m_IsLooped ? "true" : "false" );
-   pe->addChildElement( peIsLooped );
+   xmlNode *peIsLooped = xmlNewNode( nullptr, (xmlChar *)"islooped" );
+   xmlAddChild( peIsLooped, xmlNewText( (xmlChar *)( m_IsLooped ? "true" : "false" ) ) );
+   xmlAddChild( pe, peIsLooped );
 
-   juce::XmlElement *peData = new juce::XmlElement( "data" );
-   juce::MemoryBlock mb = juce::MemoryBlock( m_pData, (uint32_t)m_nChannels * (uint32_t)m_nBits * m_nSamples / 8 );
-   peData->addTextElement( mb.toBase64Encoding() );
-   pe->addChildElement( peData );
+   xmlNode *peData = xmlNewNode( nullptr, (xmlChar *)"data" );
+   std::vector<uint8_t> data;
+   size_t dataSize = (size_t)m_nChannels * (size_t)m_nBits * (size_t)m_nSamples / 8;
+   data.resize( dataSize );
+   memcpy( data.data(), m_pData, dataSize );
+   xmlAddChild( peData, xmlNewText( (xmlChar *)util::base64encode( data ).c_str() ) );
+   xmlAddChild( pe, peData );
 
    return( pe );
 }
@@ -103,9 +106,9 @@ Reconstruct a Wavefile object from a previously generated XML element (see toXml
 \return Pointer to the WaveFile object or nullptr on error
 */
 /*----------------------------------------------------------------------------*/
-WaveFile *WaveFile::fromXml( const juce::XmlElement *pe )
+WaveFile *WaveFile::fromXml( xmlNode *pe )
 {
-   if( pe->getTagName() != "wave" )
+   if( std::string( (char*)pe->name ) != "wave" )
       return( nullptr );
 
    int nChannels = -1;
@@ -117,50 +120,46 @@ WaveFile *WaveFile::fromXml( const juce::XmlElement *pe )
    bool isLooped = false;
    uint8_t *pData = nullptr;
 
-   for( int i = 0; pe->getChildElement( i ); i++ )
+   for( xmlNode *pChild = pe->children; pChild; pChild = pChild->next )
    {
-      juce::XmlElement *pChild = pe->getChildElement( i );
-      std::string tagName = pChild->getTagName().toStdString();
+      std::string tagName = std::string( (char*)pChild->name );
 
       if( tagName == "nchannels" )
       {
-         nChannels = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+         nChannels = std::stoi( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "samplerate" )
       {
-         sampleRate = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+         sampleRate = std::stoi( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "nbits" )
       {
-         nBits = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+         nBits = std::stoi( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "nsamples" )
       {
-         nSamples = std::stoul( pChild->getChildElement( 0 )->getText().toStdString() );
+         nSamples = std::stoul( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "loopstart" )
       {
-         loopStart = std::stoul( pChild->getChildElement( 0 )->getText().toStdString() );
+         loopStart = std::stoul( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "loopend" )
       {
-         loopEnd = std::stoul( pChild->getChildElement( 0 )->getText().toStdString() );
+         loopEnd = std::stoul( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "islooped" )
       {
-         std::string v = pChild->getChildElement( 0 )->getText().toStdString();
+         std::string v = std::string( (char*)pChild->children->content );
          isLooped = ( v == "true" );
       } else
       if( tagName == "data" )
       {
-         std::string v = pChild->getChildElement( 0 )->getText().toStdString();
-         juce::MemoryBlock mem;
-         if( mem.fromBase64Encoding( v ) )
-         {
-            size_t dataSize = mem.getSize();
-            pData = new uint8_t[dataSize];
-            memcpy( pData, mem.getData(), dataSize );
-         }
+         std::string v = std::string( (char*)pChild->children->content );
+         std::vector<uint8_t> d = util::base64decode( v );
+         size_t dataSize = d.size();
+         pData = new uint8_t[dataSize];
+         memcpy( pData, d.data(), dataSize );
       }
    }
 
@@ -554,7 +553,7 @@ uint32_t WaveFile::numSamples() const
 void WaveFile::dft() const
 {
    std::vector<DSP::Complex> d;
-   
+
    /*bool ok = */DSP::DFT::dft( *this, 0, 0, 512, d, DSP::DFT::WindowHamming );
 
 //   double p = d[0].getA() * d[0].getA();

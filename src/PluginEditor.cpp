@@ -224,16 +224,21 @@ void PluginEditor::buttonClicked( Button *pButton )
             file.seekg( 0, std::ios::beg );
             char *pTmp = new char[fsize];
             file.read( pTmp, (std::streamsize)fsize );
-            std::string xml = std::string( pTmp );
-            delete[] pTmp;
             file.close();
 
-            std::unique_ptr<juce::XmlElement> pXml = parseXML( xml );
-            if( pXml.get() )
+            xmlDocPtr doc = xmlReadMemory( pTmp, fsize, "noname.xml", nullptr, 0 );
+            if( doc != nullptr )
             {
-               processor().samplerEngine()->importPart( currentPart(), pXml.get() );
-               repaint();
+               xmlNode *pRoot = xmlDocGetRootElement( doc );
+               if( pRoot )
+               {
+                  processor().samplerEngine()->importPart( currentPart(), pRoot );
+                  repaint();
+               }
+               xmlFreeDoc( doc );
             }
+
+            delete[] pTmp;
          }
       }
    } else
@@ -243,9 +248,7 @@ void PluginEditor::buttonClicked( Button *pButton )
       if( ch.browseForFileToSave( true ) )
       {
          std::string fname = ch.getResult().getFullPathName().toStdString();
-         juce::XmlElement *pPartXml = processor().samplerEngine()->getPart( currentPart() )->toXml();
-         std::string partXml = pPartXml->toString().toStdString();
-         delete pPartXml;
+         std::string partXml = util::toString( processor().samplerEngine()->getPart( currentPart() )->toXml() );
 
          std::ofstream file;
          file.open( fname, std::ofstream::out );
@@ -271,16 +274,21 @@ void PluginEditor::buttonClicked( Button *pButton )
             file.seekg( 0, std::ios::beg );
             char *pTmp = new char[fsize];
             file.read( pTmp, (std::streamsize)fsize );
-            std::string xml = std::string( pTmp );
-            delete[] pTmp;
             file.close();
 
-            std::unique_ptr<juce::XmlElement> pXml = parseXML( xml );
-            if( pXml.get() )
+            xmlDocPtr doc = xmlReadMemory( pTmp, fsize, "noname.xml", nullptr, 0 );
+            if( doc != nullptr )
             {
-               processor().importMulti( pXml.get() );
-               repaint();
+               xmlNode *pRoot = xmlDocGetRootElement( doc );
+               if( pRoot )
+               {
+                  processor().importMulti( pRoot );
+                  repaint();
+               }
+               xmlFreeDoc( doc );
             }
+
+            delete[] pTmp;
          }
       }
    } else
@@ -290,9 +298,7 @@ void PluginEditor::buttonClicked( Button *pButton )
       if( ch.browseForFileToSave( true ) )
       {
          std::string fname = ch.getResult().getFullPathName().toStdString();
-         juce::XmlElement *pXmlMulti = processor().samplerEngine()->toXml();
-         std::string xmlMulti = pXmlMulti->toString().toStdString();
-         delete pXmlMulti;
+         std::string xmlMulti = util::toString( processor().samplerEngine()->toXml() );
 
          std::ofstream file;
          file.open( fname, std::ofstream::out );
@@ -386,7 +392,7 @@ void PluginEditor::resized()
 
 /*----------------------------------------------------------------------------*/
 /*! 2024-06-10
-This function gets called by PluginProcessor when the selection of samples has 
+This function gets called by PluginProcessor when the selection of samples has
 been updated.
 
 \param pSamplerKeyboard

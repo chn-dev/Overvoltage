@@ -371,41 +371,40 @@ Reconstruct an ModSlot object from a previously generated XML element (see toXml
 \return Pointer to the ModSlot object or nullptr on error
 */
 /*----------------------------------------------------------------------------*/
-ModMatrix::ModSlot *ModMatrix::ModSlot::fromXml( const juce::XmlElement *pe )
+ModMatrix::ModSlot *ModMatrix::ModSlot::fromXml( xmlNode *pe )
 {
-   if( pe->getTagName() != "modslot" )
+   if( std::string( (char*)pe->name ) != "modslot" )
       return( nullptr );
 
    ModSlot *pModSlot = new ModSlot();
 
-   for( int i = 0; pe->getChildElement( i ); i++ )
+   for( xmlNode *pChild = pe->children; pChild; pChild = pChild->next  )
    {
-      juce::XmlElement *pChild = pe->getChildElement( i );
-      std::string tagName = pChild->getTagName().toStdString();
+      std::string tagName = std::string( (char*)pChild->name );
 
       if( tagName == "src" )
       {
-         pModSlot->m_Src = ModMatrix::modSrcFromString( pChild->getChildElement( 0 )->getText().toStdString() );
+         pModSlot->m_Src = ModMatrix::modSrcFromString( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "mod" )
       {
-         pModSlot->m_Mod = ModMatrix::modSrcFromString( pChild->getChildElement( 0 )->getText().toStdString() );
+         pModSlot->m_Mod = ModMatrix::modSrcFromString( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "dest" )
       {
-         pModSlot->m_Dest = ModMatrix::modDestFromString( pChild->getChildElement( 0 )->getText().toStdString() );
+         pModSlot->m_Dest = ModMatrix::modDestFromString( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "mathfunc" )
       {
-         pModSlot->m_Func = ModMatrix::mathFuncFromString(( pChild->getChildElement( 0 )->getText().toStdString() ) );
+         pModSlot->m_Func = ModMatrix::mathFuncFromString( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "amt" )
       {
-         pModSlot->m_Amt = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+         pModSlot->m_Amt = std::stof( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "enabled" )
       {
-         pModSlot->m_Enabled = ( util::toLower( util::trim( pChild->getChildElement( 0 )->getText().toStdString() ) ) == "true" );
+         pModSlot->m_Enabled = ( util::toLower( util::trim( std::string( (char*)pChild->children->content ) ) ) == "true" );
       }
    }
 
@@ -419,33 +418,33 @@ Create an XML element from the ModSlot settings.
 \return Pointer to the new XML element
 */
 /*----------------------------------------------------------------------------*/
-juce::XmlElement *ModMatrix::ModSlot::toXml() const
+xmlNode *ModMatrix::ModSlot::toXml() const
 {
-   juce::XmlElement *pe = new juce::XmlElement( "modslot" );
+   xmlNode *pe = xmlNewNode( nullptr, (xmlChar *)"modslot" );
 
-   juce::XmlElement *peSrc = new juce::XmlElement( "src" );
-   peSrc->addTextElement( ModMatrix::toString( m_Src ) );
-   pe->addChildElement( peSrc );
+   xmlNode *peSrc = xmlNewNode( nullptr, (xmlChar *)"src" );
+   xmlAddChild( peSrc, xmlNewText( (xmlChar *)ModMatrix::toString( m_Src ).c_str() ) );
+   xmlAddChild( pe, peSrc );
 
-   juce::XmlElement *peMod = new juce::XmlElement( "mod" );
-   peMod->addTextElement( ModMatrix::toString( m_Mod ) );
-   pe->addChildElement( peMod );
+   xmlNode *peMod = xmlNewNode( nullptr, (xmlChar *)"mod" );
+   xmlAddChild( peMod, xmlNewText( (xmlChar *)ModMatrix::toString( m_Mod ).c_str() ) );
+   xmlAddChild( pe, peMod );
 
-   juce::XmlElement *peDest = new juce::XmlElement( "dest" );
-   peDest->addTextElement( ModMatrix::toString( m_Dest ) );
-   pe->addChildElement( peDest );
+   xmlNode *peDest = xmlNewNode( nullptr, (xmlChar *)"dest" );
+   xmlAddChild( peDest, xmlNewText( (xmlChar *)ModMatrix::toString( m_Dest ).c_str() ) );
+   xmlAddChild( pe, peDest );
 
-   juce::XmlElement *peFunc = new juce::XmlElement( "mathfunc" );
-   peFunc->addTextElement( ModMatrix::toString( m_Func ) );
-   pe->addChildElement( peFunc );
+   xmlNode *peFunc = xmlNewNode( nullptr, (xmlChar *)"mathfunc" );
+   xmlAddChild( peFunc, xmlNewText( (xmlChar *)ModMatrix::toString( m_Func ).c_str() ) );
+   xmlAddChild( pe, peFunc );
 
-   juce::XmlElement *peAmt = new juce::XmlElement( "amt" );
-   peAmt->addTextElement( stdformat( "{}", m_Amt ) );
-   pe->addChildElement( peAmt );
+   xmlNode *peAmt = xmlNewNode( nullptr, (xmlChar *)"amt" );
+   xmlAddChild( peAmt, xmlNewText( (xmlChar *)stdformat( "{}", m_Amt ).c_str() ) );
+   xmlAddChild( pe, peAmt );
 
-   juce::XmlElement *peEnabled = new juce::XmlElement( "enabled" );
-   peEnabled->addTextElement( m_Enabled ? "true" : "false" );
-   pe->addChildElement( peEnabled );
+   xmlNode *peEnabled = xmlNewNode( nullptr, (xmlChar *)"enabled" );
+   xmlAddChild( peEnabled, xmlNewText( (xmlChar *)( m_Enabled ? "true" : "false" ) ) );
+   xmlAddChild( pe, peEnabled );
 
    return( pe );
 }
@@ -483,30 +482,31 @@ Reconstruct an ModMatrix object from a previously generated XML element (see toX
 \return Pointer to the ModMatrix object or nullptr on error
 */
 /*----------------------------------------------------------------------------*/
-ModMatrix *ModMatrix::fromXml( const juce::XmlElement *pe )
+ModMatrix *ModMatrix::fromXml( xmlNode *pe )
 {
-   if( pe->getTagName() != "modmatrix" )
+   if( std::string( (char*)pe->name ) != "modmatrix" )
       return( nullptr );
 
    ModMatrix *pModMatrix = new ModMatrix();
    pModMatrix->m_ModSlots.clear();
 
-   for( int i = 0; /*pe->getChildElement( i ) && */i < 5; i++ )
+   for( xmlNode *pChild = pe->children; pChild; pChild = pChild->next )
    {
-      juce::XmlElement *pChild = pe->getChildElement( i );
-      if( pChild )
-      {
-         std::string tagName = pChild->getTagName().toStdString();
+      std::string tagName = std::string( (char*)pChild->name );
 
-         if( tagName == "modslot" )
+      if( tagName == "modslot" )
+      {
+         ModSlot *pModSlot = ModSlot::fromXml( pChild );
+         if( pModSlot )
          {
-            ModSlot *pModSlot = ModSlot::fromXml( pChild );
-            if( pModSlot )
-            {
-               pModMatrix->m_ModSlots.push_back( pModSlot );
-            }
+            pModMatrix->m_ModSlots.push_back( pModSlot );
          }
-      } else
+      }
+   }
+
+   if( pModMatrix->m_ModSlots.size() < 5 )
+   {
+      for( size_t i = 0; i < 5 - pModMatrix->m_ModSlots.size(); i++ )
       {
          pModMatrix->m_ModSlots.push_back( new ModSlot() );
       }
@@ -522,14 +522,14 @@ Create an XML element from the ModMatrix settings.
 \return Pointer to the new XML element
 */
 /*----------------------------------------------------------------------------*/
-juce::XmlElement *ModMatrix::toXml() const
+xmlNode *ModMatrix::toXml() const
 {
-   juce::XmlElement *pe = new juce::XmlElement( "modmatrix" );
+   xmlNode *pe = xmlNewNode( nullptr, (xmlChar *)"modmatrix" );
 
    for( size_t i = 0; i < m_ModSlots.size() && i < 5; i++ )
    {
-      juce::XmlElement *peModSlot = m_ModSlots[i]->toXml();
-      pe->addChildElement( peModSlot );
+      xmlNode *peModSlot = m_ModSlots[i]->toXml();
+      xmlAddChild( pe, peModSlot );
    }
 
    return( pe );

@@ -8,7 +8,8 @@
 #ifndef __LFO_H__
 #define __LFO_H__
 
-#include "JuceHeader.h"
+#include <set>
+#include <libxml/tree.h>
 
 //==============================================================================
 namespace SamplerEngine
@@ -95,8 +96,8 @@ namespace SamplerEngine
 
       void step( double s, double bpm );
 
-      static LFO *fromXml( const juce::XmlElement *pe );
-      juce::XmlElement *toXml() const;
+      static LFO *fromXml( xmlNode *pe );
+      xmlNode *toXml() const;
 
    protected:
 

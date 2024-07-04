@@ -12,7 +12,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "JuceHeader.h"
+#include <libxml/tree.h>
 
 #include <DSP/Wave.h>
 
@@ -51,8 +51,8 @@ namespace SamplerEngine
 
       uint32_t size() const;
 
-      juce::XmlElement *toXml() const;
-      static WaveFile *fromXml( const juce::XmlElement *pe );
+      static WaveFile *fromXml( xmlNode *pe );
+      xmlNode *toXml() const;
 
    protected:
       static std::string readTagName( std::ifstream &file );

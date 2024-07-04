@@ -141,19 +141,19 @@ Create an XML element from the Part settings.
 \return Pointer to the new XML element
 */
 /*----------------------------------------------------------------------------*/
-juce::XmlElement *Part::toXml() const
+xmlNode *Part::toXml() const
 {
-   juce::XmlElement *pePart = new juce::XmlElement( "part" );
-   pePart->setAttribute( "num", stdformat( "{}", m_PartNum ) );
+   xmlNode *pePart = xmlNewNode( nullptr, (xmlChar *)"part" );
+   xmlNewProp( pePart, (xmlChar *)"num", (xmlChar *)stdformat( "{}", m_PartNum ).c_str() );
 
-   juce::XmlElement *peSamples = new juce::XmlElement( "samples" );
+   xmlNode *peSamples = xmlNewNode( nullptr, (xmlChar *)"samples" );
    for( Sample *pSample : m_Samples )
    {
-      juce::XmlElement *peSample = pSample->toXml();
-      peSamples->addChildElement( peSample );
+      xmlNode *peSample = pSample->toXml();
+      xmlAddChild( peSamples, peSample );
 
    }
-   pePart->addChildElement( peSamples );
+   xmlAddChild( pePart, peSamples );
 
    return( pePart );
 }
@@ -166,29 +166,49 @@ Reconstruct a Part object from a previously generated XML element (see toXml()).
 \return Pointer to the Part object or nullptr on error
 */
 /*----------------------------------------------------------------------------*/
-Part *Part::fromXml( const juce::XmlElement *pe )
+Part *Part::fromXml( xmlNode *pe )
 {
-   if( pe->getTagName() != "part" )
+   if( std::string( (char*)pe->name ) != "part" )
       return( nullptr );
 
-   size_t partNum = std::stoul( pe->getStringAttribute( "num" ).toStdString() );
+   size_t partNum = 0;
+
+   for( xmlAttr *pAttr = pe->properties; pAttr; pAttr = pAttr->next )
+   {
+      if( pAttr->type == XML_ATTRIBUTE_NODE )
+      {
+         std::string name = std::string( (char*)pAttr->name );
+         xmlChar* pValue = xmlNodeListGetString( pe->doc, pAttr->children, 1 );
+         std::string value = std::string( (char*)pValue );
+         xmlFree( pValue );
+
+         if( name == "num" )
+         {
+            partNum = std::stoul( value );
+         }
+      }
+   }
 
    Part *pPart = new Part( partNum );
 
-   for( int i = 0; pe->getChildElement( i ); i++ )
+   for( xmlNode *p = pe->children; p; p = p->next )
    {
-      juce::XmlElement *peChild = pe->getChildElement( i );
-      if( peChild->getTagName() == "samples" )
+      if( p->type == XML_ELEMENT_NODE )
       {
-         for( int nSample = 0; peChild->getChildElement( nSample ); nSample++ )
+         if( std::string( (char*)p->name ) == "samples" )
          {
-            if( peChild->getChildElement( nSample )->getTagName() == "sample" )
+            for( xmlNode *pSamples = p->children; pSamples; pSamples = pSamples->next )
             {
-               juce::XmlElement *peSample = peChild->getChildElement( nSample );
-               Sample *pSample = Sample::fromXml( peSample );
-               if( pSample )
+               if( pSamples->type == XML_ELEMENT_NODE )
                {
-                  pPart->m_Samples.push_back( pSample );
+                  if( std::string( (char*)pSamples->name ) == "sample" )
+                  {
+                     Sample *pSample = Sample::fromXml( pSamples );
+                     if( pSample )
+                     {
+                        pPart->m_Samples.push_back( pSample );
+                     }
+                  }
                }
             }
          }
@@ -258,8 +278,8 @@ void Part::addSample( Sample *pSample )
 
 /*----------------------------------------------------------------------------*/
 /*! 2024-06-28
-\param pSample The sample to be removed from this part. All currently playing 
-voices containing the sample will be stopped. The sample itself will not  be 
+\param pSample The sample to be removed from this part. All currently playing
+voices containing the sample will be stopped. The sample itself will not  be
 deleted from memory.
 */
 /*----------------------------------------------------------------------------*/
@@ -288,8 +308,8 @@ void Part::removeSample( Sample *pSample )
 
 /*----------------------------------------------------------------------------*/
 /*! 2024-06-28
-\param pSample The sample to be removed from this part. All currently playing 
-voices containing the sample will be stopped. The sample itself will  be 
+\param pSample The sample to be removed from this part. All currently playing
+voices containing the sample will be stopped. The sample itself will  be
 deleted from memory.
 */
 /*----------------------------------------------------------------------------*/

@@ -10,8 +10,7 @@
 
 #include <set>
 #include <vector>
-
-#include <juce_audio_processors/juce_audio_processors.h>
+#include <libxml/tree.h>
 
 #include "WaveFile.h"
 #include "ENV.h"
@@ -44,8 +43,8 @@ namespace SamplerEngine
       Sample( std::string name, WaveFile *pWave, int minNote, int maxNote, int nLayer );
       ~Sample();
 
-      static Sample *fromXml( const juce::XmlElement *pe );
-      juce::XmlElement *toXml() const;
+      static Sample *fromXml( xmlNode *pe );
+      xmlNode *toXml() const;
 
       std::string getName() const;
       void setName( std::string name );

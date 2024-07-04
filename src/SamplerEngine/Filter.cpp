@@ -169,29 +169,28 @@ Recreate the Filter from an XmlElement
 \return The new Filter object
 */
 /*----------------------------------------------------------------------------*/
-Filter *Filter::fromXml( const juce::XmlElement *pe )
+Filter *Filter::fromXml( xmlNode *pe )
 {
-   if( pe->getTagName() != "filter" )
+   if( std::string( (char*)pe->name ) != "filter" )
       return( nullptr );
 
    Filter *pFilter = new Filter();
 
-   for( int i = 0; pe->getChildElement( i ); i++ )
+   for( xmlNode *pChild = pe->children; pChild; pChild = pChild->next )
    {
-      juce::XmlElement *pChild = pe->getChildElement( i );
-      std::string tagName = pChild->getTagName().toStdString();
+      std::string tagName = std::string( (char*)pChild->name );
 
       if( tagName == "cutoff" )
       {
-         pFilter->setCutoff( std::stof( pChild->getChildElement( 0 )->getText().toStdString() ) );
+         pFilter->setCutoff( std::stof( std::string( (char*)pChild->children->content ) ) );
       } else
       if( tagName == "resonance" )
       {
-         pFilter->setResonance( std::stof( pChild->getChildElement( 0 )->getText().toStdString() ) );
+         pFilter->setResonance( std::stof( std::string( (char*)pChild->children->content ) ) );
       } else
       if( tagName == "type" )
       {
-         pFilter->setType( fromString( pChild->getChildElement( 0 )->getText().toStdString() ) );
+         pFilter->setType( fromString( std::string( (char*)pChild->children->content ) ) );
       }
    }
 
@@ -205,21 +204,21 @@ Create an XmlElement from the Filter settings
 \return Pointer to the XmlElement
 */
 /*----------------------------------------------------------------------------*/
-juce::XmlElement *Filter::toXml() const
+xmlNode *Filter::toXml() const
 {
-   juce::XmlElement *pe = new juce::XmlElement( "filter" );
+   xmlNode *pe = xmlNewNode( nullptr, (xmlChar *)"filter" );
 
-   juce::XmlElement *peCutoff = new juce::XmlElement( "cutoff" );
-   peCutoff->addTextElement( stdformat( "{}", m_Cutoff ) );
-   pe->addChildElement( peCutoff );
+   xmlNode *peCutoff = xmlNewNode( nullptr, (xmlChar *)"cutoff" );
+   xmlAddChild( peCutoff, xmlNewText( (xmlChar *)stdformat( "{}", m_Cutoff ).c_str() ) );
+   xmlAddChild( pe, peCutoff );
 
-   juce::XmlElement *peResonance = new juce::XmlElement( "resonance" );
-   peResonance->addTextElement( stdformat( "{}", m_Resonance ) );
-   pe->addChildElement( peResonance );
+   xmlNode *peResonance = xmlNewNode( nullptr, (xmlChar *)"resonance" );
+   xmlAddChild( peResonance, xmlNewText( (xmlChar *)stdformat( "{}", m_Resonance ).c_str() ) );
+   xmlAddChild( pe, peResonance );
 
-   juce::XmlElement *peType = new juce::XmlElement( "type" );
-   peType->addTextElement( toString( m_Type ) );
-   pe->addChildElement( peType );
+   xmlNode *peType = xmlNewNode( nullptr, (xmlChar *)"type" );
+   xmlAddChild( peType, xmlNewText( (xmlChar *)toString( m_Type ).c_str() ) );
+   xmlAddChild( pe, peType );
 
    return( pe );
 }

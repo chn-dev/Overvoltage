@@ -11,6 +11,8 @@
 #include <vector>
 #include <string>
 
+#include <libxml/tree.h>
+
 #ifdef __GNUC__
    #if __cplusplus >= 202002L
       #include <format>
@@ -36,6 +38,9 @@ namespace util
    double randomValue( double min, double max );
    std::string toLower( const std::string &str );
    double clamp( double min, double max, double v );
+   std::vector<uint8_t> base64decode( const std::string &input );
+   std::string base64encode( const std::vector<uint8_t> &input );
+   std::string toString( xmlNode *pXml );
 }
 
 #endif

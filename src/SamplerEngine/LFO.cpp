@@ -723,82 +723,91 @@ Reconstruct an LFO object from a previously generated XML element (see toXml()).
 \return Pointer to the LFO object or nullptr on error
 */
 /*----------------------------------------------------------------------------*/
-LFO *LFO::fromXml( const juce::XmlElement *pe )
+LFO *LFO::fromXml( xmlNode *pe )
 {
-   if( pe->getTagName() != "lfo" )
+   if( std::string( (char*)pe->name ) != "lfo" )
       return( nullptr );
 
    LFO *pLFO = new LFO();
 
-   for( int i = 0; pe->getChildElement( i ); i++ )
+   for( xmlNode *pChild = pe->children; pChild; pChild = pChild->next )
    {
-      juce::XmlElement *pChild = pe->getChildElement( i );
-      std::string tagName = pChild->getTagName().toStdString();
+      std::string tagName = std::string( (char*)pChild->name );
 
       if( tagName == "waveform" )
       {
-         pLFO->m_Waveform = waveformFromString( util::toLower( util::trim( pChild->getChildElement( 0 )->getText().toStdString() ) ) );
+         pLFO->m_Waveform = waveformFromString( util::toLower( util::trim( std::string( (char*)pChild->children->content ) ) ) );
       } else
       if( tagName == "frequency" )
       {
-         pLFO->m_Frequency = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+         pLFO->m_Frequency = std::stof( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "syncenabled" )
       {
-         pLFO->m_SyncEnabled = util::toLower( util::trim( pChild->getChildElement( 0 )->getText().toStdString() ) ) == "true";
+         pLFO->m_SyncEnabled = util::toLower( util::trim( std::string( (char*)pChild->children->content ) ) ) == "true";
       } else
       if( tagName == "syncbeats" )
       {
-         pLFO->m_SyncBeats = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+         pLFO->m_SyncBeats = std::stof( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "delaysyncenabled" )
       {
-         pLFO->m_DelaySyncEnabled = util::toLower( util::trim( pChild->getChildElement( 0 )->getText().toStdString() ) ) == "true";
+         pLFO->m_DelaySyncEnabled = util::toLower( util::trim( std::string( (char*)pChild->children->content ) ) ) == "true";
       } else
       if( tagName == "delaysecs" )
       {
-         pLFO->m_DelaySecs = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+         pLFO->m_DelaySecs = std::stof( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "delaybeats" )
       {
-         pLFO->m_DelayBeats = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+         pLFO->m_DelayBeats = std::stof( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "fadeinsyncenabled" )
       {
-         pLFO->m_FadeInSyncEnabled = util::toLower( util::trim( pChild->getChildElement( 0 )->getText().toStdString() ) ) == "true";
+         pLFO->m_FadeInSyncEnabled = util::toLower( util::trim( std::string( (char*)pChild->children->content ) ) ) == "true";
       } else
       if( tagName == "fadeinsecs" )
       {
-         pLFO->m_FadeInSecs = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+         pLFO->m_FadeInSecs = std::stof( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "fadeinbeats" )
       {
-         pLFO->m_FadeInBeats = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+         pLFO->m_FadeInBeats = std::stof( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "onceenabled" )
       {
-         pLFO->m_OnceEnabled = util::toLower( util::trim( pChild->getChildElement( 0 )->getText().toStdString() ) ) == "true";
+         pLFO->m_OnceEnabled = util::toLower( util::trim( std::string( (char*)pChild->children->content ) ) ) == "true";
       } else
       if( tagName == "randomphaseenabled" )
       {
-         pLFO->m_RandomPhaseEnabled = util::toLower( util::trim( pChild->getChildElement( 0 )->getText().toStdString() ) ) == "true";
+         pLFO->m_RandomPhaseEnabled = util::toLower( util::trim( std::string( (char*)pChild->children->content ) ) ) == "true";
       } else
       if( tagName == "custom" )
       {
-         if( pChild->hasAttribute( "quantizeenabled" ) )
+         for( xmlAttr *pAttr = pChild->properties; pAttr; pAttr = pAttr->next )
          {
-            pLFO->m_CustomQuantizeEnabled = util::toLower( util::trim( pChild->getStringAttribute( "quantizeenabled" ).toStdString() ) ) == "true";
-         }
+            if( pAttr->type == XML_ATTRIBUTE_NODE )
+            {
+               std::string name = std::string( (char*)pAttr->name );
+               xmlChar* pValue = xmlNodeListGetString( pe->doc, pAttr->children, 1 );
+               std::string value = std::string( (char*)pValue );
+               xmlFree( pValue );
 
-         if( pChild->hasAttribute( "quantize") )
-         {
-            pLFO->m_CustomQuantize = std::stoul( util::trim( pChild->getStringAttribute( "quantize" ).toStdString() ) );
+               if( name == "quantizeenabled" )
+               {
+                  pLFO->m_CustomQuantizeEnabled = util::toLower( util::trim( value ) ) == "true";
+               } else
+               if( name == "quantize" )
+               {
+                  pLFO->m_CustomQuantize = std::stoul( util::trim( value ) );
+               }
+            }
          }
 
          std::vector<std::string> sVals =
             util::strsplit(
                util::trim(
-                  pChild->getChildElement( 0 )->getText().toStdString() ), ",", false );
+                  std::string( (char*)pChild->children->content ) ), ",", false );
          std::vector<double> dVals;
          for( size_t j = 0; j < sVals.size(); j++ )
          {
@@ -818,69 +827,68 @@ Create an XML element from the LFO settings.
 \return Pointer to the new XML element
 */
 /*----------------------------------------------------------------------------*/
-juce::XmlElement *LFO::toXml() const
+xmlNode *LFO::toXml() const
 {
-   juce::XmlElement *pe = new juce::XmlElement( "lfo" );
+   xmlNode *pe = xmlNewNode( nullptr, (xmlChar *)"lfo" );
 
-   juce::XmlElement *peWaveform = new juce::XmlElement( "waveform" );
-   peWaveform->addTextElement( stdformat( "{}", toString( m_Waveform ) ) );
-   pe->addChildElement( peWaveform );
+   xmlNode *peWaveform = xmlNewNode( nullptr, (xmlChar *)"waveform" );
+   xmlAddChild( peWaveform, xmlNewText( (xmlChar *)stdformat( "{}", toString( m_Waveform ) ).c_str() ) );
+   xmlAddChild( pe, peWaveform );
 
-   juce::XmlElement *peFrequency = new juce::XmlElement( "frequency" );
-   peFrequency->addTextElement( stdformat( "{}", m_Frequency ) );
-   pe->addChildElement( peFrequency );
+   xmlNode *peFrequency = xmlNewNode( nullptr, (xmlChar *)"frequency" );
+   xmlAddChild( peFrequency, xmlNewText( (xmlChar *)stdformat( "{}", m_Frequency ).c_str() ) );
+   xmlAddChild( pe, peFrequency );
 
-   juce::XmlElement *peSyncEnabled = new juce::XmlElement( "syncenabled" );
-   peSyncEnabled->addTextElement( m_SyncEnabled ? "true" : "false" );
-   pe->addChildElement( peSyncEnabled );
+   xmlNode *peSyncEnabled = xmlNewNode( nullptr, (xmlChar *)"syncenabled" );
+   xmlAddChild( peSyncEnabled, xmlNewText( (xmlChar *)( m_SyncEnabled ? "true" : "false" ) ) );
+   xmlAddChild( pe, peSyncEnabled );
 
-   juce::XmlElement *peSyncBeats = new juce::XmlElement( "syncbeats" );
-   peSyncBeats->addTextElement( stdformat( "{:.2f}", m_SyncBeats ) );
-   pe->addChildElement( peSyncBeats );
+   xmlNode *peSyncBeats = xmlNewNode( nullptr, (xmlChar *)"syncbeats" );
+   xmlAddChild( peSyncBeats, xmlNewText( (xmlChar *)stdformat( "{:.2f}", m_SyncBeats ).c_str() ) );
+   xmlAddChild( pe, peSyncBeats );
 
-   juce::XmlElement *peDelaySyncEnabled = new juce::XmlElement( "delaysyncenabled" );
-   peDelaySyncEnabled->addTextElement( m_DelaySyncEnabled ? "true" : "false" );
-   pe->addChildElement( peDelaySyncEnabled );
+   xmlNode *peDelaySyncEnabled = xmlNewNode( nullptr, (xmlChar *)"delaysyncenabled" );
+   xmlAddChild( peDelaySyncEnabled, xmlNewText( (xmlChar *)( m_DelaySyncEnabled ? "true" : "false" ) ) );
+   xmlAddChild( pe, peDelaySyncEnabled );
 
-   juce::XmlElement *peDelaySecs = new juce::XmlElement( "delaysecs" );
-   peDelaySecs->addTextElement( stdformat( "{:.2f}", m_DelaySecs ) );
-   pe->addChildElement( peDelaySecs );
+   xmlNode *peDelaySecs = xmlNewNode( nullptr, (xmlChar *)"delaysecs" );
+   xmlAddChild( peDelaySecs, xmlNewText( (xmlChar *)stdformat( "{:.2f}", m_DelaySecs ).c_str() ) );
+   xmlAddChild( pe, peDelaySecs );
 
-   juce::XmlElement *peDelayBeats = new juce::XmlElement( "delaybeats" );
-   peDelayBeats->addTextElement( stdformat( "{:.2f}", m_DelayBeats ) );
-   pe->addChildElement( peDelayBeats );
+   xmlNode *peDelayBeats = xmlNewNode( nullptr, (xmlChar *)"delaybeats" );
+   xmlAddChild( peDelayBeats, xmlNewText( (xmlChar *)stdformat( "{:.2f}", m_DelayBeats ).c_str() ) );
+   xmlAddChild( pe, peDelayBeats );
 
-   juce::XmlElement *peFadeInSyncEnabled = new juce::XmlElement( "fadeinsyncenabled" );
-   peFadeInSyncEnabled->addTextElement( m_FadeInSyncEnabled ? "true" : "false" );
-   pe->addChildElement( peFadeInSyncEnabled );
+   xmlNode *peFadeInSyncEnabled = xmlNewNode( nullptr, (xmlChar *)"fadeinsyncenabled" );
+   xmlAddChild( peFadeInSyncEnabled, xmlNewText( (xmlChar *)( m_FadeInSyncEnabled ? "true" : "false" ) ) );
+   xmlAddChild( pe, peFadeInSyncEnabled );
 
-   juce::XmlElement *peFadeInSecs = new juce::XmlElement( "fadeinsecs" );
-   peFadeInSecs->addTextElement( stdformat( "{:.2f}", m_FadeInSecs ) );
-   pe->addChildElement( peFadeInSecs );
+   xmlNode *peFadeInSecs = xmlNewNode( nullptr, (xmlChar *)"fadeinsecs" );
+   xmlAddChild( peFadeInSecs, xmlNewText( (xmlChar *)stdformat( "{:.2f}", m_FadeInSecs ).c_str() ) );
+   xmlAddChild( pe, peFadeInSecs );
 
-   juce::XmlElement *peFadeInBeats = new juce::XmlElement( "fadeinbeats" );
-   peFadeInBeats->addTextElement( stdformat( "{:.2f}", m_FadeInBeats ) );
-   pe->addChildElement( peFadeInBeats );
+   xmlNode *peFadeInBeats = xmlNewNode( nullptr, (xmlChar *)"fadeinbeats" );
+   xmlAddChild( peFadeInBeats, xmlNewText( (xmlChar *)stdformat( "{:.2f}", m_FadeInBeats ).c_str() ) );
+   xmlAddChild( pe, peFadeInBeats );
 
-   juce::XmlElement *peOnceEnabled = new juce::XmlElement( "onceenabled" );
-   peOnceEnabled->addTextElement( m_OnceEnabled ? "true" : "false" );
-   pe->addChildElement( peOnceEnabled );
+   xmlNode *peOnceEnabled = xmlNewNode( nullptr, (xmlChar *)"onceenabled" );
+   xmlAddChild( peOnceEnabled, xmlNewText( (xmlChar *)( m_OnceEnabled ? "true" : "false" ) ) );
+   xmlAddChild( pe, peOnceEnabled );
 
-   juce::XmlElement *peRandomPhaseEnabled = new juce::XmlElement( "randomphaseenabled" );
-   peRandomPhaseEnabled->addTextElement( m_RandomPhaseEnabled ? "true" : "false" );
-   pe->addChildElement( peRandomPhaseEnabled );
+   xmlNode *peRandomPhaseEnabled = xmlNewNode( nullptr, (xmlChar *)"randomphaseenabled" );
+   xmlAddChild( peRandomPhaseEnabled, xmlNewText( (xmlChar *)( m_RandomPhaseEnabled ? "true" : "false" ) ) );
+   xmlAddChild( pe, peRandomPhaseEnabled );
 
-   juce::XmlElement *peCustom = new juce::XmlElement( "custom" );
-   peCustom->setAttribute( "quantizeenabled", m_CustomQuantizeEnabled ? "true" : "false" );
-   peCustom->setAttribute( "quantize", stdformat( "{}", m_CustomQuantize ) );
+   xmlNode *peCustom = xmlNewNode( nullptr, (xmlChar *)"custom" );
+   xmlNewProp( peCustom, (xmlChar *)"quantizeenabled", (xmlChar *)( m_CustomQuantizeEnabled ? "true" : "false" ) );
+   xmlNewProp( peCustom, (xmlChar *)"quantize", (xmlChar *)stdformat( "{}", m_CustomQuantize ).c_str() );
    std::vector<std::string> vals;
    for( size_t i = 0; i < m_Custom.size(); i++ )
    {
       vals.push_back( stdformat( "{:.2f}", m_Custom[i] ) );
    }
-   peCustom->addTextElement( util::strjoin( vals, "," ) );
-   pe->addChildElement( peCustom );
+   xmlAddChild( peCustom, xmlNewText( (xmlChar *)util::strjoin( vals, "," ).c_str() ) );
+   xmlAddChild( pe, peCustom );
 
    return( pe );
 }
-

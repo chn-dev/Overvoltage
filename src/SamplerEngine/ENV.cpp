@@ -7,6 +7,8 @@
 /*----------------------------------------------------------------------------*/
 #include <string>
 #include <math.h>
+#include <libxml/parser.h>
+#include <libxml/tree.h>
 
 #include "ENV.h"
 
@@ -63,33 +65,32 @@ Reconstruct an ENV object from a previously generated XML element (see toXml()).
 \return Pointer to the ENV object or nullptr on error
 */
 /*----------------------------------------------------------------------------*/
-ENV *ENV::fromXml( const juce::XmlElement *pe )
+ENV *ENV::fromXml( xmlNode *pe )
 {
-   if( pe->getTagName() != "envelope" )
+   if( std::string( (char*)pe->name ) != "envelope" )
       return( nullptr );
 
    ENV *pENV = new ENV();
 
-   for( int i = 0; pe->getChildElement( i ); i++ )
+   for( xmlNode *pChild = pe->children; pChild; pChild = pChild->next )
    {
-      juce::XmlElement *pChild = pe->getChildElement( i );
-      std::string tagName = pChild->getTagName().toStdString();
+      std::string tagName = std::string( (char*)pChild->name );
 
       if( tagName == "attack" )
       {
-         pENV->m_Attack = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+         pENV->m_Attack = std::stof( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "decay" )
       {
-         pENV->m_Decay = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+         pENV->m_Decay = std::stof( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "sustain" )
       {
-         pENV->m_Sustain = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+         pENV->m_Sustain = std::stof( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "release" )
       {
-         pENV->m_Release = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+         pENV->m_Release = std::stof( std::string( (char*)pChild->children->content ) );
       }
    }
 
@@ -103,25 +104,25 @@ Create an XML element from the ENV settings.
 \return Pointer to the new XML element
 */
 /*----------------------------------------------------------------------------*/
-juce::XmlElement *ENV::toXml() const
+xmlNode *ENV::toXml() const
 {
-   juce::XmlElement *pe = new juce::XmlElement( "envelope" );
+   xmlNode *pe = xmlNewNode( nullptr, (xmlChar *)"envelope" );
 
-   juce::XmlElement *peAttack = new juce::XmlElement( "attack" );
-   peAttack->addTextElement( stdformat( "{}", m_Attack ) );
-   pe->addChildElement( peAttack );
+   xmlNode *peAttack = xmlNewNode( nullptr, (xmlChar *)"attack" );
+   xmlAddChild( peAttack, xmlNewText( (xmlChar *)stdformat( "{}", m_Attack ).c_str() ) );
+   xmlAddChild( pe, peAttack );
 
-   juce::XmlElement *peDecay = new juce::XmlElement( "decay" );
-   peDecay->addTextElement( stdformat( "{}", m_Decay ) );
-   pe->addChildElement( peDecay );
+   xmlNode *peDecay = xmlNewNode( nullptr, (xmlChar *)"decay" );
+   xmlAddChild( peDecay, xmlNewText( (xmlChar *)stdformat( "{}", m_Decay ).c_str() ) );
+   xmlAddChild( pe, peDecay );
 
-   juce::XmlElement *peSustain = new juce::XmlElement( "sustain" );
-   peSustain->addTextElement( stdformat( "{}", m_Sustain ) );
-   pe->addChildElement( peSustain );
+   xmlNode *peSustain = xmlNewNode( nullptr, (xmlChar *)"sustain" );
+   xmlAddChild( peSustain, xmlNewText( (xmlChar *)stdformat( "{}", m_Sustain ).c_str() ) );
+   xmlAddChild( pe, peSustain );
 
-   juce::XmlElement *peRelease = new juce::XmlElement( "release" );
-   peRelease->addTextElement( stdformat( "{}", m_Release ) );
-   pe->addChildElement( peRelease );
+   xmlNode *peRelease = xmlNewNode( nullptr, (xmlChar *)"release" );
+   xmlAddChild( peRelease, xmlNewText( (xmlChar *)stdformat( "{}", m_Release ).c_str() ) );
+   xmlAddChild( pe, peRelease );
 
    return( pe );
 }

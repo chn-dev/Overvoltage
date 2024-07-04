@@ -11,6 +11,8 @@
 #include "Part.h"
 #include "Voice.h"
 
+#include <libxml/tree.h>
+
 #define SAMPLERENGINE_NUMLAYERS 8
 #define SAMPLERENGINE_NUMPARTS 16
 
@@ -76,10 +78,10 @@ namespace SamplerEngine
 
       bool isPlaying( size_t nPart, const Sample *pSample ) const;
 
-      void importPart( size_t nPart, juce::XmlElement *pXmlPart );
+      void importPart( size_t nPart, xmlNode *pXmlPart );
 
-      static Engine *fromXml( const juce::XmlElement *peOvervoltage );
-      juce::XmlElement *toXml() const;
+      xmlNode *toXml() const;
+      static Engine *fromXml( xmlNode *peOvervoltage );
 
    private:
       PluginProcessor *m_pProcessor;

@@ -108,93 +108,93 @@ Create an XML element from the Sample settings.
 \return Pointer to the new XML element
 */
 /*----------------------------------------------------------------------------*/
-juce::XmlElement *Sample::toXml() const
+xmlNode *Sample::toXml() const
 {
-   juce::XmlElement *peSample = new juce::XmlElement( "sample" );
-   peSample->setAttribute( "name", juce::String( m_Name ) );
+   xmlNode *peSample = xmlNewNode( nullptr, (xmlChar *)"sample" );
+   xmlNewProp( peSample, (xmlChar *)"name", (xmlChar *)m_Name.c_str() );
 
-   juce::XmlElement *pePlaymode = new juce::XmlElement( "playmode" );
-   pePlaymode->addTextElement( toString( m_PlayMode ) );
-   peSample->addChildElement( pePlaymode );
+   xmlNode *pePlaymode = xmlNewNode( nullptr, (xmlChar *)"playmode" );
+   xmlAddChild( pePlaymode, xmlNewText( (xmlChar *)toString( m_PlayMode ).c_str() ) );
+   xmlAddChild( peSample, pePlaymode );
 
-   juce::XmlElement *peDetune = new juce::XmlElement( "detune" );
-   peDetune->addTextElement( stdformat( "{}", m_DetuneCents ) );
-   peSample->addChildElement( peDetune );
+   xmlNode *peDetune = xmlNewNode( nullptr, (xmlChar *)"detune" );
+   xmlAddChild( peDetune, xmlNewText( (xmlChar *)stdformat( "{}", m_DetuneCents ).c_str() ) );
+   xmlAddChild( peSample, peDetune );
 
-   juce::XmlElement *pePan = new juce::XmlElement( "pan" );
-   pePan->addTextElement( stdformat( "{}", m_Pan ) );
-   peSample->addChildElement( pePan );
+   xmlNode *pePan = xmlNewNode( nullptr, (xmlChar *)"pan" );
+   xmlAddChild( pePan, xmlNewText( (xmlChar *)stdformat( "{}", m_Pan ).c_str() ) );
+   xmlAddChild( peSample, pePan );
 
-   juce::XmlElement *peGain = new juce::XmlElement( "gain" );
-   peGain->addTextElement( stdformat( "{}", m_Gain ) );
-   peSample->addChildElement( peGain );
+   xmlNode *peGain = xmlNewNode( nullptr, (xmlChar *)"gain" );
+   xmlAddChild( peGain, xmlNewText( (xmlChar *)stdformat( "{}", m_Gain ).c_str() ) );
+   xmlAddChild( peSample, peGain );
 
-   juce::XmlElement *peKeytrack = new juce::XmlElement( "keytrack" );
-   peKeytrack->addTextElement( stdformat( "{}", m_Keytrack ) );
-   peSample->addChildElement( peKeytrack );
+   xmlNode *peKeytrack = xmlNewNode( nullptr, (xmlChar *)"keytrack" );
+   xmlAddChild( peKeytrack, xmlNewText( (xmlChar *)stdformat( "{}", m_Keytrack ).c_str() ) );
+   xmlAddChild( peSample, peKeytrack );
 
-   juce::XmlElement *pePitchbendRange = new juce::XmlElement( "pitchbendrange" );
-   pePitchbendRange->addTextElement( stdformat( "{}", m_PitchbendRange ) );
-   peSample->addChildElement( pePitchbendRange );
+   xmlNode *pePitchbendRange = xmlNewNode( nullptr, (xmlChar *)"pitchbendrange" );
+   xmlAddChild( pePitchbendRange, xmlNewText( (xmlChar *)stdformat( "{}", m_PitchbendRange ).c_str() ) );
+   xmlAddChild( peSample, pePitchbendRange );
 
-   juce::XmlElement *peReverse = new juce::XmlElement( "reverse" );
-   peReverse->addTextElement( m_Reverse ? "true" : "false" );
-   peSample->addChildElement( peReverse );
+   xmlNode *peReverse = xmlNewNode( nullptr, (xmlChar *)"reverse" );
+   xmlAddChild( peReverse, xmlNewText( (xmlChar *)( m_Reverse ? "true" : "false" ) ) );
+   xmlAddChild( peSample, peReverse );
 
-   juce::XmlElement *peBaseNote = new juce::XmlElement( "basenote" );
-   peBaseNote->addTextElement( stdformat( "{}", m_BaseNote ) );
-   peSample->addChildElement( peBaseNote );
+   xmlNode *peBaseNote = xmlNewNode( nullptr, (xmlChar *)"basenote" );
+   xmlAddChild( peBaseNote, xmlNewText( (xmlChar *)stdformat( "{}", m_BaseNote ).c_str() ) );
+   xmlAddChild( peSample, peBaseNote );
 
-   juce::XmlElement *peMinNote = new juce::XmlElement( "minnote" );
-   peMinNote->addTextElement( stdformat( "{}", m_MinNote ) );
-   peSample->addChildElement( peMinNote );
+   xmlNode *peMinNote = xmlNewNode( nullptr, (xmlChar *)"minnote" );
+   xmlAddChild( peMinNote, xmlNewText( (xmlChar *)stdformat( "{}", m_MinNote ).c_str() ) );
+   xmlAddChild( peSample, peMinNote );
 
-   juce::XmlElement *peMaxNote = new juce::XmlElement( "maxnote" );
-   peMaxNote->addTextElement( stdformat( "{}", m_MaxNote ) );
-   peSample->addChildElement( peMaxNote );
+   xmlNode *peMaxNote = xmlNewNode( nullptr, (xmlChar *)"maxnote" );
+   xmlAddChild( peMaxNote, xmlNewText( (xmlChar *)stdformat( "{}", m_MaxNote ).c_str() ) );
+   xmlAddChild( peSample, peMaxNote );
 
-   juce::XmlElement *peMinVelocity = new juce::XmlElement( "minvelocity" );
-   peMinVelocity->addTextElement( stdformat( "{}", m_MinVelocity ) );
-   peSample->addChildElement( peMinVelocity );
+   xmlNode *peMinVelocity = xmlNewNode( nullptr, (xmlChar *)"minvelocity" );
+   xmlAddChild( peMinVelocity, xmlNewText( (xmlChar *)stdformat( "{}", m_MinVelocity ).c_str() ) );
+   xmlAddChild( peSample, peMinVelocity );
 
-   juce::XmlElement *peMaxVelocity = new juce::XmlElement( "maxvelocity" );
-   peMaxVelocity->addTextElement( stdformat( "{}", m_MaxVelocity ) );
-   peSample->addChildElement( peMaxVelocity );
+   xmlNode *peMaxVelocity = xmlNewNode( nullptr, (xmlChar *)"maxvelocity" );
+   xmlAddChild( peMaxVelocity, xmlNewText( (xmlChar *)stdformat( "{}", m_MaxVelocity ).c_str() ) );
+   xmlAddChild( peSample, peMaxVelocity );
 
-   juce::XmlElement *peLayer = new juce::XmlElement( "layer" );
-   peLayer->addTextElement( stdformat( "{}", m_NLayer ) );
-   peSample->addChildElement( peLayer );
+   xmlNode *peLayer = xmlNewNode( nullptr, (xmlChar *)"layer" );
+   xmlAddChild( peLayer, xmlNewText( (xmlChar *)stdformat( "{}", m_NLayer ).c_str() ) );
+   xmlAddChild( peSample, peLayer );
 
-   juce::XmlElement *peOutputBus = new juce::XmlElement( "outputbus" );
-   peOutputBus->addTextElement( stdformat( "{}", m_OutputBus ) );
-   peSample->addChildElement( peOutputBus );
+   xmlNode *peOutputBus = xmlNewNode( nullptr, (xmlChar *)"outputbus" );
+   xmlAddChild( peOutputBus, xmlNewText( (xmlChar *)stdformat( "{}", m_OutputBus ).c_str() ) );
+   xmlAddChild( peSample, peOutputBus );
 
-   juce::XmlElement *peAEG = m_pAEG->toXml();
-   peAEG->setAttribute( "type", "amplitude" );
-   peSample->addChildElement( peAEG );
+   xmlNode *peAEG = m_pAEG->toXml();
+   xmlNewProp( peAEG, (xmlChar *)"type", (xmlChar *)"amplitude" );
+   xmlAddChild( peSample, peAEG );
 
-   juce::XmlElement *peEG2 = m_pEG2->toXml();
-   peEG2->setAttribute( "type", "eg2" );
-   peSample->addChildElement( peEG2 );
+   xmlNode *peEG2 = m_pEG2->toXml();
+   xmlNewProp( peEG2, (xmlChar *)"type", (xmlChar *)"eg2" );
+   xmlAddChild( peSample, peEG2 );
 
    for( size_t i = 0; i < m_LFOs.size(); i++ )
    {
       if( m_LFOs[i] )
       {
-         juce::XmlElement *peLFO = m_LFOs[i]->toXml();
-         peLFO->setAttribute( "num", stdformat( "{}", i ) );
-         peSample->addChildElement( peLFO );
+         xmlNode *peLFO = m_LFOs[i]->toXml();
+         xmlNewProp( peLFO, (xmlChar *)"num", (xmlChar *)stdformat( "{}", i ).c_str() );
+         xmlAddChild( peSample, peLFO );
       }
    }
 
-   juce::XmlElement *peFilter = m_pFilter->toXml();
-   peSample->addChildElement( peFilter );
+   xmlNode *peFilter = m_pFilter->toXml();
+   xmlAddChild( peSample, peFilter );
 
-   juce::XmlElement *peModMatrix = m_pModMatrix->toXml();
-   peSample->addChildElement( peModMatrix );
+   xmlNode *peModMatrix = m_pModMatrix->toXml();
+   xmlAddChild( peSample, peModMatrix );
 
-   juce::XmlElement *peWave = m_pWave->toXml();
-   peSample->addChildElement( peWave );
+   xmlNode *peWave = m_pWave->toXml();
+   xmlAddChild( peSample, peWave );
 
    return( peSample );
 }
@@ -207,14 +207,29 @@ Reconstruct a Sample object from a previously generated XML element (see toXml()
 \return Pointer to the Sample object or nullptr on error
 */
 /*----------------------------------------------------------------------------*/
-Sample *Sample::fromXml( const juce::XmlElement *pe )
+Sample *Sample::fromXml( xmlNode *pe )
 {
-   if( !pe )
-      return( nullptr );
-   if( pe->getTagName() != "sample" )
+   if( std::string( (char*)pe->name ) != "sample" )
       return( nullptr );
 
-   std::string name = pe->getStringAttribute( "name" ).toStdString();
+   std::string sampleName;
+
+   for( xmlAttr *pAttr = pe->properties; pAttr; pAttr = pAttr->next )
+   {
+      if( pAttr->type == XML_ATTRIBUTE_NODE )
+      {
+         std::string name = std::string( (char*)pAttr->name );
+         xmlChar* pValue = xmlNodeListGetString( pe->doc, pAttr->children, 1 );
+         std::string value = std::string( (char*)pValue );
+         xmlFree( pValue );
+
+         if( name == "name" )
+         {
+            sampleName = std::string( value );
+         }
+      }
+   }
+
    PlayMode playMode = PlayModeStandard;
    float detune = 0.0;
    float pan = 0.0;
@@ -236,66 +251,65 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
    ModMatrix *pModMatrix = nullptr;
    WaveFile *pWave = nullptr;
 
-   for( int i = 0; pe->getChildElement( i ); i++ )
+   for( xmlNode *pChild = pe->children; pChild; pChild = pChild->next )
    {
-      juce::XmlElement *pChild = pe->getChildElement( i );
-      std::string tagName = pChild->getTagName().toStdString();
+      std::string tagName = std::string( (char*)pChild->name );
 
       if( tagName == "playmode" )
       {
-         playMode = fromString( pChild->getChildElement( 0 )->getText().toStdString() );
+         playMode = fromString( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "detune" )
       {
-         detune = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+         detune = std::stof( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "pan" )
       {
-         pan = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+         pan = std::stof( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "gain" )
       {
-         gain = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+         gain = std::stof( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "keytrack" )
       {
-         keytrack = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+         keytrack = std::stof( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "pitchbendrange" )
       {
-         pitchbendRange = std::stof( pChild->getChildElement( 0 )->getText().toStdString() );
+         pitchbendRange = std::stof( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "reverse" )
       {
-         reverse = pChild->getChildElement( 0 )->getText() == "true";
+         reverse = std::string( (char*)pChild->children->content ) == "true";
       } else
       if( tagName == "basenote" )
       {
-         baseNote = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+         baseNote = std::stoi( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "minnote" )
       {
-         minNote = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+         minNote = std::stoi( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "maxnote" )
       {
-         maxNote = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+         maxNote = std::stoi( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "minvelocity" )
       {
-         minVelocity = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+         minVelocity = std::stoi( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "maxvelocity" )
       {
-         maxVelocity = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+         maxVelocity = std::stoi( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "layer" )
       {
-         nLayer = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+         nLayer = std::stoi( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "outputbus" )
       {
-         outputBus = std::stoi( pChild->getChildElement( 0 )->getText().toStdString() );
+         outputBus = std::stoi( std::string( (char*)pChild->children->content ) );
       } else
       if( tagName == "filter" )
       {
@@ -307,7 +321,23 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       } else
       if( tagName == "lfo" )
       {
-         size_t num = (size_t)std::stoi( pChild->getStringAttribute( "num" ).toStdString() );
+         size_t num = 0;
+         for( xmlAttr *pAttr = pChild->properties; pAttr; pAttr = pAttr->next )
+         {
+            if( pAttr->type == XML_ATTRIBUTE_NODE )
+            {
+               std::string name = std::string( (char*)pAttr->name );
+               xmlChar* pValue = xmlNodeListGetString( pe->doc, pAttr->children, 1 );
+               std::string value = std::string( (char*)pValue );
+               xmlFree( pValue );
+
+               if( name == "num" )
+               {
+                  num = (size_t)std::stoi( value );
+               }
+            }
+         }
+
          LFO *pLFO = LFO::fromXml( pChild );
          if( pLFO )
          {
@@ -318,7 +348,23 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       } else
       if( tagName == "envelope" )
       {
-         std::string envType = pChild->getStringAttribute( "type" ).toStdString();
+         std::string envType;
+
+         for( xmlAttr *pAttr = pChild->properties; pAttr; pAttr = pAttr->next )
+         {
+            if( pAttr->type == XML_ATTRIBUTE_NODE )
+            {
+               std::string name = std::string( (char*)pAttr->name );
+               xmlChar* pValue = xmlNodeListGetString( pe->doc, pAttr->children, 1 );
+               std::string value = std::string( (char*)pValue );
+               xmlFree( pValue );
+
+               if( name == "type" )
+               {
+                  envType = value;
+               }
+            }
+         }
 
          ENV *pENV = ENV::fromXml( pChild );
          if( pENV )
@@ -372,7 +418,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
       }
    }
 
-   if( pWave && !name.empty() &&
+   if( pWave && !sampleName.empty() &&
        baseNote >= 0 && minNote >= 0 &&
        maxNote >= 0 && minVelocity >= 0 &&
        outputBus >= 0 &&
@@ -381,7 +427,7 @@ Sample *Sample::fromXml( const juce::XmlElement *pe )
    {
       Sample *pSample = new Sample();
 
-      pSample->m_Name = name;
+      pSample->m_Name = sampleName;
       pSample->m_pAEG = pAEG;
       pSample->m_pEG2 = pEG2;
       pSample->m_LFOs = lfos;
