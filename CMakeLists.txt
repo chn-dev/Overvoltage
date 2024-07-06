@@ -21,8 +21,11 @@ find_package(LibXml2 REQUIRED)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
    find_package(fmt REQUIRED)
    set( FMTLIB "fmt::fmt" )
+   set( BCRYPT )
 else()
    set( FMTLIB )
+   set( BCRYPT "bcrypt" )
+   add_compile_definitions( LIBXML_STATIC )
 endif()
 
 
@@ -124,7 +127,8 @@ target_link_libraries(Overvoltage
         juce::juce_audio_utils
     PUBLIC
         ${FMTLIB}
-	${LIBXML2_LIBRARIES}
+        ${LIBXML2_LIBRARIES}
+        ${BCRYPT}
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags)
