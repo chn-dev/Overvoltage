@@ -6,6 +6,7 @@
 */
 /*----------------------------------------------------------------------------*/
 #include <math.h>
+#include <string.h>
 #include <string>
 
 #include <DSP/DFT.h>

@@ -5,6 +5,7 @@
 \brief This class implements a MIDI Part of the sampler engine
 */
 /*----------------------------------------------------------------------------*/
+#include <algorithm>
 #include <string>
 
 #include "SamplerEngine.h"
