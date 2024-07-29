@@ -14,6 +14,8 @@
 
 #include <libxml/tree.h>
 
+#define SAMPLERENGINE_NUMMODSLOTS 5
+
 //==============================================================================
 namespace SamplerEngine
 {
@@ -144,7 +146,7 @@ namespace SamplerEngine
          double m_Amt;
       };
 
-      ModMatrix();
+      ModMatrix( size_t numSlots = 0 );
       ~ModMatrix();
 
       size_t numSlots() const;

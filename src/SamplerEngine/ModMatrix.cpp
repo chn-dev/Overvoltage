@@ -455,8 +455,12 @@ xmlNode *ModMatrix::ModSlot::toXml() const
 Constructor
 */
 /*----------------------------------------------------------------------------*/
-ModMatrix::ModMatrix()
+ModMatrix::ModMatrix( size_t numSlots )
 {
+   for( size_t i = 0; i < numSlots; i++ )
+   {
+      m_ModSlots.push_back( new ModSlot() );
+   }
 }
 
 
@@ -490,21 +494,26 @@ ModMatrix *ModMatrix::fromXml( xmlNode *pe )
    ModMatrix *pModMatrix = new ModMatrix();
    pModMatrix->m_ModSlots.clear();
 
+   size_t nSlots = 0;
    for( xmlNode *pChild = pe->children; pChild; pChild = pChild->next )
    {
       std::string tagName = std::string( (char*)pChild->name );
 
       if( tagName == "modslot" )
       {
-         ModSlot *pModSlot = ModSlot::fromXml( pChild );
-         if( pModSlot )
+         if( pModMatrix->m_ModSlots.size() < SAMPLERENGINE_NUMMODSLOTS )
          {
-            pModMatrix->m_ModSlots.push_back( pModSlot );
+            ModSlot *pModSlot = ModSlot::fromXml( pChild );
+            if( pModSlot )
+            {
+               pModMatrix->m_ModSlots.push_back( pModSlot );
+               nSlots++;
+            }
          }
       }
    }
 
-   if( pModMatrix->m_ModSlots.size() < 5 )
+   if( pModMatrix->m_ModSlots.size() < SAMPLERENGINE_NUMMODSLOTS )
    {
       for( size_t i = 0; i < 5 - pModMatrix->m_ModSlots.size(); i++ )
       {

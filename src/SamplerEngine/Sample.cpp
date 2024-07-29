@@ -47,7 +47,7 @@ Sample::Sample( std::string name, WaveFile *pWave, int minNote, int maxNote, int
       m_LFOs.push_back( new LFO() );
    }
    m_pFilter = new Filter();
-   m_pModMatrix = new ModMatrix();
+   m_pModMatrix = new ModMatrix( SAMPLERENGINE_NUMMODSLOTS );
 }
 
 
