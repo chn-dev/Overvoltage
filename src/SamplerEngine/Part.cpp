@@ -55,8 +55,10 @@ Called on a regular bases to process the part and produce new audio data.
 bool Part::process( std::vector<OutputBus> &buses, double sampleRate, double bpm )
 {
    std::set<Voice *> stoppedVoices;
+   int n = 0;
    for( auto k = m_Voices.begin(); k != m_Voices.end(); k++ )
    {
+      n++;
       Voice *pVoice = k->second;
       size_t busNum;
       if( pVoice->sample()->getOutputBus() < 0 )
@@ -68,24 +70,26 @@ bool Part::process( std::vector<OutputBus> &buses, double sampleRate, double bpm
       {
          stoppedVoices.insert( pVoice );
       } else
-         if( !buses[busNum].isValid() )
+      if( !buses[busNum].isValid() )
+      {
+         stoppedVoices.insert( pVoice );
+      } else
+      if( buses[busNum].getWritePointers().size() != 2 )
+      {
+         stoppedVoices.insert( pVoice );
+      } else
+      {
+         float *pLeft = buses[busNum].getWritePointers()[0];
+         float *pRight = buses[busNum].getWritePointers()[1];
+
+         if( !pVoice->process( pLeft, pRight, buses[busNum].getNumSamples(), sampleRate, bpm ) )
          {
             stoppedVoices.insert( pVoice );
-         } else
-            if( buses[busNum].getWritePointers().size() != 2 )
-            {
-               stoppedVoices.insert( pVoice );
-            } else
-            {
-               float *pLeft = buses[busNum].getWritePointers()[0];
-               float *pRight = buses[busNum].getWritePointers()[1];
-
-               if( !pVoice->process( pLeft, pRight, buses[busNum].getNumSamples(), sampleRate, bpm ) )
-               {
-                  stoppedVoices.insert( pVoice );
-               }
-            }
+         }
+      }
    }
+   if( m_PartNum == 0 )
+   printf("%d\n", n);
 
    if( stoppedVoices.size() > 0 )
    {

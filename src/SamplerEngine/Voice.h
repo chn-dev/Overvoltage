@@ -36,7 +36,7 @@ namespace SamplerEngine
 
    protected:
       bool handleLoop();
-      void handleModulations( double sampleRate, double bpm );
+      bool handleModulations( double sampleRate, double bpm );
       double getModValue( ModMatrix::ModSrc modSrc, double defaultValue ) const;
 
    private:

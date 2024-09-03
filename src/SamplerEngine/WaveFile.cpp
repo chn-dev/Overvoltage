@@ -179,6 +179,8 @@ WaveFile *WaveFile::fromXml( xmlNode *pe )
       pWaveFile->m_IsLooped = isLooped;
       pWaveFile->m_pData = pData;
 
+      pWaveFile->m_ToFloatLambdaFunction = pWaveFile->getToFloatLambdaFunction();
+
       return( pWaveFile );
    } else
    {
@@ -188,6 +190,65 @@ WaveFile *WaveFile::fromXml( xmlNode *pe )
       }
       return( nullptr );
    }
+}
+
+
+std::function<float( const WaveFile *, int, uint32_t )> WaveFile::getToFloatLambdaFunction() const
+{
+
+   if( numBits() == 16 )
+   {
+      if( numChannels() == 1 )
+      {
+         return(
+            []( const WaveFile *pWav, int nChan, uint32_t nSample ) -> float
+            {
+               uint32_t o = 2 * nSample;
+               uint8_t *pData = pWav->data8();
+               int16_t v = pData[o + 0] | ( pData[o + 1] << 8 );
+               return( (float)v / 32768.0 );
+            }
+         );
+      } else
+      if( numChannels() == 2 )
+      {
+         return(
+            []( const WaveFile *pWav, int nChan, uint32_t nSample ) -> float
+            {
+               uint32_t o = ( 4 * nSample ) + ( 2 * nChan );
+               uint8_t *pData = pWav->data8();
+               int16_t v = pData[o + 0] | ( pData[o + 1] << 8 );
+               return( (float)v / 32768.0 );
+            }
+         );
+      }
+   } else
+   if( numBits() == 8 )
+   {
+      if( numChannels() == 1 )
+      {
+         return(
+            []( const WaveFile *pWav, int nChan, uint32_t nSample ) -> float
+            {
+               return( (float)pWav->data8()[nSample] / 128.0 );
+            }
+         );
+      } else
+      if( numChannels() == 2 )
+      {
+         return(
+            []( const WaveFile *pWav, int nChan, uint32_t nSample ) -> float
+            {
+               uint32_t o = ( 2 * nSample ) + nChan;
+               uint8_t *pData = pWav->data8();
+               int8_t v = pData[o];
+               return( (float)v / 128.0 );
+            }
+         );
+      }
+   }
+
+   return( nullptr );
 }
 
 
@@ -338,7 +399,8 @@ float WaveFile::floatValue( int nChannel, uint32_t nSample ) const
    if( nSample >= m_nSamples )
       return( NAN );
 
-   if( m_nBits == 16 )
+   m_ToFloatLambdaFunction( this, nChannel, nSample );
+/*   if( m_nBits == 16 )
    {
       int16_t v = (int16_t)data16()[( nSample * m_nChannels ) + (uint32_t)nChannel];
       return( (float)v / 32768.0f );
@@ -350,7 +412,7 @@ float WaveFile::floatValue( int nChannel, uint32_t nSample ) const
    } else
    {
       return( NAN );
-   }
+   }*/
 }
 
 
@@ -531,6 +593,8 @@ WaveFile *WaveFile::load( std::string fname )
       pWav->m_LoopStart = 0;
       pWav->m_LoopEnd = pWav->m_nSamples - 1;
    }
+
+   pWav->m_ToFloatLambdaFunction = pWav->getToFloatLambdaFunction();
 
    return( pWav );
 }

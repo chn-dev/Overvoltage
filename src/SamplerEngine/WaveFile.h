@@ -11,6 +11,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <functional>
 
 #include <libxml/tree.h>
 
@@ -47,6 +48,8 @@ namespace SamplerEngine
       virtual int numBits() const;
       virtual uint32_t numSamples() const;
 
+      std::function<float( const WaveFile *, int, uint32_t )> getToFloatLambdaFunction() const;
+
       void dft() const;
 
       uint32_t size() const;
@@ -64,6 +67,8 @@ namespace SamplerEngine
       WaveFile();
 
    private:
+      std::function<float( const WaveFile *, int, uint32_t )> m_ToFloatLambdaFunction;
+
       uint16_t m_Format;
       uint16_t m_nChannels;
       uint32_t m_SampleRate;
