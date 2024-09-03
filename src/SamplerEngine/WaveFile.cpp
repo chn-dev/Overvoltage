@@ -393,26 +393,7 @@ Retrieve a single sample as a floating point value.
 /*----------------------------------------------------------------------------*/
 float WaveFile::floatValue( int nChannel, uint32_t nSample ) const
 {
-   if( (uint32_t)nChannel >= m_nChannels )
-      return( NAN );
-
-   if( nSample >= m_nSamples )
-      return( NAN );
-
    m_ToFloatLambdaFunction( this, nChannel, nSample );
-/*   if( m_nBits == 16 )
-   {
-      int16_t v = (int16_t)data16()[( nSample * m_nChannels ) + (uint32_t)nChannel];
-      return( (float)v / 32768.0f );
-   } else
-   if( m_nBits == 8 )
-   {
-      uint8_t v = data8()[( nSample * m_nChannels ) + (uint32_t)nChannel];
-      return( (float)v / 128 );
-   } else
-   {
-      return( NAN );
-   }*/
 }
 
 

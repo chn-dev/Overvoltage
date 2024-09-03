@@ -370,141 +370,35 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate, d
       m_LFOs[i]->getSettings( *m_pSample->getLFO( i ) );
    }
 
-   if( m_pSample->getWave()->numBits() == 16 )
+   for( size_t i = 0; i < nSamples; i++ )
    {
-      if( m_pSample->getWave()->numChannels() == 2 )
+      if( !handleLoop() )
+         return( false );
+
+      if( handleModulations( sampleRate, bpm ) )
       {
-         for( size_t i = 0; i < nSamples; i++ )
-         {
-            if( !handleLoop() )
-               return( false );
-
-            if( handleModulations( sampleRate, bpm ) )
-            {
-               if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
-                  return( false );
-            }
-
-            double panning = getPanning();
-            double lAmp = getLeftAmp( panning ) * m_pSample->getGain();
-            double rAmp = getRightAmp( panning ) * m_pSample->getGain();
-            if( m_pSample->getPlayMode() != Sample::PlayModeShot )
-            {
-               lAmp *= m_pAEG->getValue();
-               rAmp *= m_pAEG->getValue();
-            }
-
-            int o = (int)m_Ofs;
-
-            int16_t lv = pData[( 4 * o ) + 0] | ( pData[( 4 * o ) + 1] << 8 );
-            int16_t rv = pData[( 4 * o ) + 2] | ( pData[( 4 * o ) + 3] << 8 );
-
-            pLeft[i] = velocity * ( (float)lv / 32768 ) * (float)lAmp;
-            pRight[i] = velocity * ( (float)rv / 32768 ) * (float)rAmp;
-
-            m_Ofs += relSpeed;
-         }
-      } else
-      if( m_pSample->getWave()->numChannels() == 1 )
-      {
-         for( size_t i = 0; i < nSamples; i++ )
-         {
-            if( !handleLoop() )
-               return( false );
-
-            if( handleModulations( sampleRate, bpm ) )
-            {
-               if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
-                  return( false );
-            }
-
-            double panning = getPanning();
-            double lAmp = getLeftAmp( panning ) * m_pSample->getGain();
-            double rAmp = getRightAmp( panning ) * m_pSample->getGain();
-            if( m_pSample->getPlayMode() != Sample::PlayModeShot )
-            {
-               lAmp *= m_pAEG->getValue();
-               rAmp *= m_pAEG->getValue();
-            }
-
-            int o = (int)m_Ofs;
-
-            int16_t v = pData[( 2 * o ) + 0] | ( pData[( 2 * o ) + 1] << 8 );
-
-            pLeft[i] = velocity * ( (float)v / 32768 ) * (float)lAmp;
-            pRight[i] = velocity * ( (float)v / 32768 ) * (float)rAmp;
-
-            m_Ofs += relSpeed;
-         }
+         if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
+            return( false );
       }
-   } else
-   if( m_pSample->getWave()->numBits() == 8 )
-   {
-      if( m_pSample->getWave()->numChannels() == 2 )
+
+      double panning = getPanning();
+      double lAmp = getLeftAmp( panning ) * m_pSample->getGain();
+      double rAmp = getRightAmp( panning ) * m_pSample->getGain();
+      if( m_pSample->getPlayMode() != Sample::PlayModeShot )
       {
-         for( size_t i = 0; i < nSamples; i++ )
-         {
-            if( !handleLoop() )
-               return( false );
-
-            if( handleModulations( sampleRate, bpm ) )
-            {
-               if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
-                  return( false );
-            }
-
-            double panning = getPanning();
-            double lAmp = getLeftAmp( panning ) * m_pSample->getGain();
-            double rAmp = getRightAmp( panning ) * m_pSample->getGain();
-            if( m_pSample->getPlayMode() != Sample::PlayModeShot )
-            {
-               lAmp *= m_pAEG->getValue();
-               rAmp *= m_pAEG->getValue();
-            }
-
-            int o = (int)m_Ofs;
-
-            int8_t lv = (int8_t)pData[( o * 2 ) + 0];
-            int8_t rv = (int8_t)pData[( o * 2 ) + 1];
-
-            pLeft[i] = velocity * ( (float)lv / 128 ) * (float)lAmp;
-            pRight[i] = velocity * ( (float)rv / 128 ) * (float)rAmp;
-
-            m_Ofs += relSpeed;
-         }
-      } else
-      if( m_pSample->getWave()->numChannels() == 1 )
-      {
-         for( size_t i = 0; i < nSamples; i++ )
-         {
-            if( !handleLoop() )
-               return( false );
-
-            if( handleModulations( sampleRate, bpm ) )
-            {
-               if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
-                  return( false );
-            }
-
-            double panning = getPanning();
-            double lAmp = getLeftAmp( panning ) * m_pSample->getGain();
-            double rAmp = getRightAmp( panning ) * m_pSample->getGain();
-            if( m_pSample->getPlayMode() != Sample::PlayModeShot )
-            {
-               lAmp *= m_pAEG->getValue();
-               rAmp *= m_pAEG->getValue();
-            }
-
-            int o = (int)m_Ofs;
-
-            int8_t v = (int8_t)pData[o];
-
-            pLeft[i] = velocity * ( (float)v / 128 ) * (float)lAmp;
-            pRight[i] = velocity * ( (float)v / 128 ) * (float)rAmp;
-
-            m_Ofs += relSpeed;
-         }
+         lAmp *= m_pAEG->getValue();
+         rAmp *= m_pAEG->getValue();
       }
+
+      int o = (int)m_Ofs;
+
+      float lv = m_pSample->getWave()->floatValue( 0, o );
+      float rv = m_pSample->getWave()->floatValue( 1, o );
+
+      pLeft[i] = velocity * lv * (float)lAmp;
+      pRight[i] = velocity * rv * (float)rAmp;
+
+      m_Ofs += relSpeed;
    }
 
    m_pFilter->process( pLeft, pRight, nSamples, sampleRate );
