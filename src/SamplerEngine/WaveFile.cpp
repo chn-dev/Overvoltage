@@ -193,6 +193,13 @@ WaveFile *WaveFile::fromXml( xmlNode *pe )
 }
 
 
+/*----------------------------------------------------------------------------*/
+/*! 2024-09-04
+\return A lambda function
+  []( const WaveFile, int nChannel, uint32_t nSample )
+  for reading a float sample value from a WaveFile object.
+*/
+/*----------------------------------------------------------------------------*/
 std::function<float( const WaveFile *, int, uint32_t )> WaveFile::getToFloatLambdaFunction() const
 {
 

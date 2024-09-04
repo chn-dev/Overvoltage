@@ -41,8 +41,9 @@ namespace SamplerEngine
 
    private:
       double getPanning() const;
-      double getLeftAmp( double pan );
-      double getRightAmp( double pan );
+      double getLeftAmp( double pan ) const;
+      double getRightAmp( double pan ) const;
+      void getLRAmp( double &lAmp, double &rAmp ) const;
 
       const Part *m_pPart;
       const Sample *m_pSample;

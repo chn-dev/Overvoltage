@@ -328,6 +328,27 @@ double Voice::getPanning() const
 
 
 /*----------------------------------------------------------------------------*/
+/*! 2024-09-04
+Retrieve the current amplitude for the left and right channel, taking into
+account any modulations.
+\param lAmp Reference to the double variable to retrieve the left channel's amp
+\param rAmp Reference to the double variable to retrieve the right channel't amp
+*/
+/*----------------------------------------------------------------------------*/
+void Voice::getLRAmp( double &lAmp, double &rAmp ) const
+{
+   double panning = getPanning();
+   lAmp = getLeftAmp( panning ) * m_pSample->getGain();
+   rAmp = getRightAmp( panning ) * m_pSample->getGain();
+   if( m_pSample->getPlayMode() != Sample::PlayModeShot )
+   {
+      lAmp *= m_pAEG->getValue();
+      rAmp *= m_pAEG->getValue();
+   }
+}
+
+
+/*----------------------------------------------------------------------------*/
 /*! 2024-06-28
 Process the voice.
 \param pL Pointer to the left channel's sample data
@@ -370,6 +391,10 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate, d
       m_LFOs[i]->getSettings( *m_pSample->getLFO( i ) );
    }
 
+   double lAmp;
+   double rAmp;
+   getLRAmp( lAmp, rAmp );
+
    for( size_t i = 0; i < nSamples; i++ )
    {
       if( !handleLoop() )
@@ -379,15 +404,8 @@ bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate, d
       {
          if( m_pAEG->hasEnded() && m_pSample->getPlayMode() != Sample::PlayModeShot )
             return( false );
-      }
 
-      double panning = getPanning();
-      double lAmp = getLeftAmp( panning ) * m_pSample->getGain();
-      double rAmp = getRightAmp( panning ) * m_pSample->getGain();
-      if( m_pSample->getPlayMode() != Sample::PlayModeShot )
-      {
-         lAmp *= m_pAEG->getValue();
-         rAmp *= m_pAEG->getValue();
+         getLRAmp( lAmp, rAmp );
       }
 
       int o = (int)m_Ofs;
@@ -420,7 +438,7 @@ Convert a panning value to a gain value for the left channel
 \return Left channel's gain value
 */
 /*----------------------------------------------------------------------------*/
-double Voice::getLeftAmp( double pan )
+double Voice::getLeftAmp( double pan ) const
 {
    if( pan < -1.0f )
       pan = -1.0f;
@@ -447,7 +465,7 @@ Convert a panning value to a gain value for the right channel
 \return Right channel's gain value
 */
 /*----------------------------------------------------------------------------*/
-double Voice::getRightAmp( double pan )
+double Voice::getRightAmp( double pan ) const
 {
    if( pan < -1.0f )
       pan = -1.0f;
