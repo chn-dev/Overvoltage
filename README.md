@@ -39,13 +39,13 @@ Depending on libxml2 rather than the internal XML framework of JUCE is a design 
 
 ## Overview
 
-![Overvoltage Screenshot](Overvoltage-20240729.png)
+![Overvoltage Screenshot](pics/Overvoltage-20240729.png)
 
 An instance of Overvoltage consists of a program containing 16 parts (which correspond to MIDI channels 1 to 16). Each part consists of 8 layers A..H, each containing an arbitrary number of samples. You can drag&drop WAV files from your operating system's file explorer to Overvoltage's sample area located right beside the keybard area. Each block in the sample area corresponds to a sample. You can activate sample(s) by clicking on them (while optionally holding the Ctrl key) or by marking them with a selection rectangle. 
 
 ### Buttons at the Top Edge of the Plugin Window
 
-![Top Edge Buttons](Overvoltage-20240729_top_buttons.png)
+![Top Edge Buttons](pics/Overvoltage-20240729_top_buttons.png)
 
  - 1..16: Part selection
  - A..H: Layer selection for the current part
@@ -59,7 +59,7 @@ An instance of Overvoltage consists of a program containing 16 parts (which corr
 
 ### The Piano Roll and Sample Area
 
-![Piano Roll / Sample Area](Overvoltage-20240729_pianoroll_samplearea.png)
+![Piano Roll / Sample Area](pics/Overvoltage-20240729_pianoroll_samplearea.png)
 
 You can scroll the piano roll/sample area up and down with the mouse wheel. A note can be played by clicking on a key.
 
@@ -69,7 +69,7 @@ A block's vertical dimension represents the pitches and the horizontal dimension
 
 ### The Waveform Area
 
-![Waveform Area](Overvoltage-20240729_waveform.png)
+![Waveform Area](pics/Overvoltage-20240729_waveform.png)
 
 The waveform area has most of the functionality you'd expect from a wave editor program like Audacity or Wavelab:
 
@@ -83,13 +83,13 @@ The waveform area has most of the functionality you'd expect from a wave editor 
 
 ### The Sample Settings Area
 
-![Sample Settings Area](Overvoltage-20240729_sample_settings.png)
+![Sample Settings Area](pics/Overvoltage-20240729_sample_settings.png)
 
 Here you can view and change all the settings of the currently selected sample(s). Most of them should be self-explanatory, so I'll explain just the few that might actually need explanation.
 
 #### Sample
 
-![Sample Section](Overvoltage-20240729_sample.png)
+![Sample Section](pics/Overvoltage-20240729_sample.png)
 
  - Detune from -100 cents to +100 cents (i.e.: -1 .. +1 semitone)
  - Reverse: The sample is played backwards
@@ -101,7 +101,7 @@ Here you can view and change all the settings of the currently selected sample(s
 
 #### Name & Ranges
 
-![Name & Ranges Secion](Overvoltage-20240729_name_ranges.png)
+![Name & Ranges Secion](pics/Overvoltage-20240729_name_ranges.png)
 
  - **K**ey low and high are the lowest and highest note
  - **V**elocity low and high are the lowest and highest velocity the sample responds to when a MIDI note on message is received
@@ -111,13 +111,13 @@ Here you can view and change all the settings of the currently selected sample(s
 
 #### AEG / EG2
 
-![AEG / EG2](Overvoltage-20240729_aegeg2.png)
+![AEG / EG2](pics/Overvoltage-20240729_aegeg2.png)
 
 Should be self-explanatory.
 
 #### Filter
 
-![Filter](Overvoltage-20240729_filter.png)
+![Filter](pics/Overvoltage-20240729_filter.png)
 
 For now, there are three selectable types:
 
@@ -129,7 +129,7 @@ When LowPass or HighPass is selected, the Cutoff and Resonance parameters can be
 
 #### LFO
 
-![LFO](Overvoltage-20240729_lfo.png)
+![LFO](pics/Overvoltage-20240729_lfo.png)
 
 Each of the 3 LFOs has the following settings:
 
@@ -148,7 +148,7 @@ On the right hand side the settings of the custom waveform can be found:
 
 #### Modulation Matrix
 
-![Modulation Matrix](Overvoltage-20240729_modmatrix.png)
+![Modulation Matrix](pics/Overvoltage-20240729_modmatrix.png)
 
 Each row represents one of the 5 modulation slots. Each of the 6 columns has the following meaning:
 
@@ -194,7 +194,7 @@ Mathematical functions:
 
 #### Output
 
-![Output](Overvoltage-20240729_output.png)
+![Output](pics/Overvoltage-20240729_output.png)
 
 Overvoltage has 8 separate stereo output channels. So for seach sample, you can select one of them. Otherwise, you can change:
 
