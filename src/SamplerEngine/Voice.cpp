@@ -379,11 +379,11 @@ Process the voice.
 /*----------------------------------------------------------------------------*/
 bool Voice::process( float *pL, float *pR, size_t nSamples, double sampleRate, double bpm )
 {
-   float left[nSamples];
-   float right[nSamples];
+   std::vector<float> left( nSamples );
+   std::vector<float> right( nSamples );
 
-   float *const pLeft = &left[0];
-   float *const pRight = &right[0];;
+   float *const pLeft = left.data();
+   float *const pRight = right.data();
 
    double keytrack = (double)m_pSample->getKeytrack() / 100.0;
    double pitchbend = m_pPart->getPitchbend() * m_pSample->getPitchbendRange();;
