@@ -1,3 +1,22 @@
+/*******************************************************************************
+ *  Copyright (c) 2024 Christian Nowak <chnowak@web.de>                        *
+ *   This file is part of chn's Overvoltage.                                   *
+ *                                                                             *
+ *  Overvoltage is free software: you can redistribute it and/or modify it     *
+ *  under the terms of the GNU General Public License as published by the Free *
+ *  Software Foundation, either version 3 of the License, or (at your option)  *
+ *  any later version.                                                         *
+ *                                                                             *
+ *  Overvoltage is distributed in the hope that it will be useful, but         *
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY *
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License    *
+ *  for more details.                                                          *
+ *                                                                             *
+ *  You should have received a copy of the GNU General Public License along    *
+ *  with Overvoltage. If not, see <https://www.gnu.org/licenses/>.             *
+ *******************************************************************************/
+
+
 /*----------------------------------------------------------------------------*/
 /*!
 \file WaveFile.cpp
@@ -208,7 +227,7 @@ std::function<float( const WaveFile *, int, uint32_t )> WaveFile::getToFloatLamb
       if( numChannels() == 1 )
       {
          return(
-            []( const WaveFile *pWav, int nChan, uint32_t nSample ) -> float
+            []( const WaveFile *pWav, int /*nChan*/, uint32_t nSample ) -> float
             {
                uint32_t o = 2 * nSample;
                uint8_t *pData = pWav->data8();
@@ -222,7 +241,7 @@ std::function<float( const WaveFile *, int, uint32_t )> WaveFile::getToFloatLamb
          return(
             []( const WaveFile *pWav, int nChan, uint32_t nSample ) -> float
             {
-               uint32_t o = ( 4 * nSample ) + ( 2 * nChan );
+               uint32_t o = ( 4 * nSample ) + ( 2 * (uint32_t)nChan );
                uint8_t *pData = pWav->data8();
                int16_t v = pData[o + 0] | ( pData[o + 1] << 8 );
                return( (float)v / 32768.0 );
@@ -235,7 +254,7 @@ std::function<float( const WaveFile *, int, uint32_t )> WaveFile::getToFloatLamb
       if( numChannels() == 1 )
       {
          return(
-            []( const WaveFile *pWav, int nChan, uint32_t nSample ) -> float
+            []( const WaveFile *pWav, int /*nChan*/, uint32_t nSample ) -> float
             {
                return( (float)pWav->data8()[nSample] / 128.0 );
             }
@@ -246,9 +265,9 @@ std::function<float( const WaveFile *, int, uint32_t )> WaveFile::getToFloatLamb
          return(
             []( const WaveFile *pWav, int nChan, uint32_t nSample ) -> float
             {
-               uint32_t o = ( 2 * nSample ) + nChan;
+               uint32_t o = ( 2 * nSample ) + (uint32_t)nChan;
                uint8_t *pData = pWav->data8();
-               int8_t v = pData[o];
+               int8_t v = (int8_t)pData[o];
                return( (float)v / 128.0 );
             }
          );
@@ -400,7 +419,7 @@ Retrieve a single sample as a floating point value.
 /*----------------------------------------------------------------------------*/
 float WaveFile::floatValue( int nChannel, uint32_t nSample ) const
 {
-   m_ToFloatLambdaFunction( this, nChannel, nSample );
+   return( m_ToFloatLambdaFunction( this, nChannel, nSample ) );
 }
 
 
